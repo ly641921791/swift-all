@@ -1,6 +1,6 @@
 package com.ly.swift.session;
 
-import com.ly.swift.builder.xml.SwiftXMLConfigBuilder;
+import com.ly.swift.builder.ConfigurationBuilder;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -12,7 +12,7 @@ import java.io.Reader;
 import java.util.Properties;
 
 /**
- * 作用同SqlSessionFactoryBuilder，切换极为方便。
+ * 这个类继承SqlSessionFactoryBuilder，通过重写了build方法，通过自定义解析规则解析配置
  *
  * @author ly
  * @since 2018-12-21 16:26
@@ -22,8 +22,7 @@ public class SwiftSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
         try {
-            SwiftXMLConfigBuilder parser = new SwiftXMLConfigBuilder(reader, environment, properties);
-            return build(parser.parse());
+            return build(new ConfigurationBuilder(reader, environment, properties).build());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
         } finally {
@@ -31,7 +30,6 @@ public class SwiftSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
             try {
                 reader.close();
             } catch (IOException e) {
-                // Intentionally ignore. Prefer previous error.
             }
         }
     }
@@ -39,8 +37,7 @@ public class SwiftSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
         try {
-            SwiftXMLConfigBuilder parser = new SwiftXMLConfigBuilder(inputStream, environment, properties);
-            return build(parser.parse());
+            return build(new ConfigurationBuilder(inputStream, environment, properties).build());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
         } finally {
@@ -48,7 +45,6 @@ public class SwiftSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
             try {
                 inputStream.close();
             } catch (IOException e) {
-                // Intentionally ignore. Prefer previous error.
             }
         }
     }

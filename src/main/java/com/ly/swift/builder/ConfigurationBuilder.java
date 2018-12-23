@@ -1,8 +1,9 @@
-package com.ly.swift.builder.xml;
+package com.ly.swift.builder;
 
 import com.ly.swift.session.SwiftConfiguration;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
+import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.DataSourceFactory;
@@ -36,43 +37,31 @@ import java.io.Reader;
 import java.util.Properties;
 
 /**
- * 继承XMLConfigBuilder不能使用SwiftConfiguration，只能复制过来进行改造
+ * Modified from {@link XMLConfigBuilder}
+ *
+ * <ul>
+ * <li>Replace {@link Configuration} with {@link SwiftConfiguration} in {@link #ConfigurationBuilder(XPathParser, String, Properties)}</li>
+ * <li>Rename {@link XMLConfigBuilder#parse()} to {@link #build()}</li>
+ * </ul>
  *
  * @author ly
- * @since 2018-12-21 16:37
- **/
-public class SwiftXMLConfigBuilder extends BaseBuilder {
+ */
+public class ConfigurationBuilder extends BaseBuilder {
 
     private boolean parsed;
     private final XPathParser parser;
     private String environment;
     private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
-    public SwiftXMLConfigBuilder(Reader reader) {
-        this(reader, null, null);
-    }
-
-    public SwiftXMLConfigBuilder(Reader reader, String environment) {
-        this(reader, environment, null);
-    }
-
-    public SwiftXMLConfigBuilder(Reader reader, String environment, Properties props) {
+    public ConfigurationBuilder(Reader reader, String environment, Properties props) {
         this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
-    public SwiftXMLConfigBuilder(InputStream inputStream) {
-        this(inputStream, null, null);
-    }
-
-    public SwiftXMLConfigBuilder(InputStream inputStream, String environment) {
-        this(inputStream, environment, null);
-    }
-
-    public SwiftXMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
+    public ConfigurationBuilder(InputStream inputStream, String environment, Properties props) {
         this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
-    private SwiftXMLConfigBuilder(XPathParser parser, String environment, Properties props) {
+    private ConfigurationBuilder(XPathParser parser, String environment, Properties props) {
         super(new SwiftConfiguration());
         ErrorContext.instance().resource("SQL Mapper Configuration");
         this.configuration.setVariables(props);
@@ -81,7 +70,7 @@ public class SwiftXMLConfigBuilder extends BaseBuilder {
         this.parser = parser;
     }
 
-    public Configuration parse() {
+    public Configuration build() {
         if (parsed) {
             throw new BuilderException("Each XMLConfigBuilder can only be used once.");
         }
