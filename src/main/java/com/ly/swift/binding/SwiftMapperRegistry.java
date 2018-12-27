@@ -1,5 +1,6 @@
 package com.ly.swift.binding;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ly.swift.cache.CacheManager;
 import com.ly.swift.parser.MapperParser;
 import com.ly.swift.session.SwiftConfiguration;
@@ -7,6 +8,7 @@ import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,4 +57,31 @@ public class SwiftMapperRegistry extends MapperRegistry {
         }
     }
 
+    @Override
+    public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+        final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+        if (mapperProxyFactory == null) {
+
+            if (resolver(type) == null) {
+
+            }
+
+            throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
+        }
+        try {
+            return mapperProxyFactory.newInstance(sqlSession);
+        } catch (Exception e) {
+            throw new BindingException("Error getting mapper instance. Cause: " + e, e);
+        }
+    }
+
+    /**
+     * 若type是BaseMapper的子类，则解析一波
+     *
+     * @param type
+     * @return
+     */
+    protected MapperProxyFactory resolver(Class type) {
+        return null;
+    }
 }
