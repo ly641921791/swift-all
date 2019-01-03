@@ -19,6 +19,10 @@ import java.util.Properties;
 /**
  * Modified from {@link org.mybatis.spring.boot.autoconfigure.MybatisProperties}
  *
+ * <ol>
+ * <li>Modify field type {@link #configuration} to {@link SwiftConfiguration}</li>
+ * <ol/>
+ *
  * @author ly
  */
 @Setter

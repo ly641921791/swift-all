@@ -1,37 +1,24 @@
 package com.swift.spring.boot.autoconfigure;
 
+import com.swift.session.SwiftConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
-import org.mybatis.spring.mapper.ClassPathMapperScanner;
-import org.mybatis.spring.mapper.MapperFactoryBean;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -44,13 +31,17 @@ import java.util.List;
 /**
  * Modified from {@link MybatisAutoConfiguration}
  *
+ * <ol>
+ * <li>Modify {@link #sqlSessionFactory(DataSource)} method to replace {@link SwiftConfiguration} </li>
+ * </ol>
+ *
  * @author ly
  */
 @Slf4j
-@Configuration
 @AllArgsConstructor
 @ConditionalOnBean(DataSource.class)
 @EnableConfigurationProperties(SwiftProperties.class)
+@org.springframework.context.annotation.Configuration
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 public class SwiftAutoConfiguration {
 
@@ -73,8 +64,6 @@ public class SwiftAutoConfiguration {
         }
     }
 
-    //
-
     @Bean
     @ConditionalOnMissingBean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
@@ -84,9 +73,9 @@ public class SwiftAutoConfiguration {
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
         }
-        org.apache.ibatis.session.Configuration configuration = this.properties.getConfiguration();
+        Configuration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-            configuration = new org.apache.ibatis.session.Configuration();
+            configuration = new SwiftConfiguration();
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
@@ -115,88 +104,5 @@ public class SwiftAutoConfiguration {
 
         return factory.getObject();
     }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
-        ExecutorType executorType = this.properties.getExecutorType();
-        if (executorType != null) {
-            return new SqlSessionTemplate(sqlSessionFactory, executorType);
-        } else {
-            return new SqlSessionTemplate(sqlSessionFactory);
-        }
-    }
-
-    /**
-     * This will just scan the same base package as Spring Boot does. If you want
-     * more power, you can explicitly use
-     * {@link org.mybatis.spring.annotation.MapperScan} but this will get typed
-     * mappers working correctly, out-of-the-box, similar to using Spring Data JPA
-     * repositories.
-     */
-    public static class AutoConfiguredMapperScannerRegistrar
-            implements BeanFactoryAware, ImportBeanDefinitionRegistrar, ResourceLoaderAware {
-
-        private BeanFactory beanFactory;
-
-        private ResourceLoader resourceLoader;
-
-        @Override
-        public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
-            log.debug("Searching for mappers annotated with @Mapper");
-
-            ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
-
-            try {
-                if (this.resourceLoader != null) {
-                    scanner.setResourceLoader(this.resourceLoader);
-                }
-
-                List<String> packages = AutoConfigurationPackages.get(this.beanFactory);
-                if (log.isDebugEnabled()) {
-                    for (String pkg : packages) {
-                        log.debug("Using auto-configuration base package '{}'", pkg);
-                    }
-                }
-
-                scanner.setAnnotationClass(Mapper.class);
-                scanner.registerFilters();
-                scanner.doScan(StringUtils.toStringArray(packages));
-            } catch (IllegalStateException ex) {
-                log.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.", ex);
-            }
-        }
-
-        @Override
-        public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-            this.beanFactory = beanFactory;
-        }
-
-        @Override
-        public void setResourceLoader(ResourceLoader resourceLoader) {
-            this.resourceLoader = resourceLoader;
-        }
-    }
-
-    /**
-     * {@link org.mybatis.spring.annotation.MapperScan} ultimately ends up
-     * creating instances of {@link MapperFactoryBean}. If
-     * {@link org.mybatis.spring.annotation.MapperScan} is used then this
-     * auto-configuration is not needed. If it is _not_ used, however, then this
-     * will bring in a bean registrar and automatically register components based
-     * on the same component-scanning path as Spring Boot itself.
-     */
-    @org.springframework.context.annotation.Configuration
-    @Import({ MybatisAutoConfiguration.AutoConfiguredMapperScannerRegistrar.class })
-    @ConditionalOnMissingBean(MapperFactoryBean.class)
-    public static class MapperScannerRegistrarNotFoundConfiguration {
-
-        @PostConstruct
-        public void afterPropertiesSet() {
-            log.debug("No {} found.", MapperFactoryBean.class.getName());
-        }
-    }
-
 
 }
