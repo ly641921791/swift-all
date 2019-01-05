@@ -2,6 +2,7 @@ package com.swift.metadata;
 
 import lombok.Data;
 import org.apache.ibatis.session.Configuration;
+import sun.tools.jconsole.Tab;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -10,63 +11,39 @@ import java.util.List;
 import static com.swift.util.StringUtils.toUnderscore;
 
 /**
+ * 数据库表信息
+ *
  * @author ly
  */
 @Data
 public class Table {
 
-    // Source Field
+    /**
+     * 表名
+     */
+    private String name;
 
-    private Class sourceClass;
+    /**
+     * 表格列
+     */
+    private List<Column> columns = new ArrayList<>();
 
-    private Configuration configuration;
 
-    private boolean mapUnderscoreToCamelCase;
 
-    // Table Info
+    public static Table resolve(Class tableClass, Configuration configuration) {
 
-    private String tableName;
+        boolean mapUnderscoreToCamelCase = configuration.isMapUnderscoreToCamelCase();
 
-    private List<Column> tableColumn;
+        Table table = new Table();
 
-    // Constructor
-
-    public Table(Class type) {
-        this(type, null);
-    }
-
-    public Table(Class type, Configuration configuration) {
-        this.sourceClass = type;
-        this.configuration = configuration;
-
-        preInit();
-
-        doInit();
-    }
-
-    private void preInit() {
-        // 设置 下划线驼峰映射
-        if (this.configuration != null && this.configuration.isMapUnderscoreToCamelCase()) {
-            this.mapUnderscoreToCamelCase = true;
-        }
-    }
-
-    private void doInit() {
         if (mapUnderscoreToCamelCase) {
-            tableName = toUnderscore(sourceClass.getSimpleName());
+            table.name = toUnderscore(tableClass.getSimpleName());
         } else {
-            tableName = sourceClass.getSimpleName();
+            table.name = tableClass.getSimpleName();
         }
 
-        tableColumn = new ArrayList<>();
 
-        for (Field field : sourceClass.getDeclaredFields()) {
-            if (mapUnderscoreToCamelCase) {
-                tableColumn.add(new Column(toUnderscore(field.getName()), field));
-            } else {
-                tableColumn.add(new Column(field.getName(), field));
-            }
-        }
+        return table;
     }
 
 }

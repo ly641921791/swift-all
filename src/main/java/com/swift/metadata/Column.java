@@ -12,8 +12,9 @@ import java.lang.reflect.Field;
 @AllArgsConstructor
 public class Column {
 
-    private String columnName;
+    private String name;
 
     private Field javaField;
 
+    private Table table;
 }
