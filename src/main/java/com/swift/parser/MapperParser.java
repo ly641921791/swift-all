@@ -1,5 +1,7 @@
 package com.swift.parser;
 
+import com.swift.binding.MethodHandlerRegistry;
+import com.swift.session.MethodHandler;
 import org.apache.ibatis.annotations.Arg;
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.CacheNamespaceRef;
@@ -458,6 +460,12 @@ public class MapperParser extends MapperAnnotationBuilder {
                 Annotation sqlProviderAnnotation = method.getAnnotation(sqlProviderAnnotationType);
                 return new ProviderSqlSource(assistant.getConfiguration(), sqlProviderAnnotation, type, method);
             }
+
+            // 自定义方法处理
+            else if (MethodHandlerRegistry.hasMethodHandler(method.getName())) {
+                return buildSqlSourceFromMethodHandler(method, parameterType, languageDriver);
+            }
+
             return null;
         } catch (Exception e) {
             throw new BuilderException("Could not find value method on SQL annotation.  Cause: " + e, e);
@@ -473,11 +481,23 @@ public class MapperParser extends MapperAnnotationBuilder {
         return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass);
     }
 
+    private SqlSource buildSqlSourceFromMethodHandler(Method method, Class<?> parameterTypeClass, LanguageDriver languageDriver) {
+        MethodHandler methodHandler = MethodHandlerRegistry.getMethodHandler(method.getName());
+
+        String sql = methodHandler.buildSql(method, configuration);
+
+        return languageDriver.createSqlSource(configuration, sql.trim(), parameterTypeClass);
+    }
+
     private SqlCommandType getSqlCommandType(Method method) {
         Class<? extends Annotation> type = getSqlAnnotationType(method);
 
         if (type == null) {
             type = getSqlProviderAnnotationType(method);
+
+            if (type == null) {
+                type = MethodHandlerRegistry.getSqlAnnotationType(method);
+            }
 
             if (type == null) {
                 return SqlCommandType.UNKNOWN;

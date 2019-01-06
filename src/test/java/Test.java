@@ -1,4 +1,5 @@
-import com.ly.swift.session.SwiftSqlSessionFactoryBuilder;
+import com.swift.session.SwiftSqlSessionFactoryBuilder;
+import lombok.Data;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -6,13 +7,11 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.h2.tools.Server;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 public class Test {
 
@@ -85,11 +84,24 @@ public class Test {
         SqlSessionFactoryBuilder builder = new SwiftSqlSessionFactoryBuilder();
         SqlSessionFactory factory = builder.build(Resources.getResourceAsStream("conf.xml"));
         try (SqlSession sqlSession = factory.openSession()) {
-            sqlSession.getMapper(List.class);
+            sqlSession.getConfiguration().getMapperRegistry().addMapper(UserMapper.class);
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            userMapper.find(null);
+        }catch (Exception e){
+            e.printStackTrace();
         }
         // 关闭服务
         h2.stopServer();
     }
 
+    @Data
+    static class User {
+        private Long id;
+        private String user;
+    }
+
+    static interface UserMapper {
+        int find(User user);
+    }
 
 }
