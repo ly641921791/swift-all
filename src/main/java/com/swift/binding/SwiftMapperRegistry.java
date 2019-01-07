@@ -22,7 +22,7 @@ import java.util.Map;
 public class SwiftMapperRegistry extends MapperRegistry {
 
     private final Configuration config;
-    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
+    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
     public SwiftMapperRegistry(Configuration config) {
         super(config);

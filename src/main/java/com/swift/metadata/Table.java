@@ -47,7 +47,7 @@ public class Table {
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
 
-        fieldList.forEach(field -> {
+        for (Field field : fieldList) {
 
             if (mapUnderscoreToCamelCase) {
                 table.addColumn(new Column(StringUtils.toUnderscore(field.getName()), field, table));
@@ -55,7 +55,7 @@ public class Table {
                 table.addColumn(new Column(field.getName(), field, table));
             }
 
-        });
+        }
 
         return table;
     }

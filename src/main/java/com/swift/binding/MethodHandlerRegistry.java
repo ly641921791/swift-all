@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class MethodHandlerRegistry {
 
-    public static Map<String, MethodHandler> methodHandlers = new HashMap<>();
+    public static Map<String, MethodHandler> methodHandlers = new HashMap<String, MethodHandler>();
 
     static {
         methodHandlers.put(StringUtils.toLowerCamel(Find.class.getSimpleName()), new Find());

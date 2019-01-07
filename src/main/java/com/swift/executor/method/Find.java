@@ -24,16 +24,20 @@ public class Find implements MethodHandler {
 
         Class[] param = method.getParameterTypes();
 
-        Table table = CacheManager.tableCache.getOrDefault(param[0], Table.resolve(param[0], configuration));
+        Table table;
+        if ((table = CacheManager.tableCache.get(param[0])) == null) {
+            table = Table.resolve(param[0], configuration);
+            CacheManager.tableCache.put(param[0], table);
+        }
 
         List<Column> columnList = table.getColumns();
 
         StringBuilder where = new StringBuilder();
 
-        columnList.forEach(column -> {
+        for (Column column : columnList) {
             String field = column.getJavaField().getName();
             where.append(String.format(WHERE, field, column.getName(), field));
-        });
+        }
 
         return String.format(FIND, table.getName(), where.toString());
     }

@@ -10,6 +10,6 @@ import java.util.Map;
  */
 public class CacheManager {
 
-    public static final Map<Class, Table> tableCache = new HashMap<>();
+    public static final Map<Class, Table> tableCache = new HashMap<Class, Table>();
 
 }

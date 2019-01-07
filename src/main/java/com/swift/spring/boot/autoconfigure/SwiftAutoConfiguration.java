@@ -11,6 +11,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,7 +39,6 @@ import java.util.List;
  * @author ly
  */
 @Slf4j
-@AllArgsConstructor
 @ConditionalOnBean(DataSource.class)
 @EnableConfigurationProperties(SwiftProperties.class)
 @org.springframework.context.annotation.Configuration
@@ -54,6 +54,18 @@ public class SwiftAutoConfiguration {
     private final DatabaseIdProvider databaseIdProvider;
 
     private final List<ConfigurationCustomizer> configurationCustomizers;
+
+    public SwiftAutoConfiguration(SwiftProperties properties,
+                                  ObjectProvider<Interceptor[]> interceptorsProvider,
+                                  ResourceLoader resourceLoader,
+                                  ObjectProvider<DatabaseIdProvider> databaseIdProvider,
+                                  ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider) {
+        this.properties = properties;
+        this.interceptors = interceptorsProvider.getIfAvailable();
+        this.resourceLoader = resourceLoader;
+        this.databaseIdProvider = databaseIdProvider.getIfAvailable();
+        this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
+    }
 
     @PostConstruct
     public void checkConfigFileExists() {
