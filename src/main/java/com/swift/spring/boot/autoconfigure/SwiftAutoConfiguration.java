@@ -1,7 +1,6 @@
 package com.swift.spring.boot.autoconfigure;
 
 import com.swift.session.SwiftConfiguration;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
