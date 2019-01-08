@@ -10,17 +10,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * @author ly
- * @since 2019-01-07 18:54
- **/
-public class Insert implements MethodHandler {
+public class Update implements MethodHandler {
 
-    public static final String INSERT = "<script>INSERT INTO %s (%s) VALUES (%s)</script>";
+    public static final String UPDATE = "<script>UPDATE %s <set>%s</set><where>%s</where></script>";
 
-    public static final String COLUMNS = "<if test=\"%s!=null\">,%s</if>";
+    public static final String SET = "<if test=\"r.%s!=null\">%s=#{r.%s},</if>";
 
-    public static final String VALUES = "<if test=\"%s!=null\">,#{%s}</if>";
+    public static final String WHERE = "<if test=\"c.%s!=null\">AND %s=#{c.%s}</if>";
 
     @Override
     public String buildSql(Method method, Configuration configuration) {
@@ -35,23 +31,21 @@ public class Insert implements MethodHandler {
 
         List<Column> columnList = table.getColumns();
 
-        StringBuilder cols = new StringBuilder("<trim prefix=\"\" prefixOverrides=\",\">");
-        StringBuilder fs = new StringBuilder("<trim prefix=\"\" prefixOverrides=\",\">");
+        StringBuilder set = new StringBuilder();
+
+        StringBuilder where = new StringBuilder();
 
         for (Column column : columnList) {
             String field = column.getJavaField().getName();
-            cols.append(String.format(COLUMNS, field, column.getName()));
-            fs.append(String.format(VALUES, field, field));
+            set.append(String.format(SET, field, column.getName(), field));
+            where.append(String.format(WHERE, field, column.getName(), field));
         }
 
-        cols.append("</trim>");
-        fs.append("</trim>");
-
-        return String.format(INSERT, table.getName(), cols.toString(), fs.toString());
+        return String.format(UPDATE, table, set.toString(), where.toString());
     }
 
     @Override
     public Class<? extends Annotation> getSqlAnnotationType() {
-        return org.apache.ibatis.annotations.Insert.class;
+        return org.apache.ibatis.annotations.Update.class;
     }
 }
