@@ -32,6 +32,8 @@ public class SwiftProperties {
 
     public static final String SWIFT_PREFIX = "swift";
 
+    private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+
     /**
      * Location of MyBatis xml config file.
      */
@@ -46,6 +48,12 @@ public class SwiftProperties {
      * Packages to search type aliases. (Package delimiters are ",; \t\n")
      */
     private String typeAliasesPackage;
+
+    /**
+     * The super class for filtering type alias.
+     * If this not specifies, the MyBatis deal as type alias all classes that searched from typeAliasesPackage.
+     */
+    private Class<?> typeAliasesSuperType;
 
     /**
      * Packages to search for type handlers. (Package delimiters are ",; \t\n")

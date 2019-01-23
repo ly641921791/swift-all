@@ -10,6 +10,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -24,7 +25,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.List;
 
@@ -42,7 +42,7 @@ import java.util.List;
 @EnableConfigurationProperties(SwiftProperties.class)
 @org.springframework.context.annotation.Configuration
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
-public class SwiftAutoConfiguration {
+public class SwiftAutoConfiguration implements InitializingBean {
 
     private final SwiftProperties properties;
 
@@ -66,8 +66,12 @@ public class SwiftAutoConfiguration {
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
     }
 
-    @PostConstruct
-    public void checkConfigFileExists() {
+    @Override
+    public void afterPropertiesSet() {
+        checkConfigFileExists();
+    }
+
+    private void checkConfigFileExists() {
         if (this.properties.isCheckConfigLocation() && StringUtils.hasText(this.properties.getConfigLocation())) {
             Resource resource = this.resourceLoader.getResource(this.properties.getConfigLocation());
             Assert.state(resource.exists(), "Cannot find config location: " + resource
@@ -84,16 +88,7 @@ public class SwiftAutoConfiguration {
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
         }
-        Configuration configuration = this.properties.getConfiguration();
-        if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-            configuration = new SwiftConfiguration();
-        }
-        if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
-            for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
-                customizer.customize(configuration);
-            }
-        }
-        factory.setConfiguration(configuration);
+        applyConfiguration(factory);
         if (this.properties.getConfigurationProperties() != null) {
             factory.setConfigurationProperties(this.properties.getConfigurationProperties());
         }
@@ -106,6 +101,9 @@ public class SwiftAutoConfiguration {
         if (StringUtils.hasLength(this.properties.getTypeAliasesPackage())) {
             factory.setTypeAliasesPackage(this.properties.getTypeAliasesPackage());
         }
+        if (this.properties.getTypeAliasesSuperType() != null) {
+            factory.setTypeAliasesSuperType(this.properties.getTypeAliasesSuperType());
+        }
         if (StringUtils.hasLength(this.properties.getTypeHandlersPackage())) {
             factory.setTypeHandlersPackage(this.properties.getTypeHandlersPackage());
         }
@@ -114,6 +112,19 @@ public class SwiftAutoConfiguration {
         }
 
         return factory.getObject();
+    }
+
+    private void applyConfiguration(SqlSessionFactoryBean factory) {
+        Configuration configuration = this.properties.getConfiguration();
+        if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
+            configuration = new Configuration();
+        }
+        if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
+            for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
+                customizer.customize(configuration);
+            }
+        }
+        factory.setConfiguration(configuration);
     }
 
 }
