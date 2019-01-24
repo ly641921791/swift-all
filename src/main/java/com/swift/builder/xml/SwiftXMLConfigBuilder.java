@@ -1,9 +1,8 @@
-package com.swift.builder;
+package com.swift.builder.xml;
 
 import com.swift.session.SwiftConfiguration;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
-import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.DataSourceFactory;
@@ -36,31 +35,28 @@ import java.io.Reader;
 import java.util.Properties;
 
 /**
- * Modified from {@link XMLConfigBuilder}
- *
- * <ul>
- * <li>Replace {@link Configuration} with {@link SwiftConfiguration} in {@link #ConfigurationBuilder(XPathParser, String, Properties)}</li>
- * <li>Rename {@link XMLConfigBuilder#parse()} to {@link #build()}</li>
- * </ul>
+ * 通过XMLConfigBuilder修改而来
+ * <p>
+ * 1 将构造函数中的Configuration替换为SwiftConfiguration，方便拓展功能
  *
  * @author ly
  */
-public class ConfigurationBuilder extends BaseBuilder {
+public class SwiftXMLConfigBuilder extends BaseBuilder {
 
     private boolean parsed;
     private final XPathParser parser;
     private String environment;
     private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
-    public ConfigurationBuilder(Reader reader, String environment, Properties props) {
+    public SwiftXMLConfigBuilder(Reader reader, String environment, Properties props) {
         this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
-    public ConfigurationBuilder(InputStream inputStream, String environment, Properties props) {
+    public SwiftXMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
         this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
-    private ConfigurationBuilder(XPathParser parser, String environment, Properties props) {
+    private SwiftXMLConfigBuilder(XPathParser parser, String environment, Properties props) {
         super(new SwiftConfiguration());
         ErrorContext.instance().resource("SQL Mapper Configuration");
         this.configuration.setVariables(props);
@@ -69,7 +65,7 @@ public class ConfigurationBuilder extends BaseBuilder {
         this.parser = parser;
     }
 
-    public Configuration build() {
+    public Configuration parse() {
         if (parsed) {
             throw new BuilderException("Each XMLConfigBuilder can only be used once.");
         }
@@ -123,7 +119,7 @@ public class ConfigurationBuilder extends BaseBuilder {
             for (String clazz : clazzes) {
                 if (!clazz.isEmpty()) {
                     @SuppressWarnings("unchecked")
-                    Class<? extends VFS> vfsImpl = (Class<? extends VFS>)Resources.classForName(clazz);
+                    Class<? extends VFS> vfsImpl = (Class<? extends VFS>) Resources.classForName(clazz);
                     configuration.setVfsImpl(vfsImpl);
                 }
             }

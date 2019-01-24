@@ -1,16 +1,15 @@
-package com.swift.executor.method;
+package com.swift.custom.mapper.method;
 
-import com.swift.cache.CacheManager;
-import com.swift.metadata.Column;
-import com.swift.metadata.Table;
-import com.swift.session.MethodHandler;
-import org.apache.ibatis.session.Configuration;
+import com.swift.custom.mapper.MapperMethodResolver;
+import com.swift.custom.metadata.Column;
+import com.swift.custom.metadata.Table;
+import com.swift.session.SwiftConfiguration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class Update implements MethodHandler {
+public class Update implements MapperMethodResolver {
 
     public static final String UPDATE = "<script>UPDATE %s <set>%s</set><where>%s</where></script>";
 
@@ -19,15 +18,16 @@ public class Update implements MethodHandler {
     public static final String WHERE = "<if test=\"c.%s!=null\">AND %s=#{c.%s}</if>";
 
     @Override
-    public String buildSql(Method method, Configuration configuration) {
+    public String buildSql(Method method, SwiftConfiguration configuration) {
 
         Class[] param = method.getParameterTypes();
 
         Table table;
-        if ((table = CacheManager.tableCache.get(param[0])) == null) {
+        if ((table = configuration.getTable(param[0].getName())) == null) {
             table = Table.resolve(param[0], configuration);
-            CacheManager.tableCache.put(param[0], table);
+            configuration.addTable(table);
         }
+
 
         List<Column> columnList = table.getColumns();
 

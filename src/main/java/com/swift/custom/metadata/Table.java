@@ -1,4 +1,4 @@
-package com.swift.metadata;
+package com.swift.custom.metadata;
 
 import com.swift.util.ClassUtils;
 import com.swift.util.StringUtils;

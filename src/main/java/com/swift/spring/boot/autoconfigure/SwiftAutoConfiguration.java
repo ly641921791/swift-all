@@ -117,7 +117,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
     private void applyConfiguration(SqlSessionFactoryBean factory) {
         Configuration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-            configuration = new Configuration();
+            configuration = new SwiftConfiguration();
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {

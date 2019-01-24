@@ -1,7 +1,7 @@
-package com.swift.parser;
+package com.swift.builder.annotation;
 
-import com.swift.binding.MethodHandlerRegistry;
-import com.swift.session.MethodHandler;
+import com.swift.custom.swift.BaseMapper;
+import com.swift.session.SwiftConfiguration;
 import org.apache.ibatis.annotations.Arg;
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.CacheNamespaceRef;
@@ -53,7 +53,6 @@ import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.parsing.PropertyParser;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.JdbcType;
@@ -81,18 +80,21 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Modified from MapperAnnotationBuilder
+ * 继承MapperAnnotationBuilder
+ * <p>
+ * 1 新增自定义方法解析
+ * 2 将私有属性设置为protected，方便继承重写功能
  *
  * @author ly
  */
-public class MapperParser extends MapperAnnotationBuilder {
+public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
-    private static final Set<Class<? extends Annotation>> SQL_ANNOTATION_TYPES = new HashSet<>();
-    private static final Set<Class<? extends Annotation>> SQL_PROVIDER_ANNOTATION_TYPES = new HashSet<>();
+    protected static final Set<Class<? extends Annotation>> SQL_ANNOTATION_TYPES = new HashSet<>();
+    protected static final Set<Class<? extends Annotation>> SQL_PROVIDER_ANNOTATION_TYPES = new HashSet<>();
 
-    private final Configuration configuration;
-    private final MapperBuilderAssistant assistant;
-    private final Class<?> type;
+    protected final SwiftConfiguration configuration;
+    protected final MapperBuilderAssistant assistant;
+    protected final Class<?> type;
 
     static {
         SQL_ANNOTATION_TYPES.add(Select.class);
@@ -106,7 +108,7 @@ public class MapperParser extends MapperAnnotationBuilder {
         SQL_PROVIDER_ANNOTATION_TYPES.add(DeleteProvider.class);
     }
 
-    public MapperParser(Configuration configuration, Class<?> type) {
+    public SwiftMapperAnnotationBuilder(SwiftConfiguration configuration, Class<?> type) {
         super(configuration, type);
         String resource = type.getName().replace('.', '/') + ".java (best guess)";
         this.assistant = new MapperBuilderAssistant(configuration, resource);
@@ -123,6 +125,11 @@ public class MapperParser extends MapperAnnotationBuilder {
             assistant.setCurrentNamespace(type.getName());
             parseCache();
             parseCacheRef();
+
+            if (type.isAssignableFrom(BaseMapper.class)) {
+
+            }
+
             Method[] methods = type.getMethods();
             for (Method method : methods) {
                 try {
@@ -480,8 +487,8 @@ public class MapperParser extends MapperAnnotationBuilder {
             }
 
             // 自定义方法处理
-            else if (MethodHandlerRegistry.hasMethodHandler(method.getName())) {
-                return buildSqlSourceFromMethodHandler(method, parameterType, languageDriver);
+            else if (configuration.getMapperMethodResolverRegistry().hasResolver(method)) {
+                return buildSqlSourceFromMethod(method, parameterType, languageDriver);
             }
 
             return null;
@@ -499,11 +506,16 @@ public class MapperParser extends MapperAnnotationBuilder {
         return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass);
     }
 
-    private SqlSource buildSqlSourceFromMethodHandler(Method method, Class<?> parameterTypeClass, LanguageDriver languageDriver) {
-        MethodHandler methodHandler = MethodHandlerRegistry.getMethodHandler(method.getName());
-
-        String sql = methodHandler.buildSql(method, configuration);
-
+    /**
+     * 通过方法解析Sql Source
+     *
+     * @param method             当前方法
+     * @param parameterTypeClass 参数类型
+     * @param languageDriver     语言驱动
+     * @return Sql Source
+     */
+    private SqlSource buildSqlSourceFromMethod(Method method, Class<?> parameterTypeClass, LanguageDriver languageDriver) {
+        String sql = configuration.getMapperMethodResolverRegistry().getMapperMethodResolver(method).buildSql(method, configuration);
         return languageDriver.createSqlSource(configuration, sql.trim(), parameterTypeClass);
     }
 
@@ -514,7 +526,7 @@ public class MapperParser extends MapperAnnotationBuilder {
             type = getSqlProviderAnnotationType(method);
 
             if (type == null) {
-                type = MethodHandlerRegistry.getSqlAnnotationType(method);
+                type = configuration.getMapperMethodResolverRegistry().getMapperMethodResolver(method).getSqlAnnotationType();
             }
 
             if (type == null) {

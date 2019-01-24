@@ -1,10 +1,9 @@
-package com.swift.executor.method;
+package com.swift.custom.mapper.method;
 
-import com.swift.cache.CacheManager;
-import com.swift.metadata.Column;
-import com.swift.metadata.Table;
-import com.swift.session.MethodHandler;
-import org.apache.ibatis.session.Configuration;
+import com.swift.custom.mapper.MapperMethodResolver;
+import com.swift.custom.metadata.Column;
+import com.swift.custom.metadata.Table;
+import com.swift.session.SwiftConfiguration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -14,7 +13,7 @@ import java.util.List;
  * @author ly
  * @since 2019-01-07 18:54
  **/
-public class Insert implements MethodHandler {
+public class Insert implements MapperMethodResolver {
 
     public static final String INSERT = "<script>INSERT INTO %s (%s) VALUES (%s)</script>";
 
@@ -23,14 +22,14 @@ public class Insert implements MethodHandler {
     public static final String VALUES = "<if test=\"%s!=null\">,#{%s}</if>";
 
     @Override
-    public String buildSql(Method method, Configuration configuration) {
+    public String buildSql(Method method, SwiftConfiguration configuration) {
 
         Class[] param = method.getParameterTypes();
 
         Table table;
-        if ((table = CacheManager.tableCache.get(param[0])) == null) {
+        if ((table = configuration.getTable(param[0].getName())) == null) {
             table = Table.resolve(param[0], configuration);
-            CacheManager.tableCache.put(param[0], table);
+            configuration.addTable(table);
         }
 
         List<Column> columnList = table.getColumns();

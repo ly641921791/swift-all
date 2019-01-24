@@ -1,6 +1,6 @@
 package com.swift.session;
 
-import com.swift.builder.ConfigurationBuilder;
+import com.swift.builder.xml.SwiftXMLConfigBuilder;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -13,7 +13,7 @@ import java.util.Properties;
 
 /**
  * Override method build to replace ConfigurationBuilder
- *
+ * <p>
  * 这个类继承SqlSessionFactoryBuilder，通过重写了build方法，通过自定义解析规则解析配置
  *
  * @author ly
@@ -24,7 +24,7 @@ public class SwiftSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
         try {
-            return build(new ConfigurationBuilder(reader, environment, properties).build());
+            return build(new SwiftXMLConfigBuilder(reader, environment, properties).parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
         } finally {
@@ -39,7 +39,7 @@ public class SwiftSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
         try {
-            return build(new ConfigurationBuilder(inputStream, environment, properties).build());
+            return build(new SwiftXMLConfigBuilder(inputStream, environment, properties).parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
         } finally {

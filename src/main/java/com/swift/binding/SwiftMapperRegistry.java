@@ -1,11 +1,11 @@
 package com.swift.binding;
 
-import com.swift.parser.MapperParser;
+import com.swift.builder.annotation.SwiftMapperAnnotationBuilder;
+import com.swift.session.SwiftConfiguration;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.Collection;
@@ -14,17 +14,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class inherits {@link MapperRegistry}
+ * 继承MapperRegistry类
+ * <p>
+ * 1 重写了Mapper类解析和获取的方法
+ * <p>
+ * 2 将config和knownMappers设置为protected（父类设置为私有，不方便功能重写）
  *
  * @author ly
  * @since 2018-12-21 17:20
  **/
 public class SwiftMapperRegistry extends MapperRegistry {
 
-    private final Configuration config;
-    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
+    protected final SwiftConfiguration config;
+    protected final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
-    public SwiftMapperRegistry(Configuration config) {
+    public SwiftMapperRegistry(SwiftConfiguration config) {
         super(config);
         this.config = config;
     }
@@ -59,7 +63,7 @@ public class SwiftMapperRegistry extends MapperRegistry {
                 // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
-                MapperAnnotationBuilder parser = new MapperParser(this.config, type);
+                MapperAnnotationBuilder parser = new SwiftMapperAnnotationBuilder(this.config, type);
                 parser.parse();
                 loadCompleted = true;
             } finally {

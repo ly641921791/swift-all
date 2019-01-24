@@ -1,4 +1,4 @@
-package com.swift.metadata;
+package com.swift.custom.metadata;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
