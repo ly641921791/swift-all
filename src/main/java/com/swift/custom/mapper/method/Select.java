@@ -11,9 +11,13 @@ import java.util.List;
 /**
  * @author ly
  */
-public class Find implements MapperMethodResolver {
+public class Select implements MapperMethodResolver {
 
-    public static final String FIND = "<script>SELECT * FROM %s <where>%s</where></script>";
+    // SELECT * FROM tb WHERE  %s  ORDER BY %s
+
+    public static final String S = "<script>SELECT * FROM %s</script>";
+
+    public static final String SELECT = "<script>SELECT * FROM %s <where>%s</where></script>";
     public static final String WHERE = "<if test=\"%s!=null\"> AND %s=#{%s} </if>";
 
     @Override
@@ -32,8 +36,7 @@ public class Find implements MapperMethodResolver {
             where.append(String.format(WHERE, field, column.getName(), field));
         });
 
-        return String.format(FIND, table.getName(), where.toString());
+        return String.format(SELECT, table.getName(), where.toString());
     }
-
 
 }

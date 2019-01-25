@@ -128,7 +128,7 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
             parseCache();
             parseCacheRef();
 
-            prepareParseStatement(type);
+            prepareParseStatement();
 
             Method[] methods = type.getMethods();
             for (Method method : methods) {
@@ -151,28 +151,23 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
      * 1 解析Table
      * <p>
      * 2 解析Method
-     *
-     * @param mapper Mapper
      */
-    private void prepareParseStatement(Class mapper) {
+    private void prepareParseStatement() {
         // 解析Table
-        if (BaseMapper.class.isAssignableFrom(mapper)) {
+        if (BaseMapper.class.isAssignableFrom(type)) {
             // 获取接口泛型
-            ParameterizedType genericInterfaces = (ParameterizedType) mapper.getGenericInterfaces()[0];
+            ParameterizedType genericInterfaces = (ParameterizedType) type.getGenericInterfaces()[0];
             Class tableClass = (Class) genericInterfaces.getActualTypeArguments()[0];
             // 检查table信息
-            Table table = configuration.getTable(mapper);
+            Table table = configuration.getTable(type);
             if (table == null) {
                 table = Table.resolve(tableClass, configuration);
-                configuration.addTable(mapper, table);
+                configuration.addTable(type, table);
             }
         }
 
         // 解析Method
-        for (Method method : mapper.getMethods()) {
-            if (method.isBridge()) {
-                continue;
-            }
+        for (Method method : type.getMethods()) {
             if (getSqlAnnotationType(method) != null) {
                 return;
             }
@@ -189,7 +184,7 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
      * @param method 方法
      */
     void parseMapperMethodStatement(Method method) {
-        Table table = configuration.getTable(method.getDeclaringClass());
+        Table table = configuration.getTable(type);
 
         if (table == null) {
             return;

@@ -12,8 +12,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.swift.util.StringUtils.toUnderscore;
-
 /**
  * 数据库表信息
  *
@@ -33,7 +31,7 @@ public class Table {
     /**
      * 表格列
      */
-    private List<Column> columns = new ArrayList<Column>();
+    private List<Column> columns = new ArrayList<>();
 
     public void addColumn(Column column) {
         columns.add(column);
@@ -45,11 +43,8 @@ public class Table {
 
         Table table = new Table();
 
-        if (mapUnderscoreToCamelCase) {
-            table.name = toUnderscore(tableClass.getSimpleName());
-        } else {
-            table.name = tableClass.getSimpleName();
-        }
+        // Java类名默认大驼峰，转换下划线格式
+        table.name = StringUtils.toUnderscore(tableClass.getSimpleName());
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
 

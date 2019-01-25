@@ -44,16 +44,22 @@ public class StringUtils {
         return sb.toString();
     }
 
+    /**
+     * 字符串转下划线格式
+     *
+     * @param source 目标字符串
+     * @return 下划线格式
+     */
     public static String toUnderscore(String source) {
         StringBuilder sb = new StringBuilder();
-        for (char c : trimLeft(source, UNDERSCORE).toCharArray()) {
+        for (char c : source.toCharArray()) {
             if (Character.isUpperCase(c)) {
                 sb.append(UNDERSCORE).append(Character.toLowerCase(c));
             } else {
                 sb.append(c);
             }
         }
-        return sb.toString();
+        return trimLeft(sb.toString(), UNDERSCORE);
     }
 
     /**
