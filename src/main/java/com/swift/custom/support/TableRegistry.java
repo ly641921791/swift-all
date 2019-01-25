@@ -6,22 +6,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Table注册类，Mapper和Table的映射关系
+ *
  * @author ly
  */
 public class TableRegistry {
 
-    public Map<String, Table> tableMap = new HashMap<>();
+    public Map<Class, Table> tableMap = new HashMap<>();
 
-    public void addTable(Table table) {
-        tableMap.put(table.getName(), table);
+    public void addTable(Class mapper, Table table) {
+        tableMap.put(mapper, table);
     }
 
-    public Table getTable(String table) {
-        return tableMap.get(table);
+    public Table getTable(Class mapper) {
+        return tableMap.get(mapper);
     }
 
-    public boolean hasTable(String table) {
-        return tableMap.containsKey(table);
+    public boolean hasTable(Class mapper) {
+        return tableMap.containsKey(mapper);
     }
 
 }

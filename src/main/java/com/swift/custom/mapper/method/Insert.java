@@ -4,9 +4,8 @@ import com.swift.custom.mapper.MapperMethodResolver;
 import com.swift.custom.metadata.Column;
 import com.swift.custom.metadata.Table;
 import com.swift.session.SwiftConfiguration;
+import org.apache.ibatis.mapping.SqlCommandType;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -22,15 +21,12 @@ public class Insert implements MapperMethodResolver {
     public static final String VALUES = "<if test=\"%s!=null\">,#{%s}</if>";
 
     @Override
-    public String buildSql(Method method, SwiftConfiguration configuration) {
+    public SqlCommandType getSqlCommandType() {
+        return SqlCommandType.INSERT;
+    }
 
-        Class[] param = method.getParameterTypes();
-
-        Table table;
-        if ((table = configuration.getTable(param[0].getName())) == null) {
-            table = Table.resolve(param[0], configuration);
-            configuration.addTable(table);
-        }
+    @Override
+    public String buildSql(Table table, SwiftConfiguration configuration) {
 
         List<Column> columnList = table.getColumns();
 
@@ -49,8 +45,4 @@ public class Insert implements MapperMethodResolver {
         return String.format(INSERT, table.getName(), cols.toString(), fs.toString());
     }
 
-    @Override
-    public Class<? extends Annotation> getSqlAnnotationType() {
-        return org.apache.ibatis.annotations.Insert.class;
-    }
 }

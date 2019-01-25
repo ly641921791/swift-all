@@ -1,5 +1,7 @@
 package com.swift.builder.annotation;
 
+import com.swift.custom.mapper.MapperMethodResolver;
+import com.swift.custom.metadata.Table;
 import com.swift.custom.swift.BaseMapper;
 import com.swift.session.SwiftConfiguration;
 import org.apache.ibatis.annotations.Arg;
@@ -126,9 +128,7 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
             parseCache();
             parseCacheRef();
 
-            if (type.isAssignableFrom(BaseMapper.class)) {
-
-            }
+            prepareParseStatement(type);
 
             Method[] methods = type.getMethods();
             for (Method method : methods) {
@@ -143,6 +143,131 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
             }
         }
         parsePendingMethods();
+    }
+
+    /**
+     * parseStatement方法之前的准备工作
+     * <p>
+     * 1 解析Table
+     * <p>
+     * 2 解析Method
+     *
+     * @param mapper Mapper
+     */
+    private void prepareParseStatement(Class mapper) {
+        // 解析Table
+        if (BaseMapper.class.isAssignableFrom(mapper)) {
+            // 获取接口泛型
+            ParameterizedType genericInterfaces = (ParameterizedType) mapper.getGenericInterfaces()[0];
+            Class tableClass = (Class) genericInterfaces.getActualTypeArguments()[0];
+            // 检查table信息
+            Table table = configuration.getTable(mapper);
+            if (table == null) {
+                table = Table.resolve(tableClass, configuration);
+                configuration.addTable(mapper, table);
+            }
+        }
+
+        // 解析Method
+        for (Method method : mapper.getMethods()) {
+            if (method.isBridge()) {
+                continue;
+            }
+            if (getSqlAnnotationType(method) != null) {
+                return;
+            }
+            if (getSqlProviderAnnotationType(method) != null) {
+                return;
+            }
+            parseMapperMethodStatement(method);
+        }
+    }
+
+    /**
+     * 修改自 {@link #parseStatement(Method)}
+     *
+     * @param method 方法
+     */
+    void parseMapperMethodStatement(Method method) {
+        Table table = configuration.getTable(method.getDeclaringClass());
+
+        if (table == null) {
+            return;
+        }
+
+        MapperMethodResolver resolver = configuration.getMapperMethodResolver(method);
+
+        Class<?> parameterTypeClass = getParameterType(method);
+        LanguageDriver languageDriver = getLanguageDriver(method);
+
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, resolver.buildSql(table, configuration), parameterTypeClass);
+
+        if (sqlSource != null) {
+            Options options = method.getAnnotation(Options.class);
+            final String mappedStatementId = type.getName() + "." + method.getName();
+            Integer fetchSize = null;
+            Integer timeout = null;
+            StatementType statementType = StatementType.PREPARED;
+            ResultSetType resultSetType = null;
+            SqlCommandType sqlCommandType = resolver.getSqlCommandType();
+            boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+            boolean flushCache = !isSelect;
+            boolean useCache = isSelect;
+
+            KeyGenerator keyGenerator;
+            String keyProperty = null;
+            String keyColumn = null;
+            if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
+                // first check for SelectKey annotation - that overrides everything else
+                SelectKey selectKey = method.getAnnotation(SelectKey.class);
+                if (selectKey != null) {
+                    keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
+                    keyProperty = selectKey.keyProperty();
+                } else if (options == null) {
+                    keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+                } else {
+                    keyGenerator = options.useGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+                    keyProperty = options.keyProperty();
+                    keyColumn = options.keyColumn();
+                }
+            } else {
+                keyGenerator = NoKeyGenerator.INSTANCE;
+            }
+
+            if (options != null) {
+                if (Options.FlushCachePolicy.TRUE.equals(options.flushCache())) {
+                    flushCache = true;
+                } else if (Options.FlushCachePolicy.FALSE.equals(options.flushCache())) {
+                    flushCache = false;
+                }
+                useCache = options.useCache();
+                fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; //issue #348
+                timeout = options.timeout() > -1 ? options.timeout() : null;
+                statementType = options.statementType();
+                resultSetType = options.resultSetType();
+            }
+
+            String resultMapId = null;
+            ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
+            if (resultMapAnnotation != null) {
+                String[] resultMaps = resultMapAnnotation.value();
+                StringBuilder sb = new StringBuilder();
+                for (String resultMap : resultMaps) {
+                    if (sb.length() > 0) {
+                        sb.append(",");
+                    }
+                    sb.append(resultMap);
+                }
+                resultMapId = sb.toString();
+            } else if (isSelect) {
+                resultMapId = parseResultMap(method);
+            }
+
+            assistant.addMappedStatement(mappedStatementId, sqlSource, statementType, sqlCommandType, fetchSize, timeout,
+                    null, parameterTypeClass, resultMapId, getReturnType(method), resultSetType, flushCache,
+                    useCache, false, keyGenerator, keyProperty, keyColumn, null, languageDriver,
+                    options != null ? nullOrEmpty(options.resultSets()) : null);
+        }
     }
 
     private void parsePendingMethods() {
@@ -485,12 +610,6 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 Annotation sqlProviderAnnotation = method.getAnnotation(sqlProviderAnnotationType);
                 return new ProviderSqlSource(assistant.getConfiguration(), sqlProviderAnnotation, type, method);
             }
-
-            // 自定义方法处理
-            else if (configuration.getMapperMethodResolverRegistry().hasResolver(method)) {
-                return buildSqlSourceFromMethod(method, parameterType, languageDriver);
-            }
-
             return null;
         } catch (Exception e) {
             throw new BuilderException("Could not find value method on SQL annotation.  Cause: " + e, e);
@@ -506,28 +625,11 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass);
     }
 
-    /**
-     * 通过方法解析Sql Source
-     *
-     * @param method             当前方法
-     * @param parameterTypeClass 参数类型
-     * @param languageDriver     语言驱动
-     * @return Sql Source
-     */
-    private SqlSource buildSqlSourceFromMethod(Method method, Class<?> parameterTypeClass, LanguageDriver languageDriver) {
-        String sql = configuration.getMapperMethodResolverRegistry().getMapperMethodResolver(method).buildSql(method, configuration);
-        return languageDriver.createSqlSource(configuration, sql.trim(), parameterTypeClass);
-    }
-
     private SqlCommandType getSqlCommandType(Method method) {
         Class<? extends Annotation> type = getSqlAnnotationType(method);
 
         if (type == null) {
             type = getSqlProviderAnnotationType(method);
-
-            if (type == null) {
-                type = configuration.getMapperMethodResolverRegistry().getMapperMethodResolver(method).getSqlAnnotationType();
-            }
 
             if (type == null) {
                 return SqlCommandType.UNKNOWN;

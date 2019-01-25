@@ -10,6 +10,8 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
+import java.lang.reflect.Method;
+
 /**
  * 继承Configuration
  * <p>
@@ -66,16 +68,20 @@ public class SwiftConfiguration extends Configuration {
         mapperMethodResolverRegistry.addMapperMethodResolver(resolver);
     }
 
-    public void addTable(Table table) {
-        tableRegistry.addTable(table);
+    public MapperMethodResolver getMapperMethodResolver(Method method) {
+        return mapperMethodResolverRegistry.getMapperMethodResolver(method);
     }
 
-    public Table getTable(String table) {
-        return tableRegistry.getTable(table);
+    public void addTable(Class mapperClass, Table table) {
+        tableRegistry.addTable(mapperClass, table);
     }
 
-    public boolean hasTable(String table) {
-        return tableRegistry.hasTable(table);
+    public Table getTable(Class mapperClass) {
+        return tableRegistry.getTable(mapperClass);
+    }
+
+    public boolean hasTable(Class mapperClass) {
+        return tableRegistry.hasTable(mapperClass);
     }
 
 }

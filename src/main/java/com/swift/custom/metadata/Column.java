@@ -1,15 +1,19 @@
 package com.swift.custom.metadata;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.lang.reflect.Field;
 
 /**
  * @author ly
  */
-@Data
+@Setter
+@Getter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class Column {
@@ -17,7 +21,5 @@ public class Column {
     private String name;
 
     private Field javaField;
-
-    private Table table;
 
 }

@@ -2,7 +2,10 @@ package com.swift.custom.metadata;
 
 import com.swift.util.ClassUtils;
 import com.swift.util.StringUtils;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
@@ -16,7 +19,10 @@ import static com.swift.util.StringUtils.toUnderscore;
  *
  * @author ly
  */
-@Data
+@Setter
+@Getter
+@EqualsAndHashCode
+@NoArgsConstructor
 public class Table {
 
     /**
@@ -50,9 +56,9 @@ public class Table {
         for (Field field : fieldList) {
 
             if (mapUnderscoreToCamelCase) {
-                table.addColumn(new Column(StringUtils.toUnderscore(field.getName()), field, table));
+                table.addColumn(new Column(StringUtils.toUnderscore(field.getName()), field));
             } else {
-                table.addColumn(new Column(field.getName(), field, table));
+                table.addColumn(new Column(field.getName(), field));
             }
 
         }

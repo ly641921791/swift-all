@@ -4,9 +4,8 @@ import com.swift.custom.mapper.MapperMethodResolver;
 import com.swift.custom.metadata.Column;
 import com.swift.custom.metadata.Table;
 import com.swift.session.SwiftConfiguration;
+import org.apache.ibatis.mapping.SqlCommandType;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.List;
 
 public class Update implements MapperMethodResolver {
@@ -18,16 +17,12 @@ public class Update implements MapperMethodResolver {
     public static final String WHERE = "<if test=\"c.%s!=null\">AND %s=#{c.%s}</if>";
 
     @Override
-    public String buildSql(Method method, SwiftConfiguration configuration) {
+    public SqlCommandType getSqlCommandType() {
+        return SqlCommandType.UPDATE;
+    }
 
-        Class[] param = method.getParameterTypes();
-
-        Table table;
-        if ((table = configuration.getTable(param[0].getName())) == null) {
-            table = Table.resolve(param[0], configuration);
-            configuration.addTable(table);
-        }
-
+    @Override
+    public String buildSql(Table table, SwiftConfiguration configuration) {
 
         List<Column> columnList = table.getColumns();
 
@@ -44,8 +39,4 @@ public class Update implements MapperMethodResolver {
         return String.format(UPDATE, table, set.toString(), where.toString());
     }
 
-    @Override
-    public Class<? extends Annotation> getSqlAnnotationType() {
-        return org.apache.ibatis.annotations.Update.class;
-    }
 }
