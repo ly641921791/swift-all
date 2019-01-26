@@ -2,6 +2,7 @@ package com.swift.spring.boot.autoconfigure;
 
 import com.swift.custom.mapper.method.Insert;
 import com.swift.custom.mapper.method.Select;
+import com.swift.custom.mapper.method.Update;
 import com.swift.session.SwiftConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
@@ -129,6 +130,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
 
         // TODO 日后删除，改为可配置实
         ((SwiftConfiguration) configuration).addMapperMethodResolver( new Insert());
+        ((SwiftConfiguration) configuration).addMapperMethodResolver( new Update());
         ((SwiftConfiguration) configuration).addMapperMethodResolver( new Select());
 
         factory.setConfiguration(configuration);

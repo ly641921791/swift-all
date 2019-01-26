@@ -8,13 +8,14 @@ import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.List;
 
+/**
+ * @author ly
+ */
 public class Update implements MapperMethodResolver {
 
-    public static final String UPDATE = "<script>UPDATE %s <set>%s</set><where>%s</where></script>";
+    public static final String UPDATE = "<script>UPDATE %s <set>%s</set><where>${c.where}</where></script>";
 
-    public static final String SET = "<if test=\"r.%s!=null\">%s=#{r.%s},</if>";
-
-    public static final String WHERE = "<if test=\"c.%s!=null\">AND %s=#{c.%s}</if>";
+    public static final String SET_SQL = "<if test=\"p.%s!=null\">%s=#{p.%s},</if>";
 
     @Override
     public SqlCommandType getSqlCommandType() {
@@ -23,20 +24,13 @@ public class Update implements MapperMethodResolver {
 
     @Override
     public String buildSql(Table table, SwiftConfiguration configuration) {
-
         List<Column> columnList = table.getColumns();
-
-        StringBuilder set = new StringBuilder();
-
-        StringBuilder where = new StringBuilder();
-
+        StringBuilder setSql = new StringBuilder();
         for (Column column : columnList) {
             String field = column.getJavaField().getName();
-            set.append(String.format(SET, field, column.getName(), field));
-            where.append(String.format(WHERE, field, column.getName(), field));
+            setSql.append(String.format(SET_SQL, field, column.getName(), field));
         }
-
-        return String.format(UPDATE, table, set.toString(), where.toString());
+        return String.format(UPDATE, table.getName(), setSql.toString());
     }
 
 }

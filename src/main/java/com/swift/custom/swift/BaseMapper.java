@@ -1,6 +1,6 @@
 package com.swift.custom.swift;
 
-import com.swift.custom.mapper.param.SelectCondition;
+import com.swift.custom.mapper.param.Condition;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -14,7 +14,9 @@ import java.util.List;
 public interface BaseMapper<T> {
 
     /**
-     * 查询数据
+     * 插入记录
+     * <p>
+     * 只插入非Null列，如：设置r.id=1，则生成SQL为 INSERT INTO tbName (id) VALUES (#{id})
      *
      * @param r record
      * @return 插入记录数
@@ -22,11 +24,30 @@ public interface BaseMapper<T> {
     int insert(T r);
 
     /**
+     * 删除记录
+     *
+     * @param c condition
+     * @return 删除记录数
+     */
+    int delete(@Param("c") Condition c);
+
+    /**
+     * 更新记录
+     * <p>
+     * 只更新非Null列，如：设置r.id=1，则生成SQL为 UPDATE tbName SET id = #{id} WHERE xxx
+     *
+     * @param p property
+     * @param c condition
+     * @return 更新记录数
+     */
+    int update(@Param("p") T p, @Param("c") Condition c);
+
+    /**
      * 查询记录
      *
      * @param c condition
-     * @return 查询记录
+     * @return 符合条件记录
      */
-    List<T> select(@Param("c") SelectCondition c);
+    List<T> select(@Param("c") Condition c);
 
 }

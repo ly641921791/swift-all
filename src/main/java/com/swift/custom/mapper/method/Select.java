@@ -19,7 +19,7 @@ public class Select implements MapperMethodResolver {
 
     @Override
     public String buildSql(Table table, SwiftConfiguration configuration) {
-        return String.format(SELECT,table.getName());
+        return String.format(SELECT, table.getName());
     }
 
 }

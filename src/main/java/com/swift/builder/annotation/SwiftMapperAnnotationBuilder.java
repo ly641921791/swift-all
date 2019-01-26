@@ -192,6 +192,10 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
         MapperMethodResolver resolver = configuration.getMapperMethodResolver(method);
 
+        if (resolver == null) {
+            return;
+        }
+
         Class<?> parameterTypeClass = getParameterType(method);
         LanguageDriver languageDriver = getLanguageDriver(method);
 
