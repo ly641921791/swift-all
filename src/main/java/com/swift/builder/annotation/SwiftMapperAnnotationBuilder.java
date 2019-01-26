@@ -169,10 +169,10 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         // 解析Method
         for (Method method : type.getMethods()) {
             if (getSqlAnnotationType(method) != null) {
-                return;
+                continue;
             }
             if (getSqlProviderAnnotationType(method) != null) {
-                return;
+                continue;
             }
             parseMapperMethodStatement(method);
         }

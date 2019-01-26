@@ -1,6 +1,7 @@
 package com.swift.custom.swift;
 
 import com.swift.custom.mapper.param.SelectCondition;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -26,6 +27,6 @@ public interface BaseMapper<T> {
      * @param c condition
      * @return 查询记录
      */
-    List<T> select(SelectCondition c);
+    List<T> select(@Param("c") SelectCondition c);
 
 }

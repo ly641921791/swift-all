@@ -2,8 +2,6 @@ package com.swift.custom.mapper.param;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +12,7 @@ import java.util.Map;
 @Data
 public class SelectCondition {
 
-    private Where where = new Where();
+    private StringBuilder where = new StringBuilder();
 
     /**
      * 参数映射
@@ -31,19 +29,8 @@ public class SelectCondition {
     public SelectCondition eq(String column, Object value) {
         String paramK = "k" + params.size();
         params.put(paramK, value);
-        where.add("AND", column, "=", "#{" + "c.params." + paramK + "}");
+        where.append("AND ").append(column).append(" = #{c.params.").append(paramK).append("} ");
         return this;
     }
 
-    class Where extends ArrayList<String> {
-
-        public void add(String... arg) {
-            addAll(Arrays.asList(arg));
-        }
-
-        @Override
-        public String toString() {
-            return String.join(" ", this);
-        }
-    }
 }
