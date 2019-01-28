@@ -25,8 +25,18 @@ public class BaseService<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
+    public int updateById(T p, Object id) {
+        return mapper.updateById(p, id);
+    }
+
+    @Override
     public List<T> select(Condition c) {
         return mapper.select(c);
+    }
+
+    @Override
+    public T selectById(Object id) {
+        return mapper.selectById(id);
     }
 
 }

@@ -43,6 +43,15 @@ public interface BaseMapper<T> {
     int update(@Param("p") T p, @Param("c") Condition c);
 
     /**
+     * 根据id更新记录
+     *
+     * @param p  property
+     * @param id id
+     * @return 更新记录数
+     */
+    int updateById(@Param("p") T p, @Param("id") Object id);
+
+    /**
      * 查询记录
      *
      * @param c condition
@@ -50,4 +59,13 @@ public interface BaseMapper<T> {
      */
     List<T> select(@Param("c") Condition c);
 
+    /**
+     * 根据id查询记录
+     * <p>
+     * 默认使用id字段，TODO 日后新增@TableObject注解配置
+     *
+     * @param id id
+     * @return 符合条件记录
+     */
+    T selectById(Object id);
 }

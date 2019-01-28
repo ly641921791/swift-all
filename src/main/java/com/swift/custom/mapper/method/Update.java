@@ -24,13 +24,16 @@ public class Update implements MapperMethodResolver {
 
     @Override
     public String buildSql(Table table, SwiftConfiguration configuration) {
+        return String.format(UPDATE, table.getName(), getSetSql(table));
+    }
+
+    protected String getSetSql(Table table) {
         List<Column> columnList = table.getColumns();
         StringBuilder setSql = new StringBuilder();
         for (Column column : columnList) {
             String field = column.getJavaField().getName();
             setSql.append(String.format(SET_SQL, field, column.getName(), field));
         }
-        return String.format(UPDATE, table.getName(), setSql.toString());
+        return setSql.toString();
     }
-
 }
