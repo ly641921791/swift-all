@@ -27,18 +27,42 @@ public class StringUtils {
         return toCamel(source, false);
     }
 
+    /**
+     * 字符串转驼峰格式
+     *
+     * @param source          目标字符串
+     * @param toUpperCaseFlag 是否转换大驼峰
+     * @return 结果
+     */
     private static String toCamel(String source, boolean toUpperCaseFlag) {
+        // 第一个字符特殊处理，后面的字符除非前面遇到下划线，否则不变
         StringBuilder sb = new StringBuilder();
-        for (char c : trimLeft(source, UNDERSCORE).toCharArray()) {
-            if (c == UNDERSCORE) {
+        char[] cs = trim(source, UNDERSCORE).toCharArray();
+
+        if (cs.length == 0) {
+            return "";
+        }
+
+        if (toUpperCaseFlag) {
+            sb.append(Character.toUpperCase(cs[0]));
+        } else {
+            sb.append(Character.toLowerCase(cs[0]));
+        }
+
+        if (cs.length == 1) {
+            return sb.toString();
+        }
+
+        for (int i = 1; i < cs.length; i++) {
+            if (cs[i] == UNDERSCORE) {
                 toUpperCaseFlag = true;
                 continue;
             }
             if (toUpperCaseFlag) {
-                sb.append(Character.toUpperCase(c));
+                sb.append(Character.toUpperCase(cs[i]));
                 toUpperCaseFlag = false;
             } else {
-                sb.append(Character.toLowerCase(c));
+                sb.append(cs[i]);
             }
         }
         return sb.toString();
@@ -59,7 +83,7 @@ public class StringUtils {
                 sb.append(c);
             }
         }
-        return trimLeft(sb.toString(), UNDERSCORE);
+        return trim(sb.toString(), UNDERSCORE);
     }
 
     /**
@@ -69,7 +93,7 @@ public class StringUtils {
      * @param trimChar 指定字符
      * @return 返回字符串
      */
-    public static String trimLeft(String source, char trimChar) {
+    public static String trim(String source, char trimChar) {
         int len = source.length();
         int st = 0;
         char[] val = source.toCharArray();
@@ -77,7 +101,10 @@ public class StringUtils {
         while ((st < len) && (val[st] == trimChar)) {
             st++;
         }
-        return st > 0 ? source.substring(st, len) : source;
+        while ((st < len) && (val[len - 1] == trimChar)) {
+            len--;
+        }
+        return ((st > 0) || (len < source.length())) ? source.substring(st, len) : source;
     }
 
 }

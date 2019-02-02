@@ -26,9 +26,9 @@ public class Select implements MapperMethodResolver {
         StringBuilder sql = new StringBuilder();
         table.getColumns().forEach(column -> {
             if (column.getSelectValue().isEmpty()) {
-                sql.append(",").append(column.getName());
+                sql.append(",`").append(column.getName()).append("`");
             } else {
-                sql.append(",(").append(column.getSelectValue()).append(") AS ").append(column.getName());
+                sql.append(",(").append(column.getSelectValue()).append(") AS `").append(column.getName()).append("`");
             }
         });
         return sql.substring(1);

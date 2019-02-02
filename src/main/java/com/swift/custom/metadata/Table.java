@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class Table {
     /**
      * 是否通过 TableClass 注解定制过
      */
-    private boolean customized = true;
+    private boolean customized;
 
     private boolean useGeneratedKeys;
 
@@ -74,6 +75,11 @@ public class Table {
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
 
         for (Field field : fieldList) {
+            // 静态字段跳过
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
             Column column = new Column();
             // 表格列名一般是小驼峰，转下划线格式
             column.setName(StringUtils.toUnderscore(field.getName()));
