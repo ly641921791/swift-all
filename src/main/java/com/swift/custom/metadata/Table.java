@@ -1,6 +1,7 @@
 package com.swift.custom.metadata;
 
 import com.swift.custom.annotation.ColumnField;
+import com.swift.custom.annotation.TableClass;
 import com.swift.util.ClassUtils;
 import com.swift.util.StringUtils;
 import lombok.EqualsAndHashCode;
@@ -24,6 +25,12 @@ import java.util.List;
 @NoArgsConstructor
 public class Table {
 
+    public static final boolean DEFAULT_USE_GENERATED_KEYS = false;
+
+    public static final String DEFAULT_KEY_PROPERTY = "id";
+
+    public static final String DEFAULT_KEY_COLUMN = "id";
+
     /**
      * 表名
      */
@@ -34,15 +41,35 @@ public class Table {
      */
     private List<Column> columns = new ArrayList<>();
 
+    /**
+     * 是否通过 TableClass 注解定制过
+     */
+    private boolean customized = true;
+
+    private boolean useGeneratedKeys;
+
+    private String keyProperty;
+
+    private String keyColumn;
+
     public void addColumn(Column column) {
         columns.add(column);
     }
 
-    public static Table resolve(Class tableClass, Configuration configuration) {
+    public static Table resolve(Class<?> tableClass, Configuration configuration) {
         Table table = new Table();
 
         // Java类名一般是大驼峰，转换下划线格式
         table.name = StringUtils.toUnderscore(tableClass.getSimpleName());
+
+        // 注解解析
+        TableClass tableClassAnnotation = tableClass.getAnnotation(TableClass.class);
+        if (tableClassAnnotation != null) {
+            table.setCustomized(true);
+            table.setKeyColumn(tableClassAnnotation.keyColumn());
+            table.setKeyProperty(tableClassAnnotation.keyProperty());
+            table.setUseGeneratedKeys(tableClassAnnotation.useGeneratedKeys());
+        }
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
 
@@ -55,8 +82,8 @@ public class Table {
             // 解析注解
             ColumnField columnField = field.getAnnotation(ColumnField.class);
             if (columnField == null) {
-                column.setExists(true);
-                column.setSelectValue("");
+                column.setExists(Column.DEFAULT_EXISTS);
+                column.setSelectValue(Column.DEFAULT_SELECT_VALUE);
             } else {
                 column.setExists(columnField.exists());
                 column.setSelectValue(columnField.selectValue());

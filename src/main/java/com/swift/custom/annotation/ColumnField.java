@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static com.swift.custom.metadata.Column.*;
+
 /**
  * @author ly
  * @since 2019-02-02 11:13
@@ -20,7 +22,7 @@ public @interface ColumnField {
      *
      * @return 是否存在
      */
-    boolean exists() default true;
+    boolean exists() default DEFAULT_EXISTS;
 
     /**
      * 非空表示查询该字段时，指定值。
@@ -33,6 +35,6 @@ public @interface ColumnField {
      *
      * @return 查询值
      */
-    String selectValue() default "";
+    String selectValue() default DEFAULT_SELECT_VALUE;
 
 }

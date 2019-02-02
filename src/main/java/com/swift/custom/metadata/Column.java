@@ -14,6 +14,10 @@ import java.lang.reflect.Field;
 @EqualsAndHashCode
 public class Column {
 
+    public static final boolean DEFAULT_EXISTS = true;
+
+    public static final String DEFAULT_SELECT_VALUE = "";
+
     private String name;
 
     private Field javaField;
