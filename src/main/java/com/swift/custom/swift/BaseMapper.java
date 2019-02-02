@@ -62,7 +62,7 @@ public interface BaseMapper<T> {
     /**
      * 根据id查询记录
      * <p>
-     * 默认使用id字段，TODO 日后新增@TableObject注解配置
+     * 默认使用id字段，TODO 日后新增@TableClass注解配置
      *
      * @param id id
      * @return 符合条件记录

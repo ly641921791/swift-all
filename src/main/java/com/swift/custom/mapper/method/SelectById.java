@@ -11,7 +11,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
  **/
 public class SelectById implements MapperMethodResolver {
 
-    public static final String SELECT = "<script>SELECT * FROM %s WHERE id = #{id}</script>";
+    public static final String SELECT = "<script>SELECT %s FROM %s WHERE id = #{id}</script>";
 
     @Override
     public SqlCommandType getSqlCommandType() {
@@ -20,7 +20,7 @@ public class SelectById implements MapperMethodResolver {
 
     @Override
     public String buildSql(Table table, SwiftConfiguration configuration) {
-        return String.format(SELECT, table.getName());
+        return String.format(SELECT, Select.columns(table), table.getName());
     }
 
 }

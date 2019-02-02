@@ -1,5 +1,6 @@
 package com.swift.custom.metadata;
 
+import com.swift.custom.annotation.ColumnField;
 import com.swift.util.ClassUtils;
 import com.swift.util.StringUtils;
 import lombok.EqualsAndHashCode;
@@ -38,24 +39,30 @@ public class Table {
     }
 
     public static Table resolve(Class tableClass, Configuration configuration) {
-
-        boolean mapUnderscoreToCamelCase = configuration.isMapUnderscoreToCamelCase();
-
         Table table = new Table();
 
-        // Java类名默认大驼峰，转换下划线格式
+        // Java类名一般是大驼峰，转换下划线格式
         table.name = StringUtils.toUnderscore(tableClass.getSimpleName());
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
 
         for (Field field : fieldList) {
+            Column column = new Column();
+            // 表格列名一般是小驼峰，转下划线格式
+            column.setName(StringUtils.toUnderscore(field.getName()));
+            column.setJavaField(field);
 
-            if (mapUnderscoreToCamelCase) {
-                table.addColumn(new Column(StringUtils.toUnderscore(field.getName()), field));
+            // 解析注解
+            ColumnField columnField = field.getAnnotation(ColumnField.class);
+            if (columnField == null) {
+                column.setExists(true);
+                column.setSelectValue("");
             } else {
-                table.addColumn(new Column(field.getName(), field));
+                column.setExists(columnField.exists());
+                column.setSelectValue(columnField.selectValue());
             }
 
+            table.addColumn(column);
         }
 
         return table;

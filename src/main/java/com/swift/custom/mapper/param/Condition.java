@@ -13,6 +13,11 @@ import java.util.Map;
 @Setter
 public class Condition {
 
+    private boolean or = false;
+
+    /**
+     * where条件
+     */
     private StringBuilder where = new StringBuilder();
 
     /**
@@ -30,7 +35,22 @@ public class Condition {
     public Condition eq(String column, Object value) {
         String paramK = "k" + params.size();
         params.put(paramK, value);
-        where.append("AND ").append(column).append(" = #{c.params.").append(paramK).append("} ");
+        if (or) {
+            where.append("OR ").append(column).append(" = #{c.params.").append(paramK).append("} ");
+            or = false;
+        } else {
+            where.append("AND ").append(column).append(" = #{c.params.").append(paramK).append("} ");
+        }
+        return this;
+    }
+
+    /**
+     * 下一次条件作为OR条件
+     *
+     * @return 当前对象
+     */
+    public Condition or() {
+        or = true;
         return this;
     }
 

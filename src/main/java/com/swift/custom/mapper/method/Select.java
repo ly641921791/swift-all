@@ -10,7 +10,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
  */
 public class Select implements MapperMethodResolver {
 
-    public static final String SELECT = "<script>SELECT * FROM %s <where>${c.where}</where></script>";
+    public static final String SELECT = "<script>SELECT %s FROM %s <where>${c.where}</where></script>";
 
     @Override
     public SqlCommandType getSqlCommandType() {
@@ -19,7 +19,19 @@ public class Select implements MapperMethodResolver {
 
     @Override
     public String buildSql(Table table, SwiftConfiguration configuration) {
-        return String.format(SELECT, table.getName());
+        return String.format(SELECT, columns(table), table.getName());
+    }
+
+    static String columns(Table table) {
+        StringBuilder sql = new StringBuilder();
+        table.getColumns().forEach(column -> {
+            if (column.getSelectValue().isEmpty()) {
+                sql.append(",").append(column.getName());
+            } else {
+                sql.append(",(").append(column.getSelectValue()).append(") AS ").append(column.getName());
+            }
+        });
+        return sql.substring(1);
     }
 
 }

@@ -1,9 +1,7 @@
 package com.swift.custom.metadata;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.lang.reflect.Field;
@@ -14,12 +12,14 @@ import java.lang.reflect.Field;
 @Setter
 @Getter
 @EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
 public class Column {
 
     private String name;
 
     private Field javaField;
+
+    private boolean exists;
+
+    private String selectValue;
 
 }
