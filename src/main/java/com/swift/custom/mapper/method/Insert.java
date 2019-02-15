@@ -33,11 +33,15 @@ public class Insert implements MapperMethodResolver {
         StringBuilder cols = new StringBuilder("<trim prefix=\"\" prefixOverrides=\",\">");
         StringBuilder fs = new StringBuilder("<trim prefix=\"\" prefixOverrides=\",\">");
 
-        for (Column column : columnList) {
+        columnList.forEach(column -> {
+            // 不存在的列跳过
+            if (!column.isExists()) {
+                return;
+            }
             String field = column.getJavaField().getName();
             cols.append(String.format(COLUMNS, field, column.getName()));
             fs.append(String.format(VALUES, field, field));
-        }
+        });
 
         cols.append("</trim>");
         fs.append("</trim>");

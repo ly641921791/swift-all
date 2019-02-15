@@ -1,7 +1,6 @@
 package com.swift.custom.mapper.param;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +9,6 @@ import java.util.Map;
  * @author ly
  */
 @Getter
-@Setter
 public class Condition {
 
     private boolean or = false;
