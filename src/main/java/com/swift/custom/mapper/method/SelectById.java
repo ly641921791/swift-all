@@ -21,7 +21,7 @@ public class SelectById implements MapperMethodResolver {
     }
 
     @Override
-    public String buildSql(Table table, SwiftConfiguration configuration) {
+    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
         if (table.isCustomized()) {
             return String.format(SELECT, Select.columns(table), table.getName(), table.getKeyColumn(), table.getKeyProperty());
         }

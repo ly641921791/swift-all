@@ -23,7 +23,7 @@ public class Update implements MapperMethodResolver {
     }
 
     @Override
-    public String buildSql(Table table, SwiftConfiguration configuration) {
+    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
         return String.format(UPDATE, table.getName(), getSetSql(table));
     }
 

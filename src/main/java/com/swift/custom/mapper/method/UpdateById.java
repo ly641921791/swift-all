@@ -14,7 +14,7 @@ public class UpdateById extends Update {
     public static final String UPDATE = "<script>UPDATE %s <set>%s</set> WHERE %s = #{%s}</script>";
 
     @Override
-    public String buildSql(Table table, SwiftConfiguration configuration) {
+    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
         if (table.isCustomized()) {
             return String.format(UPDATE, table.getName(), getSetSql(table), table.getKeyColumn(), table.getKeyProperty());
         }

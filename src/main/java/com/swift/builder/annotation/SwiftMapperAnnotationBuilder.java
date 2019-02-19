@@ -199,7 +199,7 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         Class<?> parameterTypeClass = getParameterType(method);
         LanguageDriver languageDriver = getLanguageDriver(method);
 
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, resolver.buildSql(table, configuration), parameterTypeClass);
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, resolver.buildSqlScript(table, configuration), parameterTypeClass);
 
         if (sqlSource != null) {
             Options options = method.getAnnotation(Options.class);
@@ -226,9 +226,9 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
                     // 若定制过table，则优先于configuration生效
                     if (table.isCustomized()) {
-                        keyGenerator = table.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
-                        keyProperty = table.getKeyProperty();
-                        keyColumn = table.getKeyColumn();
+                        keyGenerator = resolver.getKeyGenerator(table);
+                        keyProperty = resolver.getKeyProperty(table);
+                        keyColumn = resolver.getKeyColumn(table);
                     } else {
                         keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
                     }

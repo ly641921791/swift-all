@@ -4,6 +4,9 @@ import com.swift.custom.mapper.MapperMethodResolver;
 import com.swift.custom.metadata.Column;
 import com.swift.custom.metadata.Table;
 import com.swift.session.SwiftConfiguration;
+import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.List;
@@ -26,7 +29,7 @@ public class Insert implements MapperMethodResolver {
     }
 
     @Override
-    public String buildSql(Table table, SwiftConfiguration configuration) {
+    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
 
         List<Column> columnList = table.getColumns();
 
@@ -49,4 +52,18 @@ public class Insert implements MapperMethodResolver {
         return String.format(INSERT, table.getName(), cols.toString(), fs.toString());
     }
 
+    @Override
+    public KeyGenerator getKeyGenerator(Table table) {
+        return table.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+    }
+
+    @Override
+    public String getKeyColumn(Table table) {
+        return table.getKeyColumn();
+    }
+
+    @Override
+    public String getKeyProperty(Table table) {
+        return table.getKeyProperty();
+    }
 }
