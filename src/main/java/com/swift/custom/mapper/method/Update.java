@@ -30,10 +30,16 @@ public class Update implements MapperMethodResolver {
     protected String getSetSql(Table table) {
         List<Column> columnList = table.getColumns();
         StringBuilder setSql = new StringBuilder();
-        for (Column column : columnList) {
+
+        columnList.forEach(column -> {
+            // 不存在的列跳过
+            if (!column.isExists()) {
+                return;
+            }
             String field = column.getJavaField().getName();
             setSql.append(String.format(SET_SQL, field, column.getName(), field));
-        }
+        });
+
         return setSql.toString();
     }
 }
