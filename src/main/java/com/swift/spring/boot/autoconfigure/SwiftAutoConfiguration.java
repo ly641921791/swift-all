@@ -3,6 +3,8 @@ package com.swift.spring.boot.autoconfigure;
 import com.swift.custom.mapper.method.Insert;
 import com.swift.custom.mapper.method.Select;
 import com.swift.custom.mapper.method.SelectById;
+import com.swift.custom.mapper.method.SelectRecordByColumn;
+import com.swift.custom.mapper.method.SelectRecordsByColumn;
 import com.swift.custom.mapper.method.Update;
 import com.swift.custom.mapper.method.UpdateById;
 import com.swift.session.SwiftConfiguration;
@@ -136,6 +138,8 @@ public class SwiftAutoConfiguration implements InitializingBean {
         ((SwiftConfiguration) configuration).addMapperMethodResolver(new UpdateById());
         ((SwiftConfiguration) configuration).addMapperMethodResolver(new Select());
         ((SwiftConfiguration) configuration).addMapperMethodResolver(new SelectById());
+        ((SwiftConfiguration) configuration).addMapperMethodResolver(new SelectRecordByColumn());
+        ((SwiftConfiguration) configuration).addMapperMethodResolver(new SelectRecordsByColumn());
 
         factory.setConfiguration(configuration);
     }

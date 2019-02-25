@@ -6,10 +6,11 @@ import com.swift.session.SwiftConfiguration;
 
 /**
  * @author ly
- */
-public class Select extends AbstractSelectMethodResolver {
+ * @since 2019-02-25 13:58
+ **/
+public class SelectRecordsByColumn extends AbstractSelectMethodResolver {
 
-    private static final String SELECT = "<script>SELECT %s FROM %s <where>${c.where}</where></script>";
+    private static final String SELECT = "<script>SELECT %s FROM %s WHERE ${c} = #{v}</script>";
 
     @Override
     public String buildSqlScript(Table table, SwiftConfiguration configuration) {

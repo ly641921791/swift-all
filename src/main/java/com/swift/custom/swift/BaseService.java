@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
+ * Base Service Implement
+ *
+ * @param <T> Table Class
+ * @param <M> Mapper Class
  * @author ly
  * @since 2019-01-24 15:45
- **/
-public class BaseService<M extends BaseMapper<T>, T> implements IService<T> {
+ */
+public class BaseService<T, M extends BaseMapper<T>> implements IService<T> {
 
     @Autowired
     protected M mapper;
@@ -37,6 +41,16 @@ public class BaseService<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public T selectById(Object id) {
         return mapper.selectById(id);
+    }
+
+    @Override
+    public T selectRecordByColumn(String column, Object value) {
+        return mapper.selectRecordByColumn(column, value);
+    }
+
+    @Override
+    public List<T> selectRecordsByColumn(String column, Object value) {
+        return mapper.selectRecordsByColumn(column, value);
     }
 
 }

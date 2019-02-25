@@ -5,11 +5,12 @@ import com.swift.custom.mapper.param.Condition;
 import java.util.List;
 
 /**
- * Service接口
+ * Base Service Interface
  *
+ * @param <T> Table Class
  * @author ly
  * @since 2019-01-24 15:44
- **/
+ */
 public interface IService<T> {
 
     /**
@@ -59,4 +60,23 @@ public interface IService<T> {
      * @return 符合条件记录
      */
     T selectById(Object id);
+
+    /**
+     * 根据指定列查询记录
+     *
+     * @param column 列名
+     * @param value  值
+     * @return 符合条件记录
+     */
+    T selectRecordByColumn(String column, Object value);
+
+    /**
+     * 根据指定列查询记录
+     *
+     * @param column 列名
+     * @param value  值
+     * @return 符合条件记录
+     */
+    List<T> selectRecordsByColumn(String column, Object value);
+
 }

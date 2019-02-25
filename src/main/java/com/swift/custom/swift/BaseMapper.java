@@ -68,4 +68,23 @@ public interface BaseMapper<T> {
      * @return 符合条件记录
      */
     T selectById(Object id);
+
+    /**
+     * 根据指定列查询记录
+     *
+     * @param column 列名
+     * @param value  值
+     * @return 符合条件记录
+     */
+    T selectRecordByColumn(@Param("c") String column, @Param("v") Object value);
+
+    /**
+     * 根据指定列查询记录
+     *
+     * @param column 列名
+     * @param value  值
+     * @return 符合条件记录
+     */
+    List<T> selectRecordsByColumn(@Param("c") String column, @Param("v") Object value);
+
 }
