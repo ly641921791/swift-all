@@ -13,7 +13,7 @@ public class SelectRecordsByColumn extends AbstractSelectMethodResolver {
     private static final String SELECT = "<script>SELECT %s FROM %s WHERE ${c} = #{v}</script>";
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String doBuildSqlScript(Table table, SwiftConfiguration configuration) {
         return String.format(SELECT, columns(table), table.getName());
     }
 

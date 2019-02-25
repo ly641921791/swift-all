@@ -1,5 +1,6 @@
 package com.swift.custom.swift;
 
+import com.swift.custom.annotation.TableClass;
 import com.swift.custom.mapper.param.Condition;
 import org.apache.ibatis.annotations.Param;
 
@@ -62,7 +63,7 @@ public interface BaseMapper<T> {
     /**
      * 根据id查询记录
      * <p>
-     * 默认使用id字段，TODO 日后新增@TableClass注解配置
+     * 默认使用id字段，可以通过{@link TableClass#keyColumn()}设置自定义id列
      *
      * @param id id
      * @return 符合条件记录

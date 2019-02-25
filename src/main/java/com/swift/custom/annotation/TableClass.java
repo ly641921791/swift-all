@@ -17,6 +17,13 @@ import static com.swift.custom.metadata.Table.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TableClass {
 
+    /**
+     * 删除标识
+     *
+     * @return 删除标识
+     */
+    String deleteColumn() default "";
+
     boolean useGeneratedKeys() default DEFAULT_USE_GENERATED_KEYS;
 
     String keyProperty() default DEFAULT_KEY_PROPERTY;

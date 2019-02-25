@@ -16,7 +16,7 @@ public class SelectById extends AbstractSelectMethodResolver {
     private static final String SELECT = "<script>SELECT %s FROM %s WHERE %s = #{%s}</script>";
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String doBuildSqlScript(Table table, SwiftConfiguration configuration) {
         if (table.isCustomized()) {
             return String.format(SELECT, columns(table), table.getName(), table.getKeyColumn(), table.getKeyProperty());
         }

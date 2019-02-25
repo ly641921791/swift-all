@@ -47,6 +47,8 @@ public class Table {
      */
     private boolean customized;
 
+    private String deleteColumn;
+
     private boolean useGeneratedKeys;
 
     private String keyProperty;
@@ -67,6 +69,7 @@ public class Table {
         TableClass tableClassAnnotation = tableClass.getAnnotation(TableClass.class);
         if (tableClassAnnotation != null) {
             table.setCustomized(true);
+            table.setDeleteColumn(tableClassAnnotation.deleteColumn());
             table.setKeyColumn(tableClassAnnotation.keyColumn());
             table.setKeyProperty(tableClassAnnotation.keyProperty());
             table.setUseGeneratedKeys(tableClassAnnotation.useGeneratedKeys());

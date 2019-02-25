@@ -1,7 +1,9 @@
 package com.swift.custom.mapper;
 
 import com.swift.custom.metadata.Table;
+import com.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.springframework.util.StringUtils;
 
 /**
  * 查询类型方法解析器
@@ -14,6 +16,36 @@ public abstract class AbstractSelectMethodResolver implements MapperMethodResolv
     @Override
     public SqlCommandType getSqlCommandType() {
         return SqlCommandType.SELECT;
+    }
+
+    @Override
+    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+        String script = doBuildSqlScript(table, configuration);
+        return afterBuildSqlScript(script, table, configuration);
+    }
+
+    /**
+     * 生成Sql Script
+     *
+     * @param table         表格对象
+     * @param configuration 配置文件
+     * @return Sql Script
+     */
+    protected abstract String doBuildSqlScript(Table table, SwiftConfiguration configuration);
+
+    /**
+     * 后置处理Sql Script
+     *
+     * @param script        script
+     * @param table         表格对象
+     * @param configuration 配置文件
+     * @return script
+     */
+    protected String afterBuildSqlScript(String script, Table table, SwiftConfiguration configuration) {
+        if (StringUtils.isEmpty(table.getDeleteColumn())) {
+            return script;
+        }
+        return script.replace("</script>", " AND " + table.getDeleteColumn() + " = 1</script>");
     }
 
     /**
