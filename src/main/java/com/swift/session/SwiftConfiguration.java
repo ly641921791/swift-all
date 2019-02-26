@@ -2,9 +2,7 @@ package com.swift.session;
 
 import com.swift.binding.SwiftMapperRegistry;
 import com.swift.custom.mapper.MapperMethodResolver;
-import com.swift.custom.metadata.Table;
 import com.swift.custom.support.MapperMethodResolverRegistry;
-import com.swift.custom.support.TableRegistry;
 import lombok.Getter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
@@ -28,9 +26,6 @@ public class SwiftConfiguration extends Configuration {
 
     @Getter
     private final MapperMethodResolverRegistry mapperMethodResolverRegistry = new MapperMethodResolverRegistry();
-
-    @Getter
-    private final TableRegistry tableRegistry = new TableRegistry();
 
     // methods
 
@@ -70,18 +65,6 @@ public class SwiftConfiguration extends Configuration {
 
     public MapperMethodResolver getMapperMethodResolver(Method method) {
         return mapperMethodResolverRegistry.getMapperMethodResolver(method);
-    }
-
-    public void addTable(Class mapperClass, Table table) {
-        tableRegistry.addTable(mapperClass, table);
-    }
-
-    public Table getTable(Class mapperClass) {
-        return tableRegistry.getTable(mapperClass);
-    }
-
-    public boolean hasTable(Class mapperClass) {
-        return tableRegistry.hasTable(mapperClass);
     }
 
 }

@@ -82,21 +82,21 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * 继承MapperAnnotationBuilder
- * <p>
- * 1 新增自定义方法解析
- * 2 将私有属性设置为protected，方便继承重写功能
+ * 注解可空的MapperBuilder
  *
  * @author ly
  */
-public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
+public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
 
-    protected static final Set<Class<? extends Annotation>> SQL_ANNOTATION_TYPES = new HashSet<>();
-    protected static final Set<Class<? extends Annotation>> SQL_PROVIDER_ANNOTATION_TYPES = new HashSet<>();
+    private static final Set<Class<? extends Annotation>> SQL_ANNOTATION_TYPES = new HashSet<>();
+    private static final Set<Class<? extends Annotation>> SQL_PROVIDER_ANNOTATION_TYPES = new HashSet<>();
 
-    protected final SwiftConfiguration configuration;
-    protected final MapperBuilderAssistant assistant;
-    protected final Class<?> type;
+    private final SwiftConfiguration configuration;
+    private final MapperBuilderAssistant assistant;
+    private final Class<?> type;
+
+    private Class<?> tableClass;
+    private Table table;
 
     static {
         SQL_ANNOTATION_TYPES.add(Select.class);
@@ -110,12 +110,14 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         SQL_PROVIDER_ANNOTATION_TYPES.add(DeleteProvider.class);
     }
 
-    public SwiftMapperAnnotationBuilder(SwiftConfiguration configuration, Class<?> type) {
+    public AnnotationNullableMapperBuilder(SwiftConfiguration configuration, Class<?> type) {
         super(configuration, type);
         String resource = type.getName().replace('.', '/') + ".java (best guess)";
+        // TODO 新增可替换的MapperBuilderAssistant生成器
         this.assistant = new MapperBuilderAssistant(configuration, resource);
         this.configuration = configuration;
         this.type = type;
+        parseBaseMapper();
     }
 
     @Override
@@ -127,9 +129,6 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
             assistant.setCurrentNamespace(type.getName());
             parseCache();
             parseCacheRef();
-
-            prepareParseStatement();
-
             Method[] methods = type.getMethods();
             for (Method method : methods) {
                 try {
@@ -145,25 +144,99 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         parsePendingMethods();
     }
 
-    /**
-     * parseStatement方法之前的准备工作
-     * <p>
-     * 1 解析Table
-     * <p>
-     * 2 解析Method
-     */
-    private void prepareParseStatement() {
-        // 解析Table
-        if (BaseMapper.class.isAssignableFrom(type)) {
-            // 获取接口泛型
-            ParameterizedType genericInterfaces = (ParameterizedType) type.getGenericInterfaces()[0];
-            Class tableClass = (Class) genericInterfaces.getActualTypeArguments()[0];
-            // 检查table信息
-            Table table = configuration.getTable(type);
-            if (table == null) {
-                table = Table.resolve(tableClass, configuration);
-                configuration.addTable(type, table);
+    private void parsePendingMethods() {
+        Collection<MethodResolver> incompleteMethods = configuration.getIncompleteMethods();
+        synchronized (incompleteMethods) {
+            Iterator<MethodResolver> iter = incompleteMethods.iterator();
+            while (iter.hasNext()) {
+                try {
+                    iter.next().resolve();
+                    iter.remove();
+                } catch (IncompleteElementException e) {
+                    // This method is still missing a resource
+                }
             }
+        }
+    }
+
+    private void loadXmlResource() {
+        // Spring may not know the real resource name so we check a flag
+        // to prevent loading again a resource twice
+        // this flag is set at XMLMapperBuilder#bindMapperForNamespace
+        if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
+            String xmlResource = type.getName().replace('.', '/') + ".xml";
+            // #1347
+            InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
+            if (inputStream == null) {
+                // Search XML mapper that is not in the module but in the classpath.
+                try {
+                    inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
+                } catch (IOException e2) {
+                    // ignore, resource is not required
+                }
+            }
+            if (inputStream != null) {
+                XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
+                xmlParser.parse();
+            }
+        }
+    }
+
+    private void parseCache() {
+        CacheNamespace cacheDomain = type.getAnnotation(CacheNamespace.class);
+        if (cacheDomain != null) {
+            Integer size = cacheDomain.size() == 0 ? null : cacheDomain.size();
+            Long flushInterval = cacheDomain.flushInterval() == 0 ? null : cacheDomain.flushInterval();
+            Properties props = convertToProperties(cacheDomain.properties());
+            assistant.useNewCache(cacheDomain.implementation(), cacheDomain.eviction(), flushInterval, size, cacheDomain.readWrite(), cacheDomain.blocking(), props);
+        }
+    }
+
+    private Properties convertToProperties(Property[] properties) {
+        if (properties.length == 0) {
+            return null;
+        }
+        Properties props = new Properties();
+        for (Property property : properties) {
+            props.setProperty(property.name(),
+                    PropertyParser.parse(property.value(), configuration.getVariables()));
+        }
+        return props;
+    }
+
+    private void parseCacheRef() {
+        CacheNamespaceRef cacheDomainRef = type.getAnnotation(CacheNamespaceRef.class);
+        if (cacheDomainRef != null) {
+            Class<?> refType = cacheDomainRef.value();
+            String refName = cacheDomainRef.name();
+            if (refType == void.class && refName.isEmpty()) {
+                throw new BuilderException("Should be specified either value() or name() attribute in the @CacheNamespaceRef");
+            }
+            if (refType != void.class && !refName.isEmpty()) {
+                throw new BuilderException("Cannot use both value() and name() attribute in the @CacheNamespaceRef");
+            }
+            String namespace = (refType != void.class) ? refType.getName() : refName;
+            try {
+                assistant.useCacheRef(namespace);
+            } catch (IncompleteElementException e) {
+                configuration.addIncompleteCacheRef(new CacheRefResolver(assistant, namespace));
+            }
+        }
+    }
+
+    private void parseBaseMapper() {
+        if (!BaseMapper.class.isAssignableFrom(type)) {
+            return;
+        }
+
+        Type[] genericInterfaces = type.getGenericInterfaces();
+        for (Type genericInterface : genericInterfaces) {
+            ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
+            if (!BaseMapper.class.equals(parameterizedType.getRawType())) {
+                continue;
+            }
+            tableClass = (Class) parameterizedType.getActualTypeArguments()[0];
+            table = Table.resolve(tableClass, configuration);
         }
 
         // 解析Method
@@ -174,7 +247,7 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
             if (getSqlProviderAnnotationType(method) != null) {
                 continue;
             }
-            parseMapperMethodStatement(method);
+            parseBaseMapperStatement(method);
         }
     }
 
@@ -183,9 +256,7 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
      *
      * @param method 方法
      */
-    void parseMapperMethodStatement(Method method) {
-        Table table = configuration.getTable(type);
-
+    void parseBaseMapperStatement(Method method) {
         if (table == null) {
             return;
         }
@@ -278,86 +349,6 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         }
     }
 
-    private void parsePendingMethods() {
-        Collection<MethodResolver> incompleteMethods = configuration.getIncompleteMethods();
-        synchronized (incompleteMethods) {
-            Iterator<MethodResolver> iter = incompleteMethods.iterator();
-            while (iter.hasNext()) {
-                try {
-                    iter.next().resolve();
-                    iter.remove();
-                } catch (IncompleteElementException e) {
-                    // This method is still missing a resource
-                }
-            }
-        }
-    }
-
-    private void loadXmlResource() {
-        // Spring may not know the real resource name so we check a flag
-        // to prevent loading again a resource twice
-        // this flag is set at XMLMapperBuilder#bindMapperForNamespace
-        if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
-            String xmlResource = type.getName().replace('.', '/') + ".xml";
-            // #1347
-            InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
-            if (inputStream == null) {
-                // Search XML mapper that is not in the module but in the classpath.
-                try {
-                    inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
-                } catch (IOException e2) {
-                    // ignore, resource is not required
-                }
-            }
-            if (inputStream != null) {
-                XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
-                xmlParser.parse();
-            }
-        }
-    }
-
-    private void parseCache() {
-        CacheNamespace cacheDomain = type.getAnnotation(CacheNamespace.class);
-        if (cacheDomain != null) {
-            Integer size = cacheDomain.size() == 0 ? null : cacheDomain.size();
-            Long flushInterval = cacheDomain.flushInterval() == 0 ? null : cacheDomain.flushInterval();
-            Properties props = convertToProperties(cacheDomain.properties());
-            assistant.useNewCache(cacheDomain.implementation(), cacheDomain.eviction(), flushInterval, size, cacheDomain.readWrite(), cacheDomain.blocking(), props);
-        }
-    }
-
-    private Properties convertToProperties(Property[] properties) {
-        if (properties.length == 0) {
-            return null;
-        }
-        Properties props = new Properties();
-        for (Property property : properties) {
-            props.setProperty(property.name(),
-                    PropertyParser.parse(property.value(), configuration.getVariables()));
-        }
-        return props;
-    }
-
-    private void parseCacheRef() {
-        CacheNamespaceRef cacheDomainRef = type.getAnnotation(CacheNamespaceRef.class);
-        if (cacheDomainRef != null) {
-            Class<?> refType = cacheDomainRef.value();
-            String refName = cacheDomainRef.name();
-            if (refType == void.class && refName.isEmpty()) {
-                throw new BuilderException("Should be specified either value() or name() attribute in the @CacheNamespaceRef");
-            }
-            if (refType != void.class && !refName.isEmpty()) {
-                throw new BuilderException("Cannot use both value() and name() attribute in the @CacheNamespaceRef");
-            }
-            String namespace = (refType != void.class) ? refType.getName() : refName;
-            try {
-                assistant.useCacheRef(namespace);
-            } catch (IncompleteElementException e) {
-                configuration.addIncompleteCacheRef(new CacheRefResolver(assistant, namespace));
-            }
-        }
-    }
-
     private String parseResultMap(Method method) {
         Class<?> returnType = getReturnType(method);
         ConstructorArgs args = method.getAnnotation(ConstructorArgs.class);
@@ -432,6 +423,11 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         Class<?> parameterTypeClass = getParameterType(method);
         LanguageDriver languageDriver = getLanguageDriver(method);
         SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
+
+        if (sqlSource == null) {
+            sqlSource = getSqlSourceFrom(method);
+        }
+
         if (sqlSource != null) {
             Options options = method.getAnnotation(Options.class);
             final String mappedStatementId = type.getName() + "." + method.getName();
@@ -622,6 +618,12 @@ public class SwiftMapperAnnotationBuilder extends MapperAnnotationBuilder {
         } catch (Exception e) {
             throw new BuilderException("Could not find value method on SQL annotation.  Cause: " + e, e);
         }
+    }
+
+    private SqlSource getSqlSourceFrom(Method method) {
+
+
+        return null;
     }
 
     private SqlSource buildSqlSourceFromStrings(String[] strings, Class<?> parameterTypeClass, LanguageDriver languageDriver) {
