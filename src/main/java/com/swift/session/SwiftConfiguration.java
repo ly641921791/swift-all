@@ -5,10 +5,13 @@ import com.swift.custom.mapper.MapperMethodResolver;
 import com.swift.custom.support.MapperMethodResolverRegistry;
 import lombok.Getter;
 import org.apache.ibatis.binding.MapperRegistry;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 继承Configuration
@@ -23,6 +26,11 @@ public class SwiftConfiguration extends Configuration {
     // fields
 
     private final MapperRegistry mapperRegistry = new SwiftMapperRegistry(this);
+
+    /**
+     * Replace Mapped Statement Names TODO 启动完成清理掉
+     */
+    private final Set<String> replaceMappedStatementNames = new HashSet<>();
 
     @Getter
     private final MapperMethodResolverRegistry mapperMethodResolverRegistry = new MapperMethodResolverRegistry();
@@ -57,6 +65,26 @@ public class SwiftConfiguration extends Configuration {
     @Override
     public boolean hasMapper(Class<?> type) {
         return this.mapperRegistry.hasMapper(type);
+    }
+
+    public void addMappedStatement(MappedStatement ms, boolean replaceable) {
+        if (replaceable) {
+            if (mappedStatements.containsKey(ms.getId())) {
+                return;
+            }
+            replaceMappedStatementNames.add(ms.getId());
+            mappedStatements.put(ms.getId(), ms);
+            return;
+        }
+
+        if (mappedStatements.containsKey(ms.getId())) {
+            if (replaceMappedStatementNames.contains(ms.getId())) {
+                replaceMappedStatementNames.remove(ms.getId());
+                mappedStatements.remove(ms.getId());
+            }
+        }
+
+        mappedStatements.put(ms.getId(), ms);
     }
 
     public void addMapperMethodResolver(MapperMethodResolver resolver) {

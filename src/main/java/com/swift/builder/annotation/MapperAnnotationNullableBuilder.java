@@ -1,5 +1,6 @@
 package com.swift.builder.annotation;
 
+import com.swift.builder.ReplaceableMapperBuilderAssistant;
 import com.swift.custom.mapper.MapperMethodResolver;
 import com.swift.custom.metadata.Table;
 import com.swift.custom.swift.BaseMapper;
@@ -32,7 +33,6 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.IncompleteElementException;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
@@ -82,17 +82,17 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * 注解可空的MapperBuilder
+ * Mapper Annotation Nullable Builder
  *
  * @author ly
  */
-public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
+public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
 
     private static final Set<Class<? extends Annotation>> SQL_ANNOTATION_TYPES = new HashSet<>();
     private static final Set<Class<? extends Annotation>> SQL_PROVIDER_ANNOTATION_TYPES = new HashSet<>();
 
     private final SwiftConfiguration configuration;
-    private final MapperBuilderAssistant assistant;
+    private final ReplaceableMapperBuilderAssistant assistant;
     private final Class<?> type;
 
     private Class<?> tableClass;
@@ -110,14 +110,12 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
         SQL_PROVIDER_ANNOTATION_TYPES.add(DeleteProvider.class);
     }
 
-    public AnnotationNullableMapperBuilder(SwiftConfiguration configuration, Class<?> type) {
+    public MapperAnnotationNullableBuilder(SwiftConfiguration configuration, Class<?> type) {
         super(configuration, type);
         String resource = type.getName().replace('.', '/') + ".java (best guess)";
-        // TODO 新增可替换的MapperBuilderAssistant生成器
-        this.assistant = new MapperBuilderAssistant(configuration, resource);
+        this.assistant = new ReplaceableMapperBuilderAssistant(configuration, resource);
         this.configuration = configuration;
         this.type = type;
-        parseBaseMapper();
     }
 
     @Override
@@ -129,6 +127,7 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
             assistant.setCurrentNamespace(type.getName());
             parseCache();
             parseCacheRef();
+            parseBaseMapper();
             Method[] methods = type.getMethods();
             for (Method method : methods) {
                 try {
@@ -238,115 +237,6 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
             tableClass = (Class) parameterizedType.getActualTypeArguments()[0];
             table = Table.resolve(tableClass, configuration);
         }
-
-        // 解析Method
-        for (Method method : type.getMethods()) {
-            if (getSqlAnnotationType(method) != null) {
-                continue;
-            }
-            if (getSqlProviderAnnotationType(method) != null) {
-                continue;
-            }
-            parseBaseMapperStatement(method);
-        }
-    }
-
-    /**
-     * 修改自 {@link #parseStatement(Method)}
-     *
-     * @param method 方法
-     */
-    void parseBaseMapperStatement(Method method) {
-        if (table == null) {
-            return;
-        }
-
-        MapperMethodResolver resolver = configuration.getMapperMethodResolver(method);
-
-        if (resolver == null) {
-            return;
-        }
-
-        Class<?> parameterTypeClass = getParameterType(method);
-        LanguageDriver languageDriver = getLanguageDriver(method);
-
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, resolver.buildSqlScript(table, configuration), parameterTypeClass);
-
-        if (sqlSource != null) {
-            Options options = method.getAnnotation(Options.class);
-            final String mappedStatementId = type.getName() + "." + method.getName();
-            Integer fetchSize = null;
-            Integer timeout = null;
-            StatementType statementType = StatementType.PREPARED;
-            ResultSetType resultSetType = null;
-            SqlCommandType sqlCommandType = resolver.getSqlCommandType();
-            boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
-            boolean flushCache = !isSelect;
-            boolean useCache = isSelect;
-
-            KeyGenerator keyGenerator;
-            String keyProperty = null;
-            String keyColumn = null;
-            if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                // first check for SelectKey annotation - that overrides everything else
-                SelectKey selectKey = method.getAnnotation(SelectKey.class);
-                if (selectKey != null) {
-                    keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
-                    keyProperty = selectKey.keyProperty();
-                } else if (options == null) {
-
-                    // 若定制过table，则优先于configuration生效
-                    if (table.isCustomized()) {
-                        keyGenerator = resolver.getKeyGenerator(table);
-                        keyProperty = resolver.getKeyProperty(table);
-                        keyColumn = resolver.getKeyColumn(table);
-                    } else {
-                        keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
-                    }
-
-                } else {
-                    keyGenerator = options.useGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
-                    keyProperty = options.keyProperty();
-                    keyColumn = options.keyColumn();
-                }
-            } else {
-                keyGenerator = NoKeyGenerator.INSTANCE;
-            }
-
-            if (options != null) {
-                if (Options.FlushCachePolicy.TRUE.equals(options.flushCache())) {
-                    flushCache = true;
-                } else if (Options.FlushCachePolicy.FALSE.equals(options.flushCache())) {
-                    flushCache = false;
-                }
-                useCache = options.useCache();
-                fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; //issue #348
-                timeout = options.timeout() > -1 ? options.timeout() : null;
-                statementType = options.statementType();
-                resultSetType = options.resultSetType();
-            }
-
-            String resultMapId = null;
-            ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
-            if (resultMapAnnotation != null) {
-                String[] resultMaps = resultMapAnnotation.value();
-                StringBuilder sb = new StringBuilder();
-                for (String resultMap : resultMaps) {
-                    if (sb.length() > 0) {
-                        sb.append(",");
-                    }
-                    sb.append(resultMap);
-                }
-                resultMapId = sb.toString();
-            } else if (isSelect) {
-                resultMapId = parseResultMap(method);
-            }
-
-            assistant.addMappedStatement(mappedStatementId, sqlSource, statementType, sqlCommandType, fetchSize, timeout,
-                    null, parameterTypeClass, resultMapId, getReturnType(method), resultSetType, flushCache,
-                    useCache, false, keyGenerator, keyProperty, keyColumn, null, languageDriver,
-                    options != null ? nullOrEmpty(options.resultSets()) : null);
-        }
     }
 
     private String parseResultMap(Method method) {
@@ -424,8 +314,12 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
         LanguageDriver languageDriver = getLanguageDriver(method);
         SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
 
+        boolean replaceable = false;
+        MapperMethodResolver resolver = null;
         if (sqlSource == null) {
-            sqlSource = getSqlSourceFrom(method);
+            resolver = configuration.getMapperMethodResolver(method);
+            sqlSource = getSqlSourceFromTable(method, parameterTypeClass, languageDriver, resolver);
+            replaceable = true;
         }
 
         if (sqlSource != null) {
@@ -436,6 +330,11 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
             StatementType statementType = StatementType.PREPARED;
             ResultSetType resultSetType = null;
             SqlCommandType sqlCommandType = getSqlCommandType(method);
+
+            if (SqlCommandType.UNKNOWN == sqlCommandType && resolver != null) {
+                sqlCommandType = resolver.getSqlCommandType();
+            }
+
             boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
             boolean flushCache = !isSelect;
             boolean useCache = isSelect;
@@ -450,7 +349,15 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
                     keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
                     keyProperty = selectKey.keyProperty();
                 } else if (options == null) {
-                    keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+
+                    if (table != null && table.isCustomized() && resolver != null) {
+                        keyGenerator = resolver.getKeyGenerator(table);
+                        keyProperty = resolver.getKeyProperty(table);
+                        keyColumn = resolver.getKeyColumn(table);
+                    } else {
+                        keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+                    }
+
                 } else {
                     keyGenerator = options.useGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
                     keyProperty = options.keyProperty();
@@ -513,7 +420,8 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
                     null,
                     languageDriver,
                     // ResultSets
-                    options != null ? nullOrEmpty(options.resultSets()) : null);
+                    options != null ? nullOrEmpty(options.resultSets()) : null,
+                    replaceable);
         }
     }
 
@@ -620,10 +528,11 @@ public class AnnotationNullableMapperBuilder extends MapperAnnotationBuilder {
         }
     }
 
-    private SqlSource getSqlSourceFrom(Method method) {
-
-
-        return null;
+    private SqlSource getSqlSourceFromTable(Method method, Class<?> parameterType, LanguageDriver languageDriver, MapperMethodResolver resolver) {
+        if (resolver == null) {
+            return null;
+        }
+        return languageDriver.createSqlSource(this.configuration, resolver.buildSqlScript(table, this.configuration), parameterType);
     }
 
     private SqlSource buildSqlSourceFromStrings(String[] strings, Class<?> parameterTypeClass, LanguageDriver languageDriver) {

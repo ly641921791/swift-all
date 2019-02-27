@@ -1,6 +1,6 @@
 package com.swift.binding;
 
-import com.swift.builder.annotation.AnnotationNullableMapperBuilder;
+import com.swift.builder.annotation.MapperAnnotationNullableBuilder;
 import com.swift.session.SwiftConfiguration;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
@@ -63,7 +63,7 @@ public class SwiftMapperRegistry extends MapperRegistry {
                 // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
-                MapperAnnotationBuilder parser = new AnnotationNullableMapperBuilder(this.config, type);
+                MapperAnnotationBuilder parser = new MapperAnnotationNullableBuilder(this.config, type);
                 parser.parse();
                 loadCompleted = true;
             } finally {
