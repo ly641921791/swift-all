@@ -43,6 +43,25 @@ public class Condition {
     }
 
     /**
+     * 不等于
+     *
+     * @param column column
+     * @param value  value
+     * @return 当前对象
+     */
+    public Condition ne(String column, Object value) {
+        String paramK = "k" + params.size();
+        params.put(paramK, value);
+        if (or) {
+            where.append("OR ").append(column).append(" <> #{c.params.").append(paramK).append("} ");
+            or = false;
+        } else {
+            where.append("AND ").append(column).append(" <> #{c.params.").append(paramK).append("} ");
+        }
+        return this;
+    }
+
+    /**
      * 下一次条件作为OR条件
      *
      * @return 当前对象
