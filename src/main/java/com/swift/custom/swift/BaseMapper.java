@@ -1,6 +1,7 @@
 package com.swift.custom.swift;
 
 import com.swift.custom.annotation.TableClass;
+import com.swift.custom.constant.Strings;
 import com.swift.custom.mapper.param.Condition;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @author ly
  * @since 2019-01-24 15:44
  **/
-public interface BaseMapper<T> {
+public interface BaseMapper<T, ID> {
 
     /**
      * 插入记录
@@ -31,6 +32,23 @@ public interface BaseMapper<T> {
      * @return 删除记录数
      */
     int delete(@Param("c") Condition c);
+
+    /**
+     * 根据id删除记录
+     *
+     * @param id id
+     * @return 删除记录数
+     */
+    int deleteById(ID id);
+
+    /**
+     * 根据指定列删除记录
+     *
+     * @param column 列名
+     * @param value  值
+     * @return 删除记录数
+     */
+    int deleteByColumn(@Param(Strings.COLUMN) String column, @Param(Strings.VALUE) Object value);
 
     /**
      * 更新记录

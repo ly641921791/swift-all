@@ -1,5 +1,6 @@
 package com.swift.custom.swift;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.swift.custom.mapper.param.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @author ly
  * @since 2019-01-24 15:45
  */
-public class BaseService<T, M extends BaseMapper<T>> implements IService<T> {
+public class BaseService<T, M extends BaseMapper<T, ID>> implements IService<T, ID> {
 
     @Autowired
     protected M mapper;
@@ -21,6 +22,21 @@ public class BaseService<T, M extends BaseMapper<T>> implements IService<T> {
     @Override
     public int insert(T r) {
         return mapper.insert(r);
+    }
+
+    @Override
+    public int delete(Condition c) {
+        return 0;
+    }
+
+    @Override
+    public int deleteById(ID id) {
+        return mapper.deleteById(id);
+    }
+
+    @Override
+    public int deleteByColumn(String column, Object value) {
+        return mapper.deleteByColumn(column, value);
     }
 
     @Override

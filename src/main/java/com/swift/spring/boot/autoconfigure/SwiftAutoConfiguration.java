@@ -1,5 +1,7 @@
 package com.swift.spring.boot.autoconfigure;
 
+import com.swift.custom.mapper.method.DeleteByColumn;
+import com.swift.custom.mapper.method.DeleteById;
 import com.swift.custom.mapper.method.Insert;
 import com.swift.custom.mapper.method.Select;
 import com.swift.custom.mapper.method.SelectById;
@@ -11,7 +13,6 @@ import com.swift.session.SwiftConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
@@ -122,7 +123,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
     }
 
     private void applyConfiguration(SqlSessionFactoryBean factory) {
-        Configuration configuration = this.properties.getConfiguration();
+        SwiftConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
             configuration = new SwiftConfiguration();
         }
@@ -133,13 +134,15 @@ public class SwiftAutoConfiguration implements InitializingBean {
         }
 
         // TODO 日后删除，改为可配置实
-        ((SwiftConfiguration) configuration).addMapperMethodResolver(new Insert());
-        ((SwiftConfiguration) configuration).addMapperMethodResolver(new Update());
-        ((SwiftConfiguration) configuration).addMapperMethodResolver(new UpdateById());
-        ((SwiftConfiguration) configuration).addMapperMethodResolver(new Select());
-        ((SwiftConfiguration) configuration).addMapperMethodResolver(new SelectById());
-        ((SwiftConfiguration) configuration).addMapperMethodResolver(new SelectRecordByColumn());
-        ((SwiftConfiguration) configuration).addMapperMethodResolver(new SelectRecordsByColumn());
+        configuration.addMapperMethodResolver(new Insert());
+        configuration.addMapperMethodResolver(new DeleteById());
+        configuration.addMapperMethodResolver(new DeleteByColumn());
+        configuration.addMapperMethodResolver(new Update());
+        configuration.addMapperMethodResolver(new UpdateById());
+        configuration.addMapperMethodResolver(new Select());
+        configuration.addMapperMethodResolver(new SelectById());
+        configuration.addMapperMethodResolver(new SelectRecordByColumn());
+        configuration.addMapperMethodResolver(new SelectRecordsByColumn());
 
         factory.setConfiguration(configuration);
     }
