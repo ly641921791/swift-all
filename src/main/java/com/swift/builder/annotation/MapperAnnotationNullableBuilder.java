@@ -5,6 +5,7 @@ import com.swift.custom.mapper.MapperMethodResolver;
 import com.swift.custom.metadata.Table;
 import com.swift.custom.swift.BaseMapper;
 import com.swift.session.SwiftConfiguration;
+import com.swift.util.ClassUtils;
 import org.apache.ibatis.annotations.Arg;
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.CacheNamespaceRef;
@@ -228,13 +229,9 @@ public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
             return;
         }
 
-        Type[] genericInterfaces = type.getGenericInterfaces();
-        for (Type genericInterface : genericInterfaces) {
-            ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
-            if (!BaseMapper.class.equals(parameterizedType.getRawType())) {
-                continue;
-            }
-            tableClass = (Class) parameterizedType.getActualTypeArguments()[0];
+        Type[] genericTypes = ClassUtils.getInterfacesGenericType(type, BaseMapper.class);
+        if (genericTypes.length != 0) {
+            tableClass = (Class) genericTypes[0];
             table = Table.resolve(tableClass, configuration);
         }
     }
