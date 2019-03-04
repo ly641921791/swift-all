@@ -26,7 +26,7 @@ public class BaseService<T, M extends BaseMapper<T, ID>> implements IService<T, 
 
     @Override
     public int delete(Condition c) {
-        return 0;
+        return mapper.delete(c);
     }
 
     @Override

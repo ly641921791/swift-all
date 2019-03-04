@@ -8,8 +8,4 @@ package com.swift.custom.constant;
  **/
 public class Strings {
 
-    public static final String COLUMN = "column";
-
-    public static final String VALUE = "value";
-
 }

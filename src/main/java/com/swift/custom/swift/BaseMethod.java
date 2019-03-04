@@ -1,11 +1,14 @@
 package com.swift.custom.swift;
 
 import com.swift.custom.annotation.TableClass;
-import com.swift.custom.constant.Strings;
 import com.swift.custom.mapper.param.Condition;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+
+import static com.swift.custom.mapper.MapperMethodResolver.COLUMN_PARAM;
+import static com.swift.custom.mapper.MapperMethodResolver.CONDITION_PARAM;
+import static com.swift.custom.mapper.MapperMethodResolver.VALUE_PARAM;
 
 /**
  * IService通过继承BaseMapper得到BaseMethod，会导致BaseService不能注入Mapper，
@@ -32,7 +35,7 @@ interface BaseMethod<T, ID> {
      * @param c condition
      * @return 删除记录数
      */
-    int delete(@Param("c") Condition c);
+    int delete(@Param(CONDITION_PARAM) Condition c);
 
     /**
      * 根据id删除记录
@@ -49,7 +52,7 @@ interface BaseMethod<T, ID> {
      * @param value  值
      * @return 删除记录数
      */
-    int deleteByColumn(@Param(Strings.COLUMN) String column, @Param(Strings.VALUE) Object value);
+    int deleteByColumn(@Param(COLUMN_PARAM) String column, @Param(VALUE_PARAM) Object value);
 
     /**
      * 更新记录

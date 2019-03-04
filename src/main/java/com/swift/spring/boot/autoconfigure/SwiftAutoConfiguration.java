@@ -1,5 +1,6 @@
 package com.swift.spring.boot.autoconfigure;
 
+import com.swift.custom.mapper.method.Delete;
 import com.swift.custom.mapper.method.DeleteByColumn;
 import com.swift.custom.mapper.method.DeleteById;
 import com.swift.custom.mapper.method.Insert;
@@ -135,6 +136,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
 
         // TODO 日后删除，改为可配置实
         configuration.addMapperMethodResolver(new Insert());
+        configuration.addMapperMethodResolver(new Delete());
         configuration.addMapperMethodResolver(new DeleteById());
         configuration.addMapperMethodResolver(new DeleteByColumn());
         configuration.addMapperMethodResolver(new Update());

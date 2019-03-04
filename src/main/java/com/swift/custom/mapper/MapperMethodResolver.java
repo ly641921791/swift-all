@@ -13,6 +13,14 @@ import org.apache.ibatis.mapping.SqlCommandType;
  */
 public interface MapperMethodResolver {
 
+    String VALUE_PARAM = "v";
+
+    String COLUMN_PARAM = "c";
+
+    String CONDITION_PARAM = "c";
+
+    String WHERE_TAG = "<where>${" + CONDITION_PARAM + ".where}</where>";
+
     /**
      * 获得SqlCommandType
      *

@@ -1,6 +1,5 @@
 package com.swift.custom.mapper.method;
 
-import com.swift.custom.constant.Strings;
 import com.swift.custom.mapper.AbstractDeleteMethodResolver;
 import com.swift.custom.metadata.Table;
 import com.swift.session.SwiftConfiguration;
@@ -19,9 +18,9 @@ public class DeleteByColumn extends AbstractDeleteMethodResolver {
     @Override
     public String buildSqlScript(Table table, SwiftConfiguration configuration) {
         if (StringUtils.isEmpty(table.getDeleteColumn())) {
-            return String.format(DELETE_BY_COLUMN, table.getName(), Strings.COLUMN, Strings.VALUE);
+            return String.format(DELETE_BY_COLUMN, table.getName(), COLUMN_PARAM, VALUE_PARAM);
         }
-        return String.format(UPDATE_BY_COLUMN, table.getName(), table.getDeleteColumn(), Strings.COLUMN, Strings.VALUE);
+        return String.format(UPDATE_BY_COLUMN, table.getName(), table.getDeleteColumn(), COLUMN_PARAM, VALUE_PARAM);
     }
 
 }
