@@ -1,6 +1,9 @@
 package com.swift.custom.swift;
 
+import com.swift.custom.mapper.method.Insert;
 import com.swift.custom.mapper.param.Condition;
+import com.swift.util.ClassUtils;
+import com.swift.util.StringUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,16 +40,12 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<T> saveAll(Iterable<T> entities) {
-
-        // TODO 根据反射获得当前的SqlStatement
-
-        String sqlStatement = "namespace" + "." + "methodName";
-
+        Type[] type = ClassUtils.getSuperclassGenericType(getClass());
+        String sqlStatement = ((Class) type[1]).getName() + "." + StringUtils.toUpperCamel(Insert.class.getSimpleName());
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
             entities.forEach(e -> sqlSession.insert(sqlStatement, e));
             sqlSession.flushStatements();
         }
-
         return null;
     }
 
