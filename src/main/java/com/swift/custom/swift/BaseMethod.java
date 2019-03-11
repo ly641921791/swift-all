@@ -4,6 +4,7 @@ import com.swift.custom.annotation.TableClass;
 import com.swift.custom.mapper.param.Condition;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.swift.custom.mapper.MapperMethodResolver.COLUMN_PARAM;
@@ -75,11 +76,19 @@ interface BaseMethod<T, ID> {
     int updateById(@Param("p") T p, @Param("id") Object id);
 
     /**
-     * find all records
+     * Find all records
      *
-     * @return 全部记录
+     * @return all records
      */
     List<T> findAll();
+
+    /**
+     * Find all records by ids
+     *
+     * @param ids ids
+     * @return all records
+     */
+    List<T> findAllById(Collection<ID> ids);
 
     /**
      * 查询记录

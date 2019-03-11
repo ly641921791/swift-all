@@ -2,7 +2,10 @@ package com.swift.custom.swift;
 
 import com.swift.custom.mapper.param.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,6 +54,14 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     @Override
     public List<T> findAll() {
         return mapper.findAll();
+    }
+
+    @Override
+    public List<T> findAllById(Collection<ID> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return mapper.findAllById(ids);
     }
 
     @Override
