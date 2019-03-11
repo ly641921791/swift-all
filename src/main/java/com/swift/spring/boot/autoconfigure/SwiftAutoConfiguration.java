@@ -3,6 +3,7 @@ package com.swift.spring.boot.autoconfigure;
 import com.swift.custom.mapper.method.Delete;
 import com.swift.custom.mapper.method.DeleteByColumn;
 import com.swift.custom.mapper.method.DeleteById;
+import com.swift.custom.mapper.method.FindAll;
 import com.swift.custom.mapper.method.Insert;
 import com.swift.custom.mapper.method.Select;
 import com.swift.custom.mapper.method.SelectById;
@@ -141,6 +142,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
         configuration.addMapperMethodResolver(new DeleteByColumn());
         configuration.addMapperMethodResolver(new Update());
         configuration.addMapperMethodResolver(new UpdateById());
+        configuration.addMapperMethodResolver(new FindAll());
         configuration.addMapperMethodResolver(new Select());
         configuration.addMapperMethodResolver(new SelectById());
         configuration.addMapperMethodResolver(new SelectRecordByColumn());

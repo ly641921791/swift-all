@@ -75,6 +75,13 @@ interface BaseMethod<T, ID> {
     int updateById(@Param("p") T p, @Param("id") Object id);
 
     /**
+     * find all records
+     *
+     * @return 全部记录
+     */
+    List<T> findAll();
+
+    /**
      * 查询记录
      *
      * @param c condition

@@ -49,6 +49,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
+    public List<T> findAll() {
+        return mapper.findAll();
+    }
+
+    @Override
     public List<T> select(Condition c) {
         return mapper.select(c);
     }
