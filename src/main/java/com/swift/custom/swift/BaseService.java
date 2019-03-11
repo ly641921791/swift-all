@@ -1,6 +1,5 @@
 package com.swift.custom.swift;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.swift.custom.mapper.param.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +13,7 @@ import java.util.List;
  * @author ly
  * @since 2019-01-24 15:45
  */
-public class BaseService<T, M extends BaseMapper<T, ID>> implements IService<T, ID> {
+public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService<T, ID> {
 
     @Autowired
     protected M mapper;
