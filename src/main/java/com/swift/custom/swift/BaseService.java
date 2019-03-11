@@ -1,7 +1,11 @@
 package com.swift.custom.swift;
 
 import com.swift.custom.mapper.param.Condition;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
@@ -21,9 +25,28 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     @Autowired
     protected M mapper;
 
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
+
     @Override
     public int insert(T r) {
         return mapper.insert(r);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<T> saveAll(Iterable<T> entities) {
+
+        // TODO 根据反射获得当前的SqlStatement
+
+        String sqlStatement = "namespace" + "." + "methodName";
+
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+            entities.forEach(e -> sqlSession.insert(sqlStatement, e));
+            sqlSession.flushStatements();
+        }
+
+        return null;
     }
 
     @Override
