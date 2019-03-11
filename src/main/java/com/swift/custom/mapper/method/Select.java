@@ -16,4 +16,9 @@ public class Select extends AbstractSelectMethodResolver {
         return String.format(SELECT, columns(table), table.getName());
     }
 
+    @Override
+    protected String afterBuildSqlScript(String script, Table table, SwiftConfiguration configuration) {
+        return script;
+    }
+
 }
