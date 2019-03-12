@@ -1,9 +1,8 @@
 package com.github.ly641921791.swift.spring;
 
+import com.github.ly641921791.swift.core.mapper.BaseMapper;
 import com.github.ly641921791.swift.core.mapper.method.Insert;
 import com.github.ly641921791.swift.core.mapper.param.Condition;
-import com.github.ly641921791.swift.core.mapper.BaseMapper;
-import com.github.ly641921791.swift.core.util.ClassUtils;
 import com.github.ly641921791.swift.core.util.StringUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +39,7 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<T> saveAll(Iterable<T> entities) {
-        Type[] type = ClassUtils.getSuperclassGenericType(getClass());
-        String sqlStatement = ((Class) type[1]).getName() + "." + StringUtils.toUpperCamel(Insert.class.getSimpleName());
+        String sqlStatement = mapper.getClass().getName() + "." + StringUtils.toUpperCamel(Insert.class.getSimpleName());
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
             entities.forEach(e -> sqlSession.insert(sqlStatement, e));
             sqlSession.flushStatements();
@@ -57,6 +54,9 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
 
     @Override
     public int deleteById(ID id) {
+        if (id == null) {
+            return 0;
+        }
         return mapper.deleteById(id);
     }
 
@@ -72,6 +72,9 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
 
     @Override
     public int updateById(T p, Object id) {
+        if (id == null) {
+            return 0;
+        }
         return mapper.updateById(p, id);
     }
 
@@ -95,6 +98,9 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
 
     @Override
     public T selectById(Object id) {
+        if (id == null) {
+            return null;
+        }
         return mapper.selectById(id);
     }
 
