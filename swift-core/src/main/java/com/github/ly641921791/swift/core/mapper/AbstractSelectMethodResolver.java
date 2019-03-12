@@ -2,6 +2,7 @@ package com.github.ly641921791.swift.core.mapper;
 
 import com.github.ly641921791.swift.core.metadata.Table;
 import com.github.ly641921791.swift.core.util.StringUtils;
+import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.SqlCommandType;
 
@@ -20,50 +21,49 @@ public abstract class AbstractSelectMethodResolver implements MapperMethodResolv
 
     @Override
     public String buildSqlScript(Table table, SwiftConfiguration configuration) {
-        String script = doBuildSqlScript(table, configuration);
-        return afterBuildSqlScript(script, table, configuration);
+        SqlScript sqlScript = new SqlScript();
+        handlerColumn(sqlScript, table, configuration);
+        sqlScript.FROM(table.getName());
+        handlerWhere(sqlScript, table, configuration);
+        return sqlScript.toString();
     }
 
     /**
-     * 生成Sql Script
+     * handler column
      *
-     * @param table         表格对象
-     * @param configuration 配置文件
-     * @return Sql Script
+     * @param sqlScript     sqlScript
+     * @param table         table
+     * @param configuration configuration
      */
-    protected abstract String doBuildSqlScript(Table table, SwiftConfiguration configuration);
-
-    /**
-     * 后置处理Sql Script
-     *
-     * @param script        script
-     * @param table         表格对象
-     * @param configuration 配置文件
-     * @return script
-     */
-    protected String afterBuildSqlScript(String script, Table table, SwiftConfiguration configuration) {
-        if (StringUtils.isEmpty(table.getDeleteColumn())) {
-            return script;
-        }
-        return script.replace("</script>", " AND " + table.getDeleteColumn() + " = 1</script>");
-    }
-
-    /**
-     * 查询列
-     *
-     * @param table 表格对象
-     * @return 表格列
-     */
-    protected String columns(Table table) {
-        StringBuilder sql = new StringBuilder();
+    protected void handlerColumn(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
         table.getColumns().forEach(column -> {
             if (column.getSelectValue().isEmpty()) {
-                sql.append(",`").append(column.getName()).append("`");
+                sqlScript.SELECT(column.getName());
             } else {
-                sql.append(",(").append(column.getSelectValue()).append(") AS `").append(column.getName()).append("`");
+                sqlScript.SELECT_SCRIPT_AS(column.getSelectValue(), column.getName());
             }
         });
-        return sql.substring(1);
     }
 
+    /**
+     * handler where condition
+     *
+     * @param sqlScript     sqlScript
+     * @param table         table
+     * @param configuration configuration
+     */
+    protected abstract void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration);
+
+    /**
+     * handler delete column
+     *
+     * @param sqlScript     sqlScript
+     * @param table         table
+     * @param configuration configuration
+     */
+    protected void handlerDeleteColumn(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
+        if (StringUtils.isNotEmpty(table.getDeleteColumn())) {
+            sqlScript.WHERE_EQ(table.getDeleteColumn(), table.getExistsValue());
+        }
+    }
 }

@@ -31,6 +31,8 @@ public @interface TableClass {
      */
     String deleteValue() default "";
 
+    String existsValue() default "";
+
     boolean useGeneratedKeys() default DEFAULT_USE_GENERATED_KEYS;
 
     String keyProperty() default DEFAULT_KEY_PROPERTY;
