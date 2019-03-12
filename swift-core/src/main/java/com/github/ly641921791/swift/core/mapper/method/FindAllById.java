@@ -2,8 +2,8 @@ package com.github.ly641921791.swift.core.mapper.method;
 
 import com.github.ly641921791.swift.core.mapper.AbstractSelectMethodResolver;
 import com.github.ly641921791.swift.core.metadata.Table;
+import com.github.ly641921791.swift.core.util.StringUtils;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
-import org.springframework.util.StringUtils;
 
 /**
  * @author ly

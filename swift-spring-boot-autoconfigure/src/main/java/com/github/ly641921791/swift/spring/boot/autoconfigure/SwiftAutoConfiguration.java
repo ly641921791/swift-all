@@ -37,6 +37,10 @@ import org.springframework.util.StringUtils;
 import javax.sql.DataSource;
 import java.util.List;
 
+/**
+ * @author ly
+ * @since 1.1.0
+ */
 @ConditionalOnBean(DataSource.class)
 @EnableConfigurationProperties(SwiftProperties.class)
 @org.springframework.context.annotation.Configuration

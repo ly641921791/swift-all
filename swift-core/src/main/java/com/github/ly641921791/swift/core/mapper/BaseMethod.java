@@ -1,4 +1,4 @@
-package com.github.ly641921791.swift.core.swift;
+package com.github.ly641921791.swift.core.mapper;
 
 import com.github.ly641921791.swift.core.annotation.TableClass;
 import com.github.ly641921791.swift.core.mapper.param.Condition;
@@ -18,7 +18,7 @@ import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.VALU
  * @author ly
  * @since 2019-03-01 11:18
  **/
-interface BaseMethod<T, ID> {
+public interface BaseMethod<T, ID> {
 
     /**
      * 插入记录

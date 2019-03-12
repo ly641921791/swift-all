@@ -1,7 +1,8 @@
-package com.github.ly641921791.swift.core.swift;
+package com.github.ly641921791.swift.spring;
 
 import com.github.ly641921791.swift.core.mapper.method.Insert;
 import com.github.ly641921791.swift.core.mapper.param.Condition;
+import com.github.ly641921791.swift.core.mapper.BaseMapper;
 import com.github.ly641921791.swift.core.util.ClassUtils;
 import com.github.ly641921791.swift.core.util.StringUtils;
 import org.apache.ibatis.session.ExecutorType;

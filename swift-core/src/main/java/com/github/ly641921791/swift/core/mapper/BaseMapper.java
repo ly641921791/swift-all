@@ -1,4 +1,6 @@
-package com.github.ly641921791.swift.core.swift;
+package com.github.ly641921791.swift.core.mapper;
+
+import com.github.ly641921791.swift.core.mapper.BaseMethod;
 
 /**
  * Mapper父类

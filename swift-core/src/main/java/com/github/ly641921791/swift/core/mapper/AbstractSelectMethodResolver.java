@@ -1,9 +1,9 @@
 package com.github.ly641921791.swift.core.mapper;
 
 import com.github.ly641921791.swift.core.metadata.Table;
+import com.github.ly641921791.swift.core.util.StringUtils;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.springframework.util.StringUtils;
 
 /**
  * 查询类型方法解析器

@@ -107,4 +107,8 @@ public class StringUtils {
         return ((st > 0) || (len < source.length())) ? source.substring(st, len) : source;
     }
 
+    public static boolean isEmpty(String str) {
+        return (str == null || str.isEmpty());
+    }
+
 }

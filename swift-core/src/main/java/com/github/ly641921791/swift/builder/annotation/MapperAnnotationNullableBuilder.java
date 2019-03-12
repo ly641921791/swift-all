@@ -3,7 +3,7 @@ package com.github.ly641921791.swift.builder.annotation;
 import com.github.ly641921791.swift.builder.ReplaceableMapperBuilderAssistant;
 import com.github.ly641921791.swift.core.mapper.MapperMethodResolver;
 import com.github.ly641921791.swift.core.metadata.Table;
-import com.github.ly641921791.swift.core.swift.BaseMapper;
+import com.github.ly641921791.swift.core.mapper.BaseMapper;
 import com.github.ly641921791.swift.core.util.ClassUtils;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.annotations.Arg;
