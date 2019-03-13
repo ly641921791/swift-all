@@ -25,8 +25,7 @@ public class UpdateById extends AbstractUpdateMethodResolver {
             }
         });
 
-        String  sql = String.format("<script>UPDATE `%s` <set>%s</set> WHERE id = #{id}</script>",table.getName(), set.substring(1));
-        return sql;
+        return String.format("<script>UPDATE `%s` <set>%s</set> WHERE id = #{id}</script>",table.getName(), set.substring(1));
     }
 
     @Override
