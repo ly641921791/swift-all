@@ -1,0 +1,14 @@
+CREATE TABLE foo (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '唯一id',
+  string_value VARCHAR (64) ,
+  del TINYINT NOT NULL DEFAULT 0 COMMENT '删除标志',
+  PRIMARY KEY (id)
+);
+
+
+CREATE TABLE foo_with_annotation (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '唯一id',
+  string_value VARCHAR (64) ,
+  del TINYINT NOT NULL DEFAULT 0 COMMENT '删除标志',
+  PRIMARY KEY (id)
+);
