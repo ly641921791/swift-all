@@ -107,13 +107,13 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public T selectRecordByColumn(String column, Object value) {
-        return mapper.selectRecordByColumn(column, value);
+    public T findOneByColumn(String column, Object value) {
+        return mapper.findOneByColumn(column, value);
     }
 
     @Override
-    public List<T> selectRecordsByColumn(String column, Object value) {
-        return mapper.selectRecordsByColumn(column, value);
+    public List<T> findAllByColumn(String column, Object value) {
+        return mapper.findAllByColumn(column, value);
     }
 
 }

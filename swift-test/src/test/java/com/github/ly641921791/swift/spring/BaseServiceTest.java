@@ -97,4 +97,10 @@ public class BaseServiceTest {
         fooWithAnnotationService.findAll();
     }
 
+    @Test
+    public void testFindAllByColumn() {
+        fooService.findAllByColumn("id",1);
+        fooWithAnnotationService.findAllByColumn("id",1);
+    }
+
 }

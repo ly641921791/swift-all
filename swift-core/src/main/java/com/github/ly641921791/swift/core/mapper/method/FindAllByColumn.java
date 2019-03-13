@@ -9,13 +9,13 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
  * Target sql script ：<script>SELECT %s FROM %s WHERE ${c} = #{v}</script>
  *
  * @author ly
- * @since 2019-02-25 13:58
+ * @since 1.0.0
  **/
-public class SelectRecordsByColumn extends AbstractSelectMethodResolver {
+public class FindAllByColumn extends AbstractSelectMethodResolver {
 
     @Override
     protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        sqlScript.WHERE("${c} = #{v}");
+        sqlScript.WHERE("`${c}` = #{v}");
         handlerDeleteColumn(sqlScript, table, configuration);
     }
 

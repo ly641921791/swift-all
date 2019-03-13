@@ -13,6 +13,12 @@ import java.util.List;
  */
 public interface IService<T, ID> extends BaseMethod<T, ID> {
 
+    /**
+     * Save all records
+     *
+     * @param entities records
+     * @return null
+     */
     List<T> saveAll(Iterable<T> entities);
 
 }

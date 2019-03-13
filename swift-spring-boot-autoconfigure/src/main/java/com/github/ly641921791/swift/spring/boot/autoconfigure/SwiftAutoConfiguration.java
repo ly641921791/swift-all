@@ -8,8 +8,8 @@ import com.github.ly641921791.swift.core.mapper.method.FindAllById;
 import com.github.ly641921791.swift.core.mapper.method.Insert;
 import com.github.ly641921791.swift.core.mapper.method.Select;
 import com.github.ly641921791.swift.core.mapper.method.SelectById;
-import com.github.ly641921791.swift.core.mapper.method.SelectRecordByColumn;
-import com.github.ly641921791.swift.core.mapper.method.SelectRecordsByColumn;
+import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
+import com.github.ly641921791.swift.core.mapper.method.FindAllByColumn;
 import com.github.ly641921791.swift.core.mapper.method.Update;
 import com.github.ly641921791.swift.core.mapper.method.UpdateById;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
@@ -139,8 +139,8 @@ public class SwiftAutoConfiguration implements InitializingBean {
         configuration.addMapperMethodResolver(new FindAllById());
         configuration.addMapperMethodResolver(new Select());
         configuration.addMapperMethodResolver(new SelectById());
-        configuration.addMapperMethodResolver(new SelectRecordByColumn());
-        configuration.addMapperMethodResolver(new SelectRecordsByColumn());
+        configuration.addMapperMethodResolver(new FindOneByColumn());
+        configuration.addMapperMethodResolver(new FindAllByColumn());
 
         factory.setConfiguration(configuration);
     }

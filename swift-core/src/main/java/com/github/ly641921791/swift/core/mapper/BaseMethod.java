@@ -113,7 +113,7 @@ public interface BaseMethod<T, ID> {
      * @param value  值
      * @return 符合条件记录
      */
-    T selectRecordByColumn(@Param("c") String column, @Param("v") Object value);
+    T findOneByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
 
     /**
      * 根据指定列查询记录
@@ -122,6 +122,6 @@ public interface BaseMethod<T, ID> {
      * @param value  值
      * @return 符合条件记录
      */
-    List<T> selectRecordsByColumn(@Param("c") String column, @Param("v") Object value);
+    List<T> findAllByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
 
 }
