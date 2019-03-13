@@ -3,6 +3,7 @@ package com.github.ly641921791.swift.spring;
 import com.github.ly641921791.swift.core.mapper.BaseMapper;
 import com.github.ly641921791.swift.core.mapper.method.Insert;
 import com.github.ly641921791.swift.core.mapper.param.Condition;
+import com.github.ly641921791.swift.core.util.ClassUtils;
 import com.github.ly641921791.swift.core.util.StringUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -39,7 +40,8 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<T> saveAll(Iterable<T> entities) {
-        String sqlStatement = mapper.getClass().getName() + "." + StringUtils.toUpperCamel(Insert.class.getSimpleName());
+        Class mapperInterface = (Class) ClassUtils.getSuperclassGenericType(getClass())[1];
+        String sqlStatement = mapperInterface.getName() + "." + StringUtils.toLowerCamel(Insert.class.getSimpleName());
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
             entities.forEach(e -> sqlSession.insert(sqlStatement, e));
             sqlSession.flushStatements();
@@ -71,7 +73,7 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public int updateById(T p, Object id) {
+    public int updateById(T p, ID id) {
         if (id == null) {
             return 0;
         }
@@ -97,7 +99,7 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public T selectById(Object id) {
+    public T selectById(ID id) {
         if (id == null) {
             return null;
         }

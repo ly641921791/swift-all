@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    schema: classpath:/sql/schema.sql
+    data: classpath:/sql/data.sql
+
+swift:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true

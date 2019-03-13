@@ -9,6 +9,16 @@ import org.apache.ibatis.jdbc.SQL;
 public class SqlScript extends org.apache.ibatis.jdbc.SQL {
 
     @Override
+    public SQL DELETE_FROM(String table) {
+        return super.DELETE_FROM(String.format("`%s`", table));
+    }
+
+    @Override
+    public SQL UPDATE(String table) {
+        return super.UPDATE(String.format("`%s`", table));
+    }
+
+    @Override
     public SQL SELECT(String column) {
         return super.SELECT(String.format("`%s`", column));
     }
@@ -39,7 +49,7 @@ public class SqlScript extends org.apache.ibatis.jdbc.SQL {
     }
 
     public void WHERE_EQ(String column, String value) {
-        super.WHERE("`%s` = %s", column, value);
+        super.WHERE(String.format("`%s` = %s", column, value));
     }
 
     public void WHERE_NE(String column, String value) {

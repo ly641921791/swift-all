@@ -22,6 +22,32 @@
         <module>swift-spring</module>
         <module>swift-spring-boot-autoconfigure</module>
         <module>swift-spring-boot-starter</module>
+        <module>swift-test</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.ly641921791</groupId>
+                <artifactId>swift-core</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ly641921791</groupId>
+                <artifactId>swift-spring</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ly641921791</groupId>
+                <artifactId>swift-spring-boot-autoconfigure</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ly641921791</groupId>
+                <artifactId>swift-spring-boot-starter</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

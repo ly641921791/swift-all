@@ -17,7 +17,6 @@
         <dependency>
             <groupId>com.github.ly641921791</groupId>
             <artifactId>swift-spring</artifactId>
-            <version>1.0.0</version>
             <optional>true</optional>
         </dependency>
         <dependency>

@@ -1,25 +1,36 @@
 package com.github.ly641921791.swift.core.mapper.method;
 
+import com.github.ly641921791.swift.core.mapper.AbstractUpdateMethodResolver;
 import com.github.ly641921791.swift.core.metadata.Table;
+import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 
-import static com.github.ly641921791.swift.core.metadata.Table.DEFAULT_KEY_COLUMN;
-import static com.github.ly641921791.swift.core.metadata.Table.DEFAULT_KEY_PROPERTY;
-
 /**
+ * <script>UPDATE table <set>%s</set> WHERE id = id</script>
+ *
+ * <if test="p.%s!=null">%s=#{p.%s},</if>
+ *
  * @author ly
  * @since 2019-01-28 09:55
  **/
-public class UpdateById extends Update {
-
-    public static final String UPDATE = "<script>UPDATE %s <set>%s</set> WHERE %s = #{%s}</script>";
+public class UpdateById extends AbstractUpdateMethodResolver {
 
     @Override
     public String buildSqlScript(Table table, SwiftConfiguration configuration) {
-        if (table.isCustomized()) {
-            return String.format(UPDATE, table.getName(), getSetSql(table), table.getKeyColumn(), table.getKeyProperty());
-        }
-        return String.format(UPDATE, table.getName(), getSetSql(table), DEFAULT_KEY_COLUMN, DEFAULT_KEY_PROPERTY);
+
+        StringBuilder set = new StringBuilder();
+        table.getColumns().forEach(column -> {
+            if (column.isExists()) {
+                set.append(String.format(",<if test=\"p.%s!=null\">`%s` = #{p.%s}</if>", column.getJavaField().getName(), column.getName(), column.getJavaField().getName()));
+            }
+        });
+
+        String  sql = String.format("<script>UPDATE `%s` <set>%s</set> WHERE id = #{id}</script>",table.getName(), set.substring(1));
+        return sql;
+    }
+
+    @Override
+    protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
     }
 
 }

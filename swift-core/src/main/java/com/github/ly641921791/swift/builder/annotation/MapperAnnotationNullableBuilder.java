@@ -312,112 +312,117 @@ public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
 
         boolean replaceable = false;
         MapperMethodResolver resolver = null;
-        if (sqlSource == null) {
-            resolver = configuration.getMapperMethodResolver(method);
-            sqlSource = getSqlSourceFromTable(method, parameterTypeClass, languageDriver, resolver);
-            replaceable = true;
-        }
-
-        if (sqlSource != null) {
-            Options options = method.getAnnotation(Options.class);
-            final String mappedStatementId = type.getName() + "." + method.getName();
-            Integer fetchSize = null;
-            Integer timeout = null;
-            StatementType statementType = StatementType.PREPARED;
-            ResultSetType resultSetType = null;
-            SqlCommandType sqlCommandType = getSqlCommandType(method);
-
-            if (SqlCommandType.UNKNOWN == sqlCommandType && resolver != null) {
-                sqlCommandType = resolver.getSqlCommandType();
+        try {
+            if (sqlSource == null) {
+                resolver = configuration.getMapperMethodResolver(method);
+                sqlSource = getSqlSourceFromTable(method, parameterTypeClass, languageDriver, resolver);
+                replaceable = true;
             }
 
-            boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
-            boolean flushCache = !isSelect;
-            boolean useCache = isSelect;
+            if (sqlSource != null) {
+                Options options = method.getAnnotation(Options.class);
+                final String mappedStatementId = type.getName() + "." + method.getName();
+                Integer fetchSize = null;
+                Integer timeout = null;
+                StatementType statementType = StatementType.PREPARED;
+                ResultSetType resultSetType = null;
+                SqlCommandType sqlCommandType = getSqlCommandType(method);
 
-            KeyGenerator keyGenerator;
-            String keyProperty = null;
-            String keyColumn = null;
-            if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                // first check for SelectKey annotation - that overrides everything else
-                SelectKey selectKey = method.getAnnotation(SelectKey.class);
-                if (selectKey != null) {
-                    keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
-                    keyProperty = selectKey.keyProperty();
-                } else if (options == null) {
+                if (SqlCommandType.UNKNOWN == sqlCommandType && resolver != null) {
+                    sqlCommandType = resolver.getSqlCommandType();
+                }
 
-                    if (table != null && table.isCustomized() && resolver != null) {
-                        keyGenerator = resolver.getKeyGenerator(table);
-                        keyProperty = resolver.getKeyProperty(table);
-                        keyColumn = resolver.getKeyColumn(table);
+                boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+                boolean flushCache = !isSelect;
+                boolean useCache = isSelect;
+
+                KeyGenerator keyGenerator;
+                String keyProperty = null;
+                String keyColumn = null;
+                if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
+                    // first check for SelectKey annotation - that overrides everything else
+                    SelectKey selectKey = method.getAnnotation(SelectKey.class);
+                    if (selectKey != null) {
+                        keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
+                        keyProperty = selectKey.keyProperty();
+                    } else if (options == null) {
+
+                        if (table != null && table.getTableClassAnnotation() != null && resolver != null) {
+                            keyGenerator = resolver.getKeyGenerator(table);
+                            keyProperty = resolver.getKeyProperty(table);
+                            keyColumn = resolver.getKeyColumn(table);
+                        } else {
+                            keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+                        }
+
                     } else {
-                        keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+                        keyGenerator = options.useGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+                        keyProperty = options.keyProperty();
+                        keyColumn = options.keyColumn();
                     }
-
                 } else {
-                    keyGenerator = options.useGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
-                    keyProperty = options.keyProperty();
-                    keyColumn = options.keyColumn();
+                    keyGenerator = NoKeyGenerator.INSTANCE;
                 }
-            } else {
-                keyGenerator = NoKeyGenerator.INSTANCE;
-            }
 
-            if (options != null) {
-                if (Options.FlushCachePolicy.TRUE.equals(options.flushCache())) {
-                    flushCache = true;
-                } else if (Options.FlushCachePolicy.FALSE.equals(options.flushCache())) {
-                    flushCache = false;
-                }
-                useCache = options.useCache();
-                fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; //issue #348
-                timeout = options.timeout() > -1 ? options.timeout() : null;
-                statementType = options.statementType();
-                resultSetType = options.resultSetType();
-            }
-
-            String resultMapId = null;
-            ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
-            if (resultMapAnnotation != null) {
-                String[] resultMaps = resultMapAnnotation.value();
-                StringBuilder sb = new StringBuilder();
-                for (String resultMap : resultMaps) {
-                    if (sb.length() > 0) {
-                        sb.append(",");
+                if (options != null) {
+                    if (Options.FlushCachePolicy.TRUE.equals(options.flushCache())) {
+                        flushCache = true;
+                    } else if (Options.FlushCachePolicy.FALSE.equals(options.flushCache())) {
+                        flushCache = false;
                     }
-                    sb.append(resultMap);
+                    useCache = options.useCache();
+                    fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; //issue #348
+                    timeout = options.timeout() > -1 ? options.timeout() : null;
+                    statementType = options.statementType();
+                    resultSetType = options.resultSetType();
                 }
-                resultMapId = sb.toString();
-            } else if (isSelect) {
-                resultMapId = parseResultMap(method);
-            }
 
-            assistant.addMappedStatement(
-                    mappedStatementId,
-                    sqlSource,
-                    statementType,
-                    sqlCommandType,
-                    fetchSize,
-                    timeout,
-                    // ParameterMapID
-                    null,
-                    parameterTypeClass,
-                    resultMapId,
-                    getReturnType(method),
-                    resultSetType,
-                    flushCache,
-                    useCache,
-                    // TODO gcode issue #577
-                    false,
-                    keyGenerator,
-                    keyProperty,
-                    keyColumn,
-                    // DatabaseID
-                    null,
-                    languageDriver,
-                    // ResultSets
-                    options != null ? nullOrEmpty(options.resultSets()) : null,
-                    replaceable);
+                String resultMapId = null;
+                ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
+                if (resultMapAnnotation != null) {
+                    String[] resultMaps = resultMapAnnotation.value();
+                    StringBuilder sb = new StringBuilder();
+                    for (String resultMap : resultMaps) {
+                        if (sb.length() > 0) {
+                            sb.append(",");
+                        }
+                        sb.append(resultMap);
+                    }
+                    resultMapId = sb.toString();
+                } else if (isSelect) {
+                    resultMapId = parseResultMap(method);
+                }
+                assistant.addMappedStatement(
+                        mappedStatementId,
+                        sqlSource,
+                        statementType,
+                        sqlCommandType,
+                        fetchSize,
+                        timeout,
+                        // ParameterMapID
+                        null,
+                        parameterTypeClass,
+                        resultMapId,
+                        getReturnType(method),
+                        resultSetType,
+                        flushCache,
+                        useCache,
+                        // TODO gcode issue #577
+                        false,
+                        keyGenerator,
+                        keyProperty,
+                        keyColumn,
+                        // DatabaseID
+                        null,
+                        languageDriver,
+                        // ResultSets
+                        options != null ? nullOrEmpty(options.resultSets()) : null,
+                        replaceable);
+            }
+        } finally {
+            if (resolver != null) {
+                resolver.close();
+            }
         }
     }
 

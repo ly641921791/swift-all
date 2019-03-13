@@ -7,23 +7,25 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 /**
- * 查询类型方法解析器
+ * <script>UPDATE table <set>%s</set></script>
+ *
+ * <if test="p.%s!=null">%s=#{p.%s},</if>
  *
  * @author ly
  * @since 1.0.0
  **/
-public abstract class AbstractSelectMethodResolver implements MapperMethodResolver {
+public abstract class AbstractUpdateMethodResolver implements MapperMethodResolver {
 
     @Override
     public SqlCommandType getSqlCommandType() {
-        return SqlCommandType.SELECT;
+        return SqlCommandType.UPDATE;
     }
 
     @Override
     public String buildSqlScript(Table table, SwiftConfiguration configuration) {
         SqlScript sqlScript = new SqlScript();
+        sqlScript.UPDATE(table.getName());
         handlerColumn(sqlScript, table, configuration);
-        sqlScript.FROM(table.getName());
         handlerWhere(sqlScript, table, configuration);
         return sqlScript.toString();
     }
@@ -36,13 +38,13 @@ public abstract class AbstractSelectMethodResolver implements MapperMethodResolv
      * @param configuration configuration
      */
     protected void handlerColumn(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
+        StringBuilder set = new StringBuilder();
         table.getColumns().forEach(column -> {
-            if (column.getSelectValue().isEmpty()) {
-                sqlScript.SELECT(column.getName());
-            } else {
-                sqlScript.SELECT_SCRIPT_AS(column.getSelectValue(), column.getName());
+            if (column.isExists()) {
+                set.append(String.format("<if test=\"p.%s!=null\">,`%s` = #{p.%s}</if>", column.getJavaField().getName(), column.getName(), column.getJavaField().getName()));
             }
         });
+        sqlScript.SET(set.substring(1));
     }
 
     /**

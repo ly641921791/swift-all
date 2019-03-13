@@ -42,24 +42,19 @@ public class Table {
      */
     private List<Column> columns = new ArrayList<>();
 
-    /**
-     * 是否通过 TableClass 注解定制过
-     */
-    private boolean customized;
-
     private TableClass tableClassAnnotation;
-
-    private String deleteColumn;
-
-    private String deleteValue;
-
-    private String existsValue;
 
     private boolean useGeneratedKeys;
 
     private String keyProperty;
 
     private String keyColumn;
+
+    private String deleteColumn;
+
+    private String deleteValue;
+
+    private String existsValue;
 
     public void addColumn(Column column) {
         columns.add(column);
@@ -74,14 +69,20 @@ public class Table {
         // 注解解析
         TableClass tableClassAnnotation = tableClass.getAnnotation(TableClass.class);
         if (tableClassAnnotation != null) {
-            table.setCustomized(true);
             table.setTableClassAnnotation(tableClassAnnotation);
+            table.setUseGeneratedKeys(tableClassAnnotation.useGeneratedKeys());
+            table.setKeyProperty(tableClassAnnotation.keyProperty());
+            table.setKeyColumn(tableClassAnnotation.keyColumn());
             table.setDeleteColumn(tableClassAnnotation.deleteColumn());
             table.setDeleteValue(tableClassAnnotation.deleteValue());
             table.setExistsValue(tableClassAnnotation.existsValue());
-            table.setKeyColumn(tableClassAnnotation.keyColumn());
-            table.setKeyProperty(tableClassAnnotation.keyProperty());
-            table.setUseGeneratedKeys(tableClassAnnotation.useGeneratedKeys());
+        } else {
+            table.setUseGeneratedKeys(false);
+            table.setKeyProperty(DEFAULT_KEY_PROPERTY);
+            table.setKeyColumn(DEFAULT_KEY_COLUMN);
+            table.setDeleteColumn("");
+            table.setDeleteValue("");
+            table.setExistsValue("");
         }
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);

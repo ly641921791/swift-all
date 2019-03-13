@@ -12,6 +12,9 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import java.util.List;
 
 /**
+ *
+ * TODO INSERT INTO foo ( del ) VALUES ( ? )   del加引号
+ *
  * @author ly
  * @since 2019-01-07 18:54
  **/

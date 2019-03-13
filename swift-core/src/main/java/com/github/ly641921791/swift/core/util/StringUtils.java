@@ -45,6 +45,7 @@ public class StringUtils {
 
         if (toUpperCaseFlag) {
             sb.append(Character.toUpperCase(cs[0]));
+            toUpperCaseFlag = false;
         } else {
             sb.append(Character.toLowerCase(cs[0]));
         }
@@ -113,6 +114,14 @@ public class StringUtils {
 
     public static boolean isNotEmpty(String str) {
         return (str != null && !str.isEmpty());
+    }
+
+    public static boolean isNotEmpty(String... str) {
+        boolean result = true;
+        for (String s : str) {
+            result &= isNotEmpty(s);
+        }
+        return result;
     }
 
 }

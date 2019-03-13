@@ -6,20 +6,27 @@ import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.SqlCommandType;
 
+import java.io.Closeable;
+
 /**
  * Mapper方法解析器
+ * <p>
+ * P_A : param alias
+ * T_ : tag
  *
  * @author ly
  */
-public interface MapperMethodResolver {
+public interface MapperMethodResolver extends Closeable {
 
-    String VALUE_PARAM = "v";
+    String P_A_VALUE = "v";
 
-    String COLUMN_PARAM = "c";
+    String P_A_COLUMN = "c";
 
-    String CONDITION_PARAM = "c";
+    String P_A_CONDITION = "c";
 
-    String WHERE_TAG = "<where>${" + CONDITION_PARAM + ".where}</where>";
+    String P_A_ID = "id";
+
+    String T_WHERE = "<where>${" + P_A_CONDITION + ".where}</where>";
 
     /**
      * 获得SqlCommandType
@@ -47,6 +54,10 @@ public interface MapperMethodResolver {
 
     default String getKeyColumn(Table table) {
         return null;
+    }
+
+    @Override
+    default void close() {
     }
 
 }

@@ -7,7 +7,7 @@ import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 
 /**
- * Target sql script : <script>SELECT %s FROM %s WHERE id IN <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>
+ * Target sql script : <script>SELECT column FROM table WHERE id IN <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>
  *
  * @author ly
  * @since 2019-03-11 16:35
@@ -24,6 +24,7 @@ public class FindAllById extends AbstractSelectMethodResolver {
 
     @Override
     protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
+        sqlScript.WHERE("id IN <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach>");
     }
 
 }

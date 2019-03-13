@@ -7,9 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Collection;
 import java.util.List;
 
-import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.COLUMN_PARAM;
-import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.CONDITION_PARAM;
-import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.VALUE_PARAM;
+import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.*;
 
 /**
  * IService通过继承BaseMapper得到BaseMethod，会导致BaseService不能注入Mapper，
@@ -36,7 +34,7 @@ public interface BaseMethod<T, ID> {
      * @param c condition
      * @return 删除记录数
      */
-    int delete(@Param(CONDITION_PARAM) Condition c);
+    int delete(@Param(P_A_CONDITION) Condition c);
 
     /**
      * 根据id删除记录
@@ -53,7 +51,7 @@ public interface BaseMethod<T, ID> {
      * @param value  值
      * @return 删除记录数
      */
-    int deleteByColumn(@Param(COLUMN_PARAM) String column, @Param(VALUE_PARAM) Object value);
+    int deleteByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
 
     /**
      * 更新记录
@@ -73,7 +71,7 @@ public interface BaseMethod<T, ID> {
      * @param id id
      * @return 更新记录数
      */
-    int updateById(@Param("p") T p, @Param("id") Object id);
+    int updateById(@Param("p") T p, @Param("id") ID id);
 
     /**
      * Find all records
@@ -88,7 +86,7 @@ public interface BaseMethod<T, ID> {
      * @param ids ids
      * @return all records
      */
-    List<T> findAllById(Collection<ID> ids);
+    List<T> findAllById(@Param("ids") Collection<ID> ids);
 
     /**
      * 查询记录
@@ -106,7 +104,7 @@ public interface BaseMethod<T, ID> {
      * @param id id
      * @return 符合条件记录
      */
-    T selectById(Object id);
+    T selectById(@Param(P_A_ID) ID id);
 
     /**
      * 根据指定列查询记录
