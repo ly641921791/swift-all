@@ -1,16 +1,17 @@
 package com.github.ly641921791.swift.spring;
 
+import com.github.ly641921791.swift.core.mapper.param.Condition;
 import com.github.ly641921791.swift.test.FooApplication;
 import com.github.ly641921791.swift.test.service.FooService;
 import com.github.ly641921791.swift.test.service.FooWithAnnotationService;
 import com.github.ly641921791.swift.test.table.Foo;
 import com.github.ly641921791.swift.test.table.FooWithAnnotation;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 /**
  * @author ly
- * @since 2019-03-13 09:33
+ * @since 1.0.0
  **/
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = FooApplication.class)
@@ -32,18 +33,26 @@ public class BaseServiceTest {
     private FooWithAnnotationService fooWithAnnotationService;
 
     @Test
+    public void deleteTestSuccess() {
+        Condition condition = new Condition();
+        condition.eq(Foo.ID, 1L);
+        condition.eq(Foo.STRING_VALUE, "foo");
+
+        fooService.delete(condition);
+        fooWithAnnotationService.delete(condition);
+    }
+
+    @Test
     public void testInsert() {
         Foo foo = new Foo();
         foo.setDel(0);
         int count = fooService.insert(foo);
-
-        Assert.state(count == 1);
+        Assert.assertEquals(count, 1);
 
         FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
         foo.setDel(0);
         count = fooWithAnnotationService.insert(fooWithAnnotation);
-
-        Assert.state(count == 1);
+        Assert.assertEquals(count, 1);
     }
 
     @Test
@@ -61,7 +70,7 @@ public class BaseServiceTest {
 
         List<Foo> fooNewList = fooService.findAllById(idList);
 
-        Assert.state(fooNewList.size() == fooList.size());
+        Assert.assertEquals(fooNewList.size(), fooList.size());
     }
 
     @Test
@@ -70,15 +79,13 @@ public class BaseServiceTest {
         Foo foo = fooList.get(0);
         fooService.deleteById(foo.getId());
         foo = fooService.selectById(foo.getId());
-
-        Assert.isNull(foo);
+        Assert.assertNull(foo);
 
         List<FooWithAnnotation> fooWithAnnotationList = fooWithAnnotationService.findAll();
         FooWithAnnotation fooWithAnnotation = fooWithAnnotationList.get(0);
         fooWithAnnotationService.deleteById(fooWithAnnotation.getId());
         fooWithAnnotation = fooWithAnnotationService.selectById(fooWithAnnotation.getId());
-
-        Assert.isNull(fooWithAnnotation);
+        Assert.assertNull(fooWithAnnotation);
     }
 
     @Test
@@ -92,8 +99,7 @@ public class BaseServiceTest {
         fooService.updateById(targetProperty, beforeUpdate.getId());
 
         Foo afterUpdate = fooService.selectById(beforeUpdate.getId());
-
-        Assert.state(targetProperty.getStringValue().equals(afterUpdate.getStringValue()));
+        Assert.assertEquals(targetProperty.getStringValue(), afterUpdate.getStringValue());
     }
 
     @Test

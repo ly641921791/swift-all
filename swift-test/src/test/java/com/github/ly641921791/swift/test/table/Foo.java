@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 public class Foo {
 
+    public static final String ID = "id";
+    public static final String STRING_VALUE = "string_value";
+
     private Long id;
 
     private String stringValue;

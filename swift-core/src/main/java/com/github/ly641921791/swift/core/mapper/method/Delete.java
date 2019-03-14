@@ -25,6 +25,9 @@ public class Delete extends AbstractDeleteMethodResolver {
 
     @Override
     protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
+        if (SqlCommandType.UPDATE.equals(getSqlCommandType())) {
+            return;
+        }
         handlerDeleteColumn(sqlScript, table, configuration);
     }
 
