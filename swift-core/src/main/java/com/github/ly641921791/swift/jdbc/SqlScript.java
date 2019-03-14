@@ -23,6 +23,10 @@ public class SqlScript extends org.apache.ibatis.jdbc.SQL {
         return super.SELECT(String.format("`%s`", column));
     }
 
+    public SQL SET_COLUMN(String column, String value) {
+        return SET(String.format("`%s` = %s", column, value));
+    }
+
     /**
      * Used to alias column. For example: SELECT `name` AS `user_name` FROM user
      *

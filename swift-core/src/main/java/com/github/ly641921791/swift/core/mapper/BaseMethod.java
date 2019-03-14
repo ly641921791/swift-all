@@ -73,6 +73,8 @@ public interface BaseMethod<T, ID> {
      */
     int updateById(@Param("p") T p, @Param("id") ID id);
 
+    int updateColumnById(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value, @Param("id") ID id);
+
     /**
      * Find all records
      *

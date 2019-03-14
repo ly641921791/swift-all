@@ -1,7 +1,7 @@
 package com.github.ly641921791.swift.core.util;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
 
 /**
  * @author ly
@@ -11,12 +11,12 @@ public class StringUtilsTest {
 
     @Test
     public void testToUpperCamel() {
-        Assert.state("SaveAll".equals(StringUtils.toUpperCamel("saveAll")));
+        Assert.assertEquals("SaveAll", StringUtils.toUpperCamel("saveAll"));
     }
 
     @Test
     public void testToLowerCamel() {
-        Assert.state("saveAll".equals(StringUtils.toLowerCamel("SaveAll")));
+        Assert.assertEquals("saveAll", StringUtils.toLowerCamel("SaveAll"));
     }
 
 }

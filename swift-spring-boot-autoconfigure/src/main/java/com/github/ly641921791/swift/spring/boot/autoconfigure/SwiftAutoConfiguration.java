@@ -4,14 +4,15 @@ import com.github.ly641921791.swift.core.mapper.method.Delete;
 import com.github.ly641921791.swift.core.mapper.method.DeleteByColumn;
 import com.github.ly641921791.swift.core.mapper.method.DeleteById;
 import com.github.ly641921791.swift.core.mapper.method.FindAll;
+import com.github.ly641921791.swift.core.mapper.method.FindAllByColumn;
 import com.github.ly641921791.swift.core.mapper.method.FindAllById;
+import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
 import com.github.ly641921791.swift.core.mapper.method.Insert;
 import com.github.ly641921791.swift.core.mapper.method.Select;
 import com.github.ly641921791.swift.core.mapper.method.SelectById;
-import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
-import com.github.ly641921791.swift.core.mapper.method.FindAllByColumn;
 import com.github.ly641921791.swift.core.mapper.method.Update;
 import com.github.ly641921791.swift.core.mapper.method.UpdateById;
+import com.github.ly641921791.swift.core.mapper.method.UpdateColumnById;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
@@ -141,6 +142,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
         configuration.addMapperMethodResolver(new SelectById());
         configuration.addMapperMethodResolver(new FindOneByColumn());
         configuration.addMapperMethodResolver(new FindAllByColumn());
+        configuration.addMapperMethodResolver(new UpdateColumnById());
 
         factory.setConfiguration(configuration);
     }

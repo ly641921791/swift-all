@@ -81,6 +81,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
+    public int updateColumnById(String column, Object value, ID id) {
+        return mapper.updateColumnById(column, value, id);
+    }
+
+    @Override
     public List<T> findAll() {
         return mapper.findAll();
     }

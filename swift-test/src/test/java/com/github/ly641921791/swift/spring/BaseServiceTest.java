@@ -43,6 +43,12 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void updateColumnByIdTestSuccess() {
+        fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
+        fooWithAnnotationService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
+    }
+
+    @Test
     public void testInsert() {
         Foo foo = new Foo();
         foo.setDel(0);
