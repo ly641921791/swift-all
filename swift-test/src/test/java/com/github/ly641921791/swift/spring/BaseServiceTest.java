@@ -16,7 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author ly
@@ -82,10 +81,22 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void updateByIdTestSuccess() {
+        FooWithAnnotation targetProperty = new FooWithAnnotation();
+        targetProperty.setStringValue("updateSuccess");
+        fooService.updateById(targetProperty, 3L);
+        Assert.assertEquals(fooService.findById(3L).getStringValue(), "updateSuccess");
+
+        fooWithAnnotationService.updateById(targetProperty, 3L);
+        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), "updateSuccess");
+    }
+
+    @Test
     public void updateColumnByIdTestSuccess() {
         fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
         fooWithAnnotationService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
     }
+
 
     // ---
 
@@ -100,20 +111,6 @@ public class BaseServiceTest {
         foo.setDel(0);
         count = fooWithAnnotationService.insert(fooWithAnnotation);
         Assert.assertEquals(count, 1);
-    }
-
-    @Test
-    public void testUpdateById() {
-        List<Foo> fooList = fooService.findAll();
-        Foo beforeUpdate = fooList.get(0);
-
-        Foo targetProperty = new Foo();
-        targetProperty.setId(beforeUpdate.getId());
-        targetProperty.setStringValue(UUID.randomUUID().toString());
-        fooService.updateById(targetProperty, beforeUpdate.getId());
-
-        Foo afterUpdate = fooService.findById(beforeUpdate.getId());
-        Assert.assertEquals(targetProperty.getStringValue(), afterUpdate.getStringValue());
     }
 
     @Test
