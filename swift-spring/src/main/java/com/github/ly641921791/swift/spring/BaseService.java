@@ -39,14 +39,17 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<T> saveAll(Iterable<T> entities) {
+    public int saveAll(Collection<T> entities) {
+        if (CollectionUtils.isEmpty(entities)) {
+            return 0;
+        }
         Class mapperInterface = (Class) ClassUtils.getSuperclassGenericType(getClass())[1];
         String sqlStatement = mapperInterface.getName() + "." + StringUtils.toLowerCamel(Insert.class.getSimpleName());
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
             entities.forEach(e -> sqlSession.insert(sqlStatement, e));
             sqlSession.flushStatements();
         }
-        return null;
+        return entities.size();
     }
 
     @Override
@@ -104,11 +107,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public T selectById(ID id) {
+    public T findById(ID id) {
         if (id == null) {
             return null;
         }
-        return mapper.selectById(id);
+        return mapper.findById(id);
     }
 
     @Override

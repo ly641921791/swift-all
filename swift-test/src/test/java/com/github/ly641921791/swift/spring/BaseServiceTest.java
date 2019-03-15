@@ -43,26 +43,28 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void updateColumnByIdTestSuccess() {
-        fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
-        fooWithAnnotationService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
+    public void deleteByColumnTestSuccess() {
+        fooService.deleteByColumn(Foo.ID, 1L);
+        fooWithAnnotationService.deleteByColumn(Foo.ID, 1L);
     }
 
     @Test
-    public void testInsert() {
-        Foo foo = new Foo();
-        foo.setDel(0);
-        int count = fooService.insert(foo);
-        Assert.assertEquals(count, 1);
+    public void deleteByIdTestSuccess() {
+        fooService.deleteById(2L);
+        Assert.assertNull(fooService.findById(2L));
 
-        FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
-        foo.setDel(0);
-        count = fooWithAnnotationService.insert(fooWithAnnotation);
-        Assert.assertEquals(count, 1);
+        fooWithAnnotationService.deleteById(2L);
+        Assert.assertNull(fooWithAnnotationService.findById(2L));
     }
 
     @Test
-    public void testSaveAll() {
+    public void findByIdTestSuccess() {
+        Assert.assertNotNull(fooService.findById(1L));
+        Assert.assertNotNull(fooWithAnnotationService.findById(1L));
+    }
+
+    @Test
+    public void saveAllTestSuccess() {
         List<Long> idList = Arrays.asList(1001L, 1002L);
         final List<Foo> fooList = new ArrayList<>();
         idList.forEach(id -> {
@@ -80,18 +82,24 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void testDeleteById() {
-        List<Foo> fooList = fooService.findAll();
-        Foo foo = fooList.get(0);
-        fooService.deleteById(foo.getId());
-        foo = fooService.selectById(foo.getId());
-        Assert.assertNull(foo);
+    public void updateColumnByIdTestSuccess() {
+        fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
+        fooWithAnnotationService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
+    }
 
-        List<FooWithAnnotation> fooWithAnnotationList = fooWithAnnotationService.findAll();
-        FooWithAnnotation fooWithAnnotation = fooWithAnnotationList.get(0);
-        fooWithAnnotationService.deleteById(fooWithAnnotation.getId());
-        fooWithAnnotation = fooWithAnnotationService.selectById(fooWithAnnotation.getId());
-        Assert.assertNull(fooWithAnnotation);
+    // ---
+
+    @Test
+    public void testInsert() {
+        Foo foo = new Foo();
+        foo.setDel(0);
+        int count = fooService.insert(foo);
+        Assert.assertEquals(count, 1);
+
+        FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
+        foo.setDel(0);
+        count = fooWithAnnotationService.insert(fooWithAnnotation);
+        Assert.assertEquals(count, 1);
     }
 
     @Test
@@ -104,7 +112,7 @@ public class BaseServiceTest {
         targetProperty.setStringValue(UUID.randomUUID().toString());
         fooService.updateById(targetProperty, beforeUpdate.getId());
 
-        Foo afterUpdate = fooService.selectById(beforeUpdate.getId());
+        Foo afterUpdate = fooService.findById(beforeUpdate.getId());
         Assert.assertEquals(targetProperty.getStringValue(), afterUpdate.getStringValue());
     }
 

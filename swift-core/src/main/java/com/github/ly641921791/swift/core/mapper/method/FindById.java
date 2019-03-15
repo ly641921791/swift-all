@@ -14,7 +14,7 @@ import static com.github.ly641921791.swift.core.metadata.Table.DEFAULT_KEY_PROPE
  * @author ly
  * @since 2019-01-28 09:42
  **/
-public class SelectById extends AbstractSelectMethodResolver {
+public class FindById extends AbstractSelectMethodResolver {
 
     @Override
     protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {

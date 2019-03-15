@@ -9,7 +9,7 @@ import com.github.ly641921791.swift.core.mapper.method.FindAllById;
 import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
 import com.github.ly641921791.swift.core.mapper.method.Insert;
 import com.github.ly641921791.swift.core.mapper.method.Select;
-import com.github.ly641921791.swift.core.mapper.method.SelectById;
+import com.github.ly641921791.swift.core.mapper.method.FindById;
 import com.github.ly641921791.swift.core.mapper.method.Update;
 import com.github.ly641921791.swift.core.mapper.method.UpdateById;
 import com.github.ly641921791.swift.core.mapper.method.UpdateColumnById;
@@ -139,7 +139,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
         configuration.addMapperMethodResolver(new FindAll());
         configuration.addMapperMethodResolver(new FindAllById());
         configuration.addMapperMethodResolver(new Select());
-        configuration.addMapperMethodResolver(new SelectById());
+        configuration.addMapperMethodResolver(new FindById());
         configuration.addMapperMethodResolver(new FindOneByColumn());
         configuration.addMapperMethodResolver(new FindAllByColumn());
         configuration.addMapperMethodResolver(new UpdateColumnById());

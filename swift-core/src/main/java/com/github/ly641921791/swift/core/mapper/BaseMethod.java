@@ -73,6 +73,14 @@ public interface BaseMethod<T, ID> {
      */
     int updateById(@Param("p") T p, @Param("id") ID id);
 
+    /**
+     * update column by id
+     *
+     * @param column column
+     * @param value  value
+     * @param id     id
+     * @return update count
+     */
     int updateColumnById(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value, @Param("id") ID id);
 
     /**
@@ -91,14 +99,6 @@ public interface BaseMethod<T, ID> {
     List<T> findAllById(@Param("ids") Collection<ID> ids);
 
     /**
-     * 查询记录
-     *
-     * @param c condition
-     * @return 符合条件记录
-     */
-    List<T> select(@Param("c") Condition c);
-
-    /**
      * 根据id查询记录
      * <p>
      * 默认使用id字段，可以通过{@link TableClass#keyColumn()}设置自定义id列
@@ -106,7 +106,15 @@ public interface BaseMethod<T, ID> {
      * @param id id
      * @return 符合条件记录
      */
-    T selectById(@Param(P_A_ID) ID id);
+    T findById(@Param(P_A_ID) ID id);
+
+    /**
+     * 查询记录
+     *
+     * @param c condition
+     * @return 符合条件记录
+     */
+    List<T> select(@Param("c") Condition c);
 
     /**
      * 根据指定列查询记录

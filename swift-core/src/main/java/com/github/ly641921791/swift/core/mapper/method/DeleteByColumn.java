@@ -16,7 +16,7 @@ public class DeleteByColumn extends AbstractDeleteMethodResolver {
 
     @Override
     protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        sqlScript.WHERE("`column` = #{column}");
+        sqlScript.WHERE("`${c}` = #{v}");
     }
 
 }
