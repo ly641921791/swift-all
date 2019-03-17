@@ -57,6 +57,12 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void findAllByIdTestSuccess() {
+        Assert.assertEquals(fooService.findAllById(Arrays.asList(4L, 5L)).size(), 2);
+        Assert.assertEquals(fooWithAnnotationService.findAllById(Arrays.asList(4L, 5L)).size(), 1);
+    }
+
+    @Test
     public void findByIdTestSuccess() {
         Assert.assertNotNull(fooService.findById(1L));
         Assert.assertNotNull(fooWithAnnotationService.findById(1L));
