@@ -16,6 +16,6 @@ public class Foo {
 
     private String stringValue;
 
-    private int del;
+    private Integer del;
 
 }

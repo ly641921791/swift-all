@@ -101,11 +101,12 @@ public class BaseServiceTest {
     public void updateByIdTestSuccess() {
         FooWithAnnotation targetProperty = new FooWithAnnotation();
         targetProperty.setStringValue("updateSuccess");
+
         fooService.updateById(targetProperty, 3L);
-        Assert.assertEquals(fooService.findById(3L).getStringValue(), "updateSuccess");
+        Assert.assertEquals(fooService.findById(3L).getStringValue(), targetProperty.getStringValue());
 
         fooWithAnnotationService.updateById(targetProperty, 3L);
-        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), "updateSuccess");
+        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), targetProperty.getStringValue());
     }
 
     @Test
