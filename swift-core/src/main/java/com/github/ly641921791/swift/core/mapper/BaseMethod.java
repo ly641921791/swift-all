@@ -65,6 +65,16 @@ public interface BaseMethod<T, ID> {
     int update(@Param("p") T p, @Param("c") Condition c);
 
     /**
+     * update by column
+     *
+     * @param p      target property
+     * @param column column
+     * @param value  value
+     * @return update count
+     */
+    int updateByColumn(@Param("p") T p, @Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
+
+    /**
      * 根据id更新记录
      *
      * @param p  property

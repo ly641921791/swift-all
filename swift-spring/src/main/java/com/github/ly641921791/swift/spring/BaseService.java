@@ -76,6 +76,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
+    public int updateByColumn(T p, String column, Object value) {
+        return mapper.updateByColumn(p, column, value);
+    }
+
+    @Override
     public int updateById(T p, ID id) {
         if (id == null) {
             return 0;

@@ -98,6 +98,18 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void updateByColumnTestSuccess() {
+        FooWithAnnotation targetProperty = new FooWithAnnotation();
+        targetProperty.setStringValue("updateSuccess");
+
+        fooService.updateByColumn(targetProperty, Foo.ID, 3L);
+        Assert.assertEquals(fooService.findById(3L).getStringValue(), targetProperty.getStringValue());
+
+        fooWithAnnotationService.updateByColumn(targetProperty, Foo.ID, 3L);
+        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), targetProperty.getStringValue());
+    }
+
+    @Test
     public void updateByIdTestSuccess() {
         FooWithAnnotation targetProperty = new FooWithAnnotation();
         targetProperty.setStringValue("updateSuccess");

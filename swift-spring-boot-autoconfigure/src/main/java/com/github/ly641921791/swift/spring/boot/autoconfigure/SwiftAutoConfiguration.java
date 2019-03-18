@@ -11,6 +11,7 @@ import com.github.ly641921791.swift.core.mapper.method.Insert;
 import com.github.ly641921791.swift.core.mapper.method.Select;
 import com.github.ly641921791.swift.core.mapper.method.FindById;
 import com.github.ly641921791.swift.core.mapper.method.Update;
+import com.github.ly641921791.swift.core.mapper.method.UpdateByColumn;
 import com.github.ly641921791.swift.core.mapper.method.UpdateById;
 import com.github.ly641921791.swift.core.mapper.method.UpdateColumnById;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
@@ -135,6 +136,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
         configuration.addMapperMethodResolver(new DeleteById());
         configuration.addMapperMethodResolver(new DeleteByColumn());
         configuration.addMapperMethodResolver(new Update());
+        configuration.addMapperMethodResolver(new UpdateByColumn());
         configuration.addMapperMethodResolver(new UpdateById());
         configuration.addMapperMethodResolver(new FindAll());
         configuration.addMapperMethodResolver(new FindAllById());
