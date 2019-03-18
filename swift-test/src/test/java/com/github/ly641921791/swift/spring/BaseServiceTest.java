@@ -57,9 +57,20 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void findAllTestSuccess() {
+        Assert.assertTrue(fooService.findAll().size() > fooWithAnnotationService.findAll().size());
+    }
+
+    @Test
+    public void findAllByColumnTestSuccess() {
+        Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, "findAllByColumn").size(), 2);
+        Assert.assertEquals(fooWithAnnotationService.findAllByColumn(Foo.STRING_VALUE, "findAllByColumn").size(), 1);
+    }
+
+    @Test
     public void findAllByIdTestSuccess() {
-        Assert.assertEquals(fooService.findAllById(Arrays.asList(4L, 5L)).size(), 2);
-        Assert.assertEquals(fooWithAnnotationService.findAllById(Arrays.asList(4L, 5L)).size(), 1);
+        Assert.assertEquals(fooService.findAllById(Arrays.asList(8L, 9L)).size(), 2);
+        Assert.assertEquals(fooWithAnnotationService.findAllById(Arrays.asList(8L, 9L)).size(), 1);
     }
 
     @Test
@@ -117,18 +128,6 @@ public class BaseServiceTest {
         foo.setDel(0);
         count = fooWithAnnotationService.insert(fooWithAnnotation);
         Assert.assertEquals(count, 1);
-    }
-
-    @Test
-    public void testFindAll() {
-        fooService.findAll();
-        fooWithAnnotationService.findAll();
-    }
-
-    @Test
-    public void testFindAllByColumn() {
-        fooService.findAllByColumn("id", 1);
-        fooWithAnnotationService.findAllByColumn("id", 1);
     }
 
 }
