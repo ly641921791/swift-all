@@ -33,6 +33,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     private SqlSessionFactory sqlSessionFactory;
 
     @Override
+    public long count() {
+        return mapper.count();
+    }
+
+    @Override
     public int insert(T r) {
         return mapper.insert(r);
     }

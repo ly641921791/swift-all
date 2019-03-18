@@ -32,6 +32,11 @@ public class BaseServiceTest {
     private FooWithAnnotationService fooWithAnnotationService;
 
     @Test
+    public void countTestSuccess() {
+        Assert.assertTrue(fooService.count() > fooWithAnnotationService.count());
+    }
+
+    @Test
     public void deleteTestSuccess() {
         Condition condition = new Condition();
         condition.eq(Foo.ID, 1L);

@@ -18,11 +18,6 @@ public class SqlScript extends org.apache.ibatis.jdbc.SQL {
         return super.UPDATE(String.format("`%s`", table));
     }
 
-    @Override
-    public SQL SELECT(String column) {
-        return super.SELECT(String.format("`%s`", column));
-    }
-
     public SQL SET_COLUMN(String column, String value) {
         return SET(String.format("`%s` = %s", column, value));
     }
