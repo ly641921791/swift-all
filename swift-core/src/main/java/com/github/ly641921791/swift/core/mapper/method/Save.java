@@ -12,19 +12,21 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import java.util.List;
 
 /**
- *
  * TODO INSERT INTO foo ( del ) VALUES ( ? )   del加引号
  *
  * @author ly
- * @since 2019-01-07 18:54
+ * @since 1.0.0
  **/
-public class Insert implements MapperMethodResolver {
+public class Save implements MapperMethodResolver {
 
     public static final String INSERT = "<script>INSERT INTO %s (%s) VALUES (%s)</script>";
 
-    public static final String COLUMNS = "<if test=\"%s!=null\">,%s</if>";
+    // TODO IGNORE 仅支持mysql数据库
+    public static final String INSERT_MYSQL = "<script>INSERT <if test='ignore'>IGNORE</if> INTO %s (%s) VALUES (%s)</script>";
 
-    public static final String VALUES = "<if test=\"%s!=null\">,#{%s}</if>";
+    public static final String COLUMNS = "<if test=\"entity.%s!=null\">,%s</if>";
+
+    public static final String VALUES = "<if test=\"entity.%s!=null\">,#{entity.%s}</if>";
 
     @Override
     public SqlCommandType getSqlCommandType() {
@@ -33,7 +35,6 @@ public class Insert implements MapperMethodResolver {
 
     @Override
     public String buildSqlScript(Table table, SwiftConfiguration configuration) {
-
         List<Column> columnList = table.getColumns();
 
         StringBuilder cols = new StringBuilder("<trim prefix=\"\" prefixOverrides=\",\">");
@@ -69,4 +70,5 @@ public class Insert implements MapperMethodResolver {
     public String getKeyProperty(Table table) {
         return table.getKeyProperty();
     }
+
 }

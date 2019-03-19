@@ -9,7 +9,7 @@ import com.github.ly641921791.swift.core.mapper.method.FindAllByColumn;
 import com.github.ly641921791.swift.core.mapper.method.FindAllById;
 import com.github.ly641921791.swift.core.mapper.method.FindById;
 import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
-import com.github.ly641921791.swift.core.mapper.method.Insert;
+import com.github.ly641921791.swift.core.mapper.method.Save;
 import com.github.ly641921791.swift.core.mapper.method.Update;
 import com.github.ly641921791.swift.core.mapper.method.UpdateByColumn;
 import com.github.ly641921791.swift.core.mapper.method.UpdateById;
@@ -132,7 +132,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
 
         // TODO 日后删除，改为可配置实
         configuration.addMapperMethodResolver(new Count());
-        configuration.addMapperMethodResolver(new Insert());
+        configuration.addMapperMethodResolver(new Save());
         configuration.addMapperMethodResolver(new Delete());
         configuration.addMapperMethodResolver(new DeleteById());
         configuration.addMapperMethodResolver(new DeleteByColumn());

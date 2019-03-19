@@ -1,7 +1,7 @@
 package com.github.ly641921791.swift.spring;
 
 import com.github.ly641921791.swift.core.mapper.BaseMapper;
-import com.github.ly641921791.swift.core.mapper.method.Insert;
+import com.github.ly641921791.swift.core.mapper.method.Save;
 import com.github.ly641921791.swift.core.mapper.param.Condition;
 import com.github.ly641921791.swift.core.util.ClassUtils;
 import com.github.ly641921791.swift.core.util.StringUtils;
@@ -43,8 +43,13 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public int insert(T r) {
-        return mapper.insert(r);
+    public int save(T entity) {
+        return mapper.save(entity, false);
+    }
+
+    @Override
+    public int save(T entity, boolean ignore) {
+        return mapper.save(entity, ignore);
     }
 
     @Override
@@ -54,7 +59,7 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
             return 0;
         }
         Class mapperInterface = (Class) ClassUtils.getSuperclassGenericType(getClass())[1];
-        String sqlStatement = mapperInterface.getName() + "." + StringUtils.toLowerCamel(Insert.class.getSimpleName());
+        String sqlStatement = mapperInterface.getName() + "." + StringUtils.toLowerCamel(Save.class.getSimpleName());
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
             entities.forEach(e -> sqlSession.insert(sqlStatement, e));
             sqlSession.flushStatements();

@@ -29,6 +29,16 @@ public interface IService<T, ID> extends BaseMethod<T, ID> {
     List<T> findAll();
 
     /**
+     * 插入记录
+     * <p>
+     * 只插入非Null列，如：设置r.id=1，则生成SQL为 INSERT INTO tbName (id) VALUES (#{id})
+     *
+     * @param entity entity
+     * @return 插入记录数
+     */
+    int save(T entity);
+
+    /**
      * Save all records
      *
      * @param entities records

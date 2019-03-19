@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author ly
@@ -99,6 +100,23 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void saveTestSuccess() {
+        Foo foo = new Foo();
+        foo.setId(new Random().nextLong());
+        foo.setDel(0);
+
+        Assert.assertEquals(fooService.save(foo), 1);
+        Assert.assertEquals(fooService.save(foo, true), 0);
+
+        FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
+        foo.setId(new Random().nextLong());
+        foo.setDel(0);
+
+        Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation), 1);
+        Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation, true), 1);
+    }
+
+    @Test
     public void saveAllTestSuccess() {
         List<Long> idList = Arrays.asList(1001L, 1002L);
         final List<Foo> fooList = new ArrayList<>();
@@ -144,22 +162,6 @@ public class BaseServiceTest {
     public void updateColumnByIdTestSuccess() {
         fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
         fooWithAnnotationService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
-    }
-
-
-    // ---
-
-    @Test
-    public void testInsert() {
-        Foo foo = new Foo();
-        foo.setDel(0);
-        int count = fooService.insert(foo);
-        Assert.assertEquals(count, 1);
-
-        FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
-        foo.setDel(0);
-        count = fooWithAnnotationService.insert(fooWithAnnotation);
-        Assert.assertEquals(count, 1);
     }
 
 }

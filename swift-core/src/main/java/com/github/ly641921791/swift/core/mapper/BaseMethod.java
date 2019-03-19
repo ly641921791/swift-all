@@ -27,16 +27,6 @@ public interface BaseMethod<T, ID> {
     long count(@Param("c") Condition c);
 
     /**
-     * 插入记录
-     * <p>
-     * 只插入非Null列，如：设置r.id=1，则生成SQL为 INSERT INTO tbName (id) VALUES (#{id})
-     *
-     * @param r record
-     * @return 插入记录数
-     */
-    int insert(T r);
-
-    /**
      * 删除记录
      *
      * @param c condition
@@ -135,6 +125,17 @@ public interface BaseMethod<T, ID> {
      * @return 符合条件记录
      */
     T findOneByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
+
+    /**
+     * 插入记录
+     * <p>
+     * 只插入非Null列，如：设置r.id=1，则生成SQL为 INSERT INTO tbName (id) VALUES (#{id})
+     *
+     * @param entity entity
+     * @param ignore ignore exception
+     * @return 插入记录数
+     */
+    int save(@Param("entity") T entity, @Param("ignore") boolean ignore);
 
     /**
      * 根据指定列查询记录
