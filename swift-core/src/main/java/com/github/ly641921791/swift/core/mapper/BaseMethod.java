@@ -103,9 +103,10 @@ public interface BaseMethod<T, ID> {
     /**
      * Find all records
      *
+     * @param c condition
      * @return all records
      */
-    List<T> findAll();
+    List<T> findAll(@Param("c") Condition c);
 
     /**
      * Find all records by ids
@@ -124,14 +125,6 @@ public interface BaseMethod<T, ID> {
      * @return 符合条件记录
      */
     T findById(@Param(P_A_ID) ID id);
-
-    /**
-     * 查询记录
-     *
-     * @param c condition
-     * @return 符合条件记录
-     */
-    List<T> select(@Param("c") Condition c);
 
     /**
      * 根据指定列查询记录

@@ -99,8 +99,13 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
+    public List<T> findAll(Condition c) {
+        return mapper.findAll(c);
+    }
+
+    @Override
     public List<T> findAll() {
-        return mapper.findAll();
+        return mapper.findAll(null);
     }
 
     @Override
@@ -109,11 +114,6 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
             return Collections.emptyList();
         }
         return mapper.findAllById(ids);
-    }
-
-    @Override
-    public List<T> select(Condition c) {
-        return mapper.select(c);
     }
 
     @Override

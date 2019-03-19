@@ -64,6 +64,12 @@ public class BaseServiceTest {
     @Test
     public void findAllTestSuccess() {
         Assert.assertTrue(fooService.findAll().size() > fooWithAnnotationService.findAll().size());
+        Condition condition = new Condition();
+        condition.eq(Foo.ID, 1L);
+        condition.orderByDesc(Foo.ID);
+        condition.limit(1);
+        fooService.findAll(condition);
+        fooWithAnnotationService.findAll(condition);
     }
 
     @Test

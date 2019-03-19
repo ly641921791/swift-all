@@ -18,6 +18,10 @@ public class Condition {
      */
     private StringBuilder where = new StringBuilder();
 
+    private StringBuilder orderBy;
+
+    private long[] limit;
+
     /**
      * 参数映射
      */
@@ -68,6 +72,39 @@ public class Condition {
      */
     public Condition or() {
         or = true;
+        return this;
+    }
+
+    private void orderBy(String column, String sort) {
+        if (orderBy == null) {
+            orderBy = new StringBuilder(column);
+        } else {
+            orderBy.append(",").append(column);
+        }
+        orderBy.append(" ").append(sort);
+    }
+
+    public Condition orderByDesc(String column) {
+        orderBy(column, "DESC");
+        return this;
+    }
+
+    public Condition orderByAsc(String column) {
+        orderBy(column, "ASC");
+        return this;
+    }
+
+    public Condition limit(long offset, long size) {
+        if (limit == null) {
+            limit = new long[2];
+        }
+        limit[0] = offset;
+        limit[1] = size;
+        return this;
+    }
+
+    public Condition limit(long size) {
+        limit(0, size);
         return this;
     }
 
