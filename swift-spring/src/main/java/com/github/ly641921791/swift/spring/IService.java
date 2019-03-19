@@ -15,6 +15,13 @@ import java.util.List;
 public interface IService<T, ID> extends BaseMethod<T, ID> {
 
     /**
+     * Return count of record
+     *
+     * @return count
+     */
+    long count();
+
+    /**
      * Find all records
      *
      * @return all records

@@ -34,7 +34,12 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
 
     @Override
     public long count() {
-        return mapper.count();
+        return mapper.count(null);
+    }
+
+    @Override
+    public long count(Condition c) {
+        return mapper.count(c);
     }
 
     @Override
@@ -99,13 +104,13 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public List<T> findAll(Condition c) {
-        return mapper.findAll(c);
+    public List<T> findAll() {
+        return mapper.findAll(null);
     }
 
     @Override
-    public List<T> findAll() {
-        return mapper.findAll(null);
+    public List<T> findAll(Condition c) {
+        return mapper.findAll(c);
     }
 
     @Override

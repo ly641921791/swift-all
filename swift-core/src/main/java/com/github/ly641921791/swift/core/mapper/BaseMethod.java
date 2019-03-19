@@ -21,9 +21,10 @@ public interface BaseMethod<T, ID> {
     /**
      * Return count of record
      *
+     * @param c condition
      * @return count
      */
-    long count();
+    long count(@Param("c") Condition c);
 
     /**
      * 插入记录
