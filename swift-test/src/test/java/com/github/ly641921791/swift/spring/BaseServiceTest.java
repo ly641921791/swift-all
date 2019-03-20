@@ -58,8 +58,11 @@ public class BaseServiceTest {
 
     @Test
     public void deleteByColumnTestSuccess() {
-        fooService.deleteByColumn(Foo.ID, 1L);
-        fooWithAnnotationService.deleteByColumn(Foo.ID, 1L);
+        Assert.assertEquals(fooService.deleteByColumn(Foo.ID, 11L), 1);
+        Assert.assertEquals(fooService.deleteByColumn(Foo.ID, 11L), 0);
+
+        Assert.assertEquals(fooWithAnnotationService.deleteByColumn(Foo.ID, 11L), 1);
+        Assert.assertEquals(fooWithAnnotationService.deleteByColumn(Foo.ID, 11L), 0);
     }
 
     @Test
@@ -77,6 +80,7 @@ public class BaseServiceTest {
 
         Condition condition = new Condition();
         condition.eq(Foo.ID, 1L);
+        condition.like(Foo.STRING_VALUE, "like");
         condition.orderByDesc(Foo.ID);
         condition.limit(1);
         fooService.findAll(condition);

@@ -9,6 +9,7 @@ INSERT INTO foo (id,string_value,del) VALUES (7,'findAllByColumn',0);
 INSERT INTO foo (id,string_value,del) VALUES (8,'findAllById',1);
 INSERT INTO foo (id,string_value,del) VALUES (9,'findAllById',0);
 INSERT INTO foo (id,string_value,del) VALUES (10,'updateByColumn',0);
+INSERT INTO foo (id,string_value,del) VALUES (11,'deleteByColumn',0);
 
 
 
@@ -26,4 +27,5 @@ INSERT INTO foo_with_annotation (id,string_value,del) VALUES (7,'findAllByColumn
 INSERT INTO foo_with_annotation (id,string_value,del) VALUES (8,'findAllById',1);
 INSERT INTO foo_with_annotation (id,string_value,del) VALUES (9,'findAllById',0);
 INSERT INTO foo_with_annotation (id,string_value,del) VALUES (10,'updateByColumn',0);
+INSERT INTO foo_with_annotation (id,string_value,del) VALUES (11,'deleteByColumn',0);
 

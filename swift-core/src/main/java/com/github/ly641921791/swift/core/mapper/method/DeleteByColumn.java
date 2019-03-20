@@ -6,17 +6,27 @@ import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 
 /**
- * Target sql script ： <script>DELETE FROM %s WHERE ${%s} = #{%s}</script>
- * Target sql script ： <script>UPDATE %s SET %s = 0 WHERE ${%s} = #{%s}</script>
+ * <pre>
+ *
+ *     <script>
+ *         DELETE FROM table WHERE column
+ *     </script>
+ *
+ *     <script>
+ *         UPDATE table SET column WHERE column AND del_column
+ *     </script>
+ *
+ * </pre>
  *
  * @author ly
- * @since 2019-03-01 09:42
+ * @since 1.0.0
  **/
 public class DeleteByColumn extends AbstractDeleteMethodResolver {
 
     @Override
     protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
         sqlScript.WHERE("`${c}` = #{v}");
+        handlerDeleteColumn(sqlScript, table, configuration);
     }
 
 }

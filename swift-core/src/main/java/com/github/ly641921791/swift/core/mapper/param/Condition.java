@@ -66,6 +66,25 @@ public class Condition {
     }
 
     /**
+     * 模糊查询。TODO 通过CONCAT实现，仅支持mysql数据库
+     *
+     * @param column 列名
+     * @param value  模糊值
+     * @return 当前对象
+     */
+    public Condition like(String column, Object value) {
+        String paramK = "k" + params.size();
+        params.put(paramK, value);
+        if (or) {
+            where.append("OR ").append(column).append(" LIKE CONCAT('%',#{c.params.").append(paramK).append("},'%') ");
+            or = false;
+        } else {
+            where.append("AND ").append(column).append(" LIKE CONCAT('%',#{c.params.").append(paramK).append("},'%') ");
+        }
+        return this;
+    }
+
+    /**
      * 下一次条件作为OR条件
      *
      * @return 当前对象
