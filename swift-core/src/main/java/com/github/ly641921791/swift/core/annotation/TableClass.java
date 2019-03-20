@@ -17,6 +17,8 @@ import static com.github.ly641921791.swift.core.metadata.Table.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TableClass {
 
+    String tableName() default "";
+
     /**
      * 删除标识
      *

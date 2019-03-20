@@ -10,6 +10,6 @@ import lombok.EqualsAndHashCode;
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableClass(deleteColumn = "del", deleteValue = "1", existsValue = "0")
+@TableClass(tableName = "foo2", deleteColumn = "del", deleteValue = "1", existsValue = "0")
 public class FooWithAnnotation extends Foo {
 }

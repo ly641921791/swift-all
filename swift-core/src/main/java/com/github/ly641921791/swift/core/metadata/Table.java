@@ -63,13 +63,11 @@ public class Table {
     public static Table resolve(Class<?> tableClass, Configuration configuration) {
         Table table = new Table();
 
-        // Java类名一般是大驼峰，转换下划线格式
-        table.name = StringUtils.toUnderscore(tableClass.getSimpleName());
-
         // 注解解析
         TableClass tableClassAnnotation = tableClass.getAnnotation(TableClass.class);
         if (tableClassAnnotation != null) {
             table.setTableClassAnnotation(tableClassAnnotation);
+            table.setName(tableClassAnnotation.tableName());
             table.setUseGeneratedKeys(tableClassAnnotation.useGeneratedKeys());
             table.setKeyProperty(tableClassAnnotation.keyProperty());
             table.setKeyColumn(tableClassAnnotation.keyColumn());
@@ -83,6 +81,11 @@ public class Table {
             table.setDeleteColumn("");
             table.setDeleteValue("");
             table.setExistsValue("");
+        }
+
+        // Java类名一般是大驼峰，转换下划线格式
+        if (StringUtils.isEmpty(table.getName())) {
+            table.setName(StringUtils.toUnderscore(tableClass.getSimpleName()));
         }
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
