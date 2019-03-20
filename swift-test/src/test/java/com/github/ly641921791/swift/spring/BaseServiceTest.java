@@ -1,5 +1,6 @@
 package com.github.ly641921791.swift.spring;
 
+import com.github.ly641921791.swift.ExceptionAssert;
 import com.github.ly641921791.swift.core.mapper.param.Condition;
 import com.github.ly641921791.swift.test.FooApplication;
 import com.github.ly641921791.swift.test.service.FooService;
@@ -113,22 +114,16 @@ public class BaseServiceTest {
         foo.setDel(0);
 
         Assert.assertEquals(fooService.save(foo), 1);
-        try {
-            fooService.save(foo);
-        } catch (DuplicateKeyException ignored) {
-        }
+        ExceptionAssert.assertException(DuplicateKeyException.class, () -> fooService.save(foo));
         Assert.assertEquals(fooService.save(foo, true), 0);
 
         FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
-        foo.setId(new Random().nextLong());
-        foo.setDel(0);
+        fooWithAnnotation.setId(new Random().nextLong());
+        fooWithAnnotation.setDel(0);
 
         Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation), 1);
-        try {
-            fooWithAnnotationService.save(fooWithAnnotation);
-        } catch (DuplicateKeyException ignored) {
-        }
-        Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation, true), 1);
+        ExceptionAssert.assertException(DuplicateKeyException.class, () -> fooWithAnnotationService.save(fooWithAnnotation));
+        Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation, true), 0);
     }
 
     @Test
