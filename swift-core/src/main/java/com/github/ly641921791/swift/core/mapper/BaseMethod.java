@@ -21,6 +21,15 @@ public interface BaseMethod<T, ID> {
     /**
      * Return count of record
      *
+     * @return count
+     */
+    default long count() {
+        return count(null);
+    }
+
+    /**
+     * Return count of record
+     *
      * @param c condition
      * @return count
      */
@@ -94,6 +103,15 @@ public interface BaseMethod<T, ID> {
     /**
      * Find all records
      *
+     * @return all records
+     */
+    default List<T> findAll() {
+        return findAll(null);
+    }
+
+    /**
+     * Find all records
+     *
      * @param c condition
      * @return all records
      */
@@ -132,10 +150,30 @@ public interface BaseMethod<T, ID> {
      * 只插入非Null列，如：设置r.id=1，则生成SQL为 INSERT INTO tbName (id) VALUES (#{id})
      *
      * @param entity entity
+     * @return 插入记录数
+     */
+    default int save(T entity) {
+        return save(entity, false);
+    }
+
+    /**
+     * 插入记录
+     * <p>
+     * 只插入非Null列，如：设置r.id=1，则生成SQL为 INSERT INTO tbName (id) VALUES (#{id})
+     *
+     * @param entity entity
      * @param ignore ignore exception
      * @return 插入记录数
      */
     int save(@Param("entity") T entity, @Param("ignore") boolean ignore);
+
+    /**
+     * Save all records
+     *
+     * @param entities records
+     * @return save count
+     */
+    int saveAll(Collection<T> entities);
 
     /**
      * 根据指定列查询记录

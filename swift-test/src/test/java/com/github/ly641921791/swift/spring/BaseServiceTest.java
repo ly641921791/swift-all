@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -112,6 +113,10 @@ public class BaseServiceTest {
         foo.setDel(0);
 
         Assert.assertEquals(fooService.save(foo), 1);
+        try {
+            fooService.save(foo);
+        } catch (DuplicateKeyException ignored) {
+        }
         Assert.assertEquals(fooService.save(foo, true), 0);
 
         FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
@@ -119,6 +124,10 @@ public class BaseServiceTest {
         foo.setDel(0);
 
         Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation), 1);
+        try {
+            fooWithAnnotationService.save(fooWithAnnotation);
+        } catch (DuplicateKeyException ignored) {
+        }
         Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation, true), 1);
     }
 

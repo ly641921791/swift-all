@@ -5,10 +5,12 @@ import com.github.ly641921791.swift.core.mapper.method.Save;
 import com.github.ly641921791.swift.core.mapper.param.Condition;
 import com.github.ly641921791.swift.core.util.ClassUtils;
 import com.github.ly641921791.swift.core.util.StringUtils;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -33,23 +35,20 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     private SqlSessionFactory sqlSessionFactory;
 
     @Override
-    public long count() {
-        return mapper.count(null);
-    }
-
-    @Override
     public long count(Condition c) {
         return mapper.count(c);
     }
 
     @Override
-    public int save(T entity) {
-        return mapper.save(entity, false);
-    }
-
-    @Override
     public int save(T entity, boolean ignore) {
-        return mapper.save(entity, ignore);
+        try {
+            return mapper.save(entity, ignore);
+        } catch (DuplicateKeyException e) {
+            if (ignore) {
+                return 0;
+            }
+            throw e;
+        }
     }
 
     @Override
@@ -61,9 +60,17 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
         Class mapperInterface = (Class) ClassUtils.getSuperclassGenericType(getClass())[1];
         String sqlStatement = mapperInterface.getName() + "." + StringUtils.toLowerCamel(Save.class.getSimpleName());
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
-            entities.forEach(e -> sqlSession.insert(sqlStatement, e));
+            entities.forEach(e -> {
+                MapperMethod.ParamMap<Object> paramMap = new MapperMethod.ParamMap<>();
+                paramMap.put("param1", e);
+                paramMap.put("entity", e);
+                paramMap.put("param2", e);
+                paramMap.put("ignore", false);
+                sqlSession.insert(sqlStatement, paramMap);
+            });
             sqlSession.flushStatements();
         }
+        // TODO 处理结果，不一定插入数量等于参数数量
         return entities.size();
     }
 
@@ -106,11 +113,6 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     @Override
     public int updateColumnById(String column, Object value, ID id) {
         return mapper.updateColumnById(column, value, id);
-    }
-
-    @Override
-    public List<T> findAll() {
-        return mapper.findAll(null);
     }
 
     @Override
