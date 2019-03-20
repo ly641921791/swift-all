@@ -100,6 +100,12 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void findOneByColumnTestSuccess() {
+        fooService.findOneByColumn(Foo.STRING_VALUE, "findAllByColumn");
+        fooWithAnnotationService.findOneByColumn(Foo.STRING_VALUE, "findAllByColumn");
+    }
+
+    @Test
     public void saveTestSuccess() {
         Foo foo = new Foo();
         foo.setId(new Random().nextLong());

@@ -28,6 +28,10 @@ public interface MapperMethodResolver extends Closeable {
 
     String T_WHERE = "<where>${" + P_A_CONDITION + ".where}</where>";
 
+    String TAG_SCRIPT_OPEN = "<script>";
+
+    String TAG_SCRIPT_CLOSE = "</script>";
+
     /**
      * 获得SqlCommandType
      *
