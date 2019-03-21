@@ -121,6 +121,14 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
+    public <C extends Collection> List<T> findAllByColumn(String column, C values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return Collections.emptyList();
+        }
+        return mapper.findAllByColumn(column, values);
+    }
+
+    @Override
     public List<T> findAllById(Collection<ID> ids) {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
@@ -139,11 +147,6 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     @Override
     public T findOneByColumn(String column, Object value) {
         return mapper.findOneByColumn(column, value);
-    }
-
-    @Override
-    public List<T> findAllByColumn(String column, Collection<Object> values) {
-        return mapper.findAllByColumn(column, values);
     }
 
 }

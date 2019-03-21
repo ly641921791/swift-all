@@ -136,7 +136,7 @@ public interface BaseMethod<T, ID> {
      * @param values 值
      * @return 符合条件记录
      */
-    List<T> findAllByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUES) Collection<Object> values);
+    <C extends Collection> List<T> findAllByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUES) C values);
 
     /**
      * Find all records by ids

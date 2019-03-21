@@ -100,8 +100,10 @@ public class BaseServiceTest {
     @Test
     public void findAllByColumnTestSuccess() {
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, "findAllByColumn").size(), 2);
+        Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, Collections.singleton("findAllByColumn")).size(), 2);
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, Collections.singletonList("findAllByColumn")).size(), 2);
         Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, "findAllByColumn").size(), 1);
+        Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, Collections.singleton("findAllByColumn")).size(), 1);
         Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, Collections.singletonList("findAllByColumn")).size(), 1);
     }
 
