@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -51,8 +52,11 @@ public class BaseServiceTest {
         Condition condition = new Condition();
         condition.eq(Foo.ID, 1L);
         condition.eq(Foo.STRING_VALUE, "foo");
-
         fooService.delete(condition);
+
+        condition = new Condition();
+        condition.eq(FooWithAnnotation.ID, 1L);
+        condition.eq(FooWithAnnotation.STRING_VALUE, "foo");
         fooWithAnnotationService.delete(condition);
     }
 
@@ -84,13 +88,21 @@ public class BaseServiceTest {
         condition.orderByDesc(Foo.ID);
         condition.limit(1);
         fooService.findAll(condition);
+
+        condition = new Condition();
+        condition.eq(FooWithAnnotation.ID, 1L);
+        condition.like(FooWithAnnotation.STRING_VALUE, "like");
+        condition.orderByDesc(FooWithAnnotation.ID);
+        condition.limit(1);
         fooWithAnnotationService.findAll(condition);
     }
 
     @Test
     public void findAllByColumnTestSuccess() {
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, "findAllByColumn").size(), 2);
-        Assert.assertEquals(fooWithAnnotationService.findAllByColumn(Foo.STRING_VALUE, "findAllByColumn").size(), 1);
+        Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, Collections.singletonList("findAllByColumn")).size(), 2);
+        Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, "findAllByColumn").size(), 1);
+        Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, Collections.singletonList("findAllByColumn")).size(), 1);
     }
 
     @Test
@@ -107,8 +119,8 @@ public class BaseServiceTest {
 
     @Test
     public void findOneByColumnTestSuccess() {
-        fooService.findOneByColumn(Foo.STRING_VALUE, "findAllByColumn");
-        fooWithAnnotationService.findOneByColumn(Foo.STRING_VALUE, "findAllByColumn");
+        fooService.findOneByColumn(Foo.STRING_VALUE, "findOneByColumn");
+        fooWithAnnotationService.findOneByColumn(FooWithAnnotation.STRING_VALUE, "findOneByColumn");
     }
 
     @Test
@@ -150,32 +162,37 @@ public class BaseServiceTest {
 
     @Test
     public void updateByColumnTestSuccess() {
-        FooWithAnnotation targetProperty = new FooWithAnnotation();
-        targetProperty.setStringValue("updateSuccess");
+        Foo fooTargetProperty = new Foo();
+        fooTargetProperty.setStringValue("updateSuccess");
+        FooWithAnnotation foo2targetProperty = new FooWithAnnotation();
+        foo2targetProperty.setStringValue("updateSuccess");
 
-        fooService.updateByColumn(targetProperty, Foo.ID, 3L);
-        Assert.assertEquals(fooService.findById(3L).getStringValue(), targetProperty.getStringValue());
+        fooService.updateByColumn(fooTargetProperty, Foo.ID, 3L);
+        Assert.assertEquals(fooService.findById(3L).getStringValue(), fooTargetProperty.getStringValue());
 
-        fooWithAnnotationService.updateByColumn(targetProperty, Foo.ID, 3L);
-        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), targetProperty.getStringValue());
+        fooWithAnnotationService.updateByColumn(foo2targetProperty, Foo.ID, 3L);
+        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), foo2targetProperty.getStringValue());
     }
 
     @Test
     public void updateByIdTestSuccess() {
-        FooWithAnnotation targetProperty = new FooWithAnnotation();
-        targetProperty.setStringValue("updateSuccess");
+        Foo fooTargetProperty = new Foo();
+        fooTargetProperty.setStringValue("updateSuccess");
+        FooWithAnnotation foo2targetProperty = new FooWithAnnotation();
+        foo2targetProperty.setStringValue("updateSuccess");
 
-        fooService.updateById(targetProperty, 3L);
-        Assert.assertEquals(fooService.findById(3L).getStringValue(), targetProperty.getStringValue());
 
-        fooWithAnnotationService.updateById(targetProperty, 3L);
-        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), targetProperty.getStringValue());
+        fooService.updateById(fooTargetProperty, 3L);
+        Assert.assertEquals(fooService.findById(3L).getStringValue(), fooTargetProperty.getStringValue());
+
+        fooWithAnnotationService.updateById(foo2targetProperty, 3L);
+        Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), foo2targetProperty.getStringValue());
     }
 
     @Test
     public void updateColumnByIdTestSuccess() {
         fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
-        fooWithAnnotationService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
+        fooWithAnnotationService.updateColumnById(FooWithAnnotation.STRING_VALUE, "111", 1L);
     }
 
 }

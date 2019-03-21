@@ -5,6 +5,7 @@ import com.github.ly641921791.swift.core.mapper.param.Condition;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.*;
@@ -118,6 +119,26 @@ public interface BaseMethod<T, ID> {
     List<T> findAll(@Param("c") Condition c);
 
     /**
+     * 根据指定列查询记录
+     *
+     * @param column 列名
+     * @param value  值
+     * @return 符合条件记录
+     */
+    default List<T> findAllByColumn(String column, Object value) {
+        return findAllByColumn(column, Collections.singletonList(value));
+    }
+
+    /**
+     * 根据指定列查询记录
+     *
+     * @param column 列名
+     * @param values 值
+     * @return 符合条件记录
+     */
+    List<T> findAllByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUES) Collection<Object> values);
+
+    /**
      * Find all records by ids
      *
      * @param ids ids
@@ -173,15 +194,9 @@ public interface BaseMethod<T, ID> {
      * @param entities records
      * @return save count
      */
-    int saveAll(Collection<T> entities);
-
-    /**
-     * 根据指定列查询记录
-     *
-     * @param column 列名
-     * @param value  值
-     * @return 符合条件记录
-     */
-    List<T> findAllByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
+    default int saveAll(Collection<T> entities) {
+        entities.forEach(this::save);
+        return entities.size();
+    }
 
 }

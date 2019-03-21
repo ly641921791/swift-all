@@ -10,7 +10,7 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
  * Target sql script : <script>SELECT column FROM table WHERE id IN <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>
  *
  * @author ly
- * @since 2019-03-11 16:35
+ * @since 1.0.0
  **/
 public class FindAllById extends AbstractSelectMethodResolver {
 

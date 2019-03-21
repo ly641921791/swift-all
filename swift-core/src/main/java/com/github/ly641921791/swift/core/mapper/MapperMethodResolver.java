@@ -20,6 +20,8 @@ public interface MapperMethodResolver extends Closeable {
 
     String P_A_VALUE = "v";
 
+    String P_A_VALUES = "vs";
+
     String P_A_COLUMN = "c";
 
     String P_A_CONDITION = "c";

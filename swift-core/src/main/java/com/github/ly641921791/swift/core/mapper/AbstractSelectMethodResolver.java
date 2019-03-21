@@ -38,8 +38,10 @@ public abstract class AbstractSelectMethodResolver implements MapperMethodResolv
     protected void handlerColumn(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
         table.getColumns().forEach(column -> {
             if (column.getSelectValue().isEmpty()) {
-                sqlScript.SELECT(column.getName());
-            } else {
+                if (column.isExists()){
+                    sqlScript.SELECT_COLUMN_AS(column.getName(),column.getJavaField().getName());
+                }
+            }else {
                 sqlScript.SELECT_SCRIPT_AS(column.getSelectValue(), column.getName());
             }
         });

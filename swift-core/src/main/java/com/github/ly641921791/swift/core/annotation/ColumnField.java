@@ -17,6 +17,8 @@ import static com.github.ly641921791.swift.core.metadata.Column.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ColumnField {
 
+    String columnName() default "";
+
     /**
      * 该字段是否在表格存在
      *

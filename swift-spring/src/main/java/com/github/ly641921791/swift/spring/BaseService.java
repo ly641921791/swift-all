@@ -142,8 +142,8 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public List<T> findAllByColumn(String column, Object value) {
-        return mapper.findAllByColumn(column, value);
+    public List<T> findAllByColumn(String column, Collection<Object> values) {
+        return mapper.findAllByColumn(column, values);
     }
 
 }

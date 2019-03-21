@@ -97,8 +97,7 @@ public class Table {
             }
 
             Column column = new Column();
-            // 表格列名一般是小驼峰，转下划线格式
-            column.setName(StringUtils.toUnderscore(field.getName()));
+
             column.setJavaField(field);
 
             // 解析注解
@@ -107,8 +106,14 @@ public class Table {
                 column.setExists(Column.DEFAULT_EXISTS);
                 column.setSelectValue(Column.DEFAULT_SELECT_VALUE);
             } else {
+                column.setName(columnField.columnName());
                 column.setExists(columnField.exists());
                 column.setSelectValue(columnField.selectValue());
+            }
+
+            // 表格列名一般是小驼峰，转下划线格式
+            if (StringUtils.isEmpty(column.getName())) {
+                column.setName(StringUtils.toUnderscore(field.getName()));
             }
 
             table.addColumn(column);
