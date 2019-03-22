@@ -57,6 +57,9 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
         if (CollectionUtils.isEmpty(entities)) {
             return 0;
         }
+        if (entities.size() == 1) {
+            return mapper.saveAll(entities);
+        }
         Class mapperInterface = (Class) ClassUtils.getSuperclassGenericType(getClass())[1];
         String sqlStatement = mapperInterface.getName() + "." + StringUtils.toLowerCamel(Save.class.getSimpleName());
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {

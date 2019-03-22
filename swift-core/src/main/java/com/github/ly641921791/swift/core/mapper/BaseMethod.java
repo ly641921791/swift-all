@@ -195,6 +195,9 @@ public interface BaseMethod<T, ID> {
      * @return save count
      */
     default int saveAll(Collection<T> entities) {
+        if (entities == null) {
+            return 0;
+        }
         entities.forEach(this::save);
         return entities.size();
     }
