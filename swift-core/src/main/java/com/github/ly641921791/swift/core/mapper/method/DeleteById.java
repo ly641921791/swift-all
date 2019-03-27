@@ -10,7 +10,7 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
  * Target sql script ： <script>UPDATE table SET column = 1 WHERE id = #{id}</script>
  *
  * @author ly
- * @since 2019-03-01 09:29
+ * @since 1.0.0
  **/
 public class DeleteById extends AbstractDeleteMethodResolver {
 

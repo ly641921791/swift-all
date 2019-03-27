@@ -24,7 +24,7 @@ import java.util.List;
  * @param <T> Table Class
  * @param <M> Mapper Class
  * @author ly
- * @since 2019-01-24 15:45
+ * @since 1.0.0
  */
 public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService<T, ID> {
 

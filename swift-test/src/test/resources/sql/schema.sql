@@ -1,6 +1,7 @@
 CREATE TABLE foo (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '唯一id',
   string_value VARCHAR (64) ,
+  `like` INT NOT NULL DEFAULT 0 COMMENT '用于测试数据库关键字',
   del TINYINT NOT NULL DEFAULT 0 COMMENT '删除标志',
   PRIMARY KEY (id)
 );
@@ -9,6 +10,7 @@ CREATE TABLE foo (
 CREATE TABLE foo2 (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '唯一id',
   string_value2 VARCHAR (64) ,
+  `like` INT NOT NULL DEFAULT 0 COMMENT '用于测试数据库关键字',
   del TINYINT NOT NULL DEFAULT 0 COMMENT '删除标志',
   PRIMARY KEY (id)
 );

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author ly
- * @since 2019-03-13 13:26
+ * @since 1.0.0
  **/
 public class StringUtilsTest {
 

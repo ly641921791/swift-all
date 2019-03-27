@@ -5,7 +5,7 @@ import com.github.ly641921791.swift.test.table.Foo;
 
 /**
  * @author ly
- * @since 2019-03-13 09:30
+ * @since 1.0.0
  **/
 public interface FooService extends IService<Foo, Long> {
 }

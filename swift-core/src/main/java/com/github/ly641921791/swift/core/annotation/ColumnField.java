@@ -10,7 +10,7 @@ import static com.github.ly641921791.swift.core.metadata.Column.*;
 
 /**
  * @author ly
- * @since 2019-02-02 11:13
+ * @since 1.0.0
  **/
 @Documented
 @Target(ElementType.FIELD)

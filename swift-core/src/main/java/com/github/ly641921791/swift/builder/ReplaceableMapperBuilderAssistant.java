@@ -40,7 +40,7 @@ import java.util.StringTokenizer;
  * Replaceable Mapper Builder Assistant
  *
  * @author ly
- * @since 2019-02-26 17:31
+ * @since 1.0.0
  **/
 public class ReplaceableMapperBuilderAssistant extends MapperBuilderAssistant {
 

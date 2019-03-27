@@ -12,7 +12,7 @@ import static com.github.ly641921791.swift.core.metadata.Table.DEFAULT_KEY_PROPE
  * Target sql script : <script>SELECT %s FROM %s WHERE %s = #{%s}</script>
  *
  * @author ly
- * @since 2019-01-28 09:42
+ * @since 1.0.0
  **/
 public class FindById extends AbstractSelectMethodResolver {
 

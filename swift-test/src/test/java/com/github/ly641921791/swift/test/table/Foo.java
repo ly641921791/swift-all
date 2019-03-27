@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * @author ly
- * @since 2019-03-13 09:27
+ * @since 1.0.0
  **/
 @Data
 public class Foo {
@@ -15,6 +15,8 @@ public class Foo {
     private Long id;
 
     private String stringValue;
+
+    private int like;
 
     private Integer del;
 

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author ly
- * @since 2019-03-13 09:37
+ * @since 1.0.0
  **/
 @SpringBootApplication
 public class FooApplication {

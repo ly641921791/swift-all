@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author ly
- * @since 2019-03-13 10:01
+ * @since 1.0.0
  **/
 @Mapper
 public interface FooWithAnnotationMapper extends BaseMapper<FooWithAnnotation, Long> {

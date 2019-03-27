@@ -11,7 +11,7 @@ import java.util.Map;
  * Mapper方法解析器注册类
  *
  * @author ly
- * @since 2019-01-24 16:55
+ * @since 1.0.0
  **/
 public class MapperMethodResolverRegistry {
 

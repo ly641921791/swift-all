@@ -15,7 +15,7 @@ import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.*;
  * 因此将BaseMapper方法抽离出来，
  *
  * @author ly
- * @since 2019-03-01 11:18
+ * @since 1.0.0
  **/
 public interface BaseMethod<T, ID> {
 
@@ -83,7 +83,7 @@ public interface BaseMethod<T, ID> {
     int updateByColumn(@Param("p") T p, @Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
 
     /**
-     * 根据id更新记录
+     * 根据id更新记录，注意：这个方法会修改id
      *
      * @param p  property
      * @param id id

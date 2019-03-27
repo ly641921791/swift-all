@@ -2,7 +2,7 @@ package com.github.ly641921791.swift;
 
 /**
  * @author ly
- * @since 2019-03-20 15:47
+ * @since 1.0.0
  **/
 public class ExceptionAssert {
 

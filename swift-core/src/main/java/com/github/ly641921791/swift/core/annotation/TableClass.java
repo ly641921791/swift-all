@@ -10,7 +10,7 @@ import static com.github.ly641921791.swift.core.metadata.Table.*;
 
 /**
  * @author ly
- * @since 2019-02-02 13:55
+ * @since 1.0.0
  **/
 @Documented
 @Target(ElementType.TYPE)

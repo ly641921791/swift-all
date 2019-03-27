@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author ly
- * @since 2019-03-13 09:30
+ * @since 1.0.0
  **/
 @Service
 public class FooWithAnnotationServiceImpl extends BaseService<FooWithAnnotation, FooWithAnnotationMapper, Long> implements FooWithAnnotationService {

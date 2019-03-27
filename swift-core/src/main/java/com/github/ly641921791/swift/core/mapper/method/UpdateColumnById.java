@@ -9,7 +9,7 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
  * Target sql script <script>UPDATE table SET `${c}` = #{v} WHERE `id` = #{id}</script>
  *
  * @author ly
- * @since 2019-03-14 15:32
+ * @since 1.0.0
  **/
 public class UpdateColumnById extends AbstractUpdateMethodResolver {
 
