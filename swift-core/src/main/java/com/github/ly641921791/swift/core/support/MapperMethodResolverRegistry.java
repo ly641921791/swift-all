@@ -1,6 +1,20 @@
 package com.github.ly641921791.swift.core.support;
 
 import com.github.ly641921791.swift.core.mapper.MapperMethodResolver;
+import com.github.ly641921791.swift.core.mapper.method.Count;
+import com.github.ly641921791.swift.core.mapper.method.Delete;
+import com.github.ly641921791.swift.core.mapper.method.DeleteByColumn;
+import com.github.ly641921791.swift.core.mapper.method.DeleteById;
+import com.github.ly641921791.swift.core.mapper.method.FindAll;
+import com.github.ly641921791.swift.core.mapper.method.FindAllByColumn;
+import com.github.ly641921791.swift.core.mapper.method.FindAllById;
+import com.github.ly641921791.swift.core.mapper.method.FindById;
+import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
+import com.github.ly641921791.swift.core.mapper.method.Save;
+import com.github.ly641921791.swift.core.mapper.method.Update;
+import com.github.ly641921791.swift.core.mapper.method.UpdateByColumn;
+import com.github.ly641921791.swift.core.mapper.method.UpdateById;
+import com.github.ly641921791.swift.core.mapper.method.UpdateColumnById;
 import com.github.ly641921791.swift.core.util.StringUtils;
 
 import java.lang.reflect.Method;
@@ -17,6 +31,23 @@ public class MapperMethodResolverRegistry {
 
     public Map<String, MapperMethodResolver> resolverMap = new HashMap<>();
 
+    public MapperMethodResolverRegistry() {
+        addMapperMethodResolver(new Count());
+        addMapperMethodResolver(new Save());
+        addMapperMethodResolver(new Delete());
+        addMapperMethodResolver(new DeleteById());
+        addMapperMethodResolver(new DeleteByColumn());
+        addMapperMethodResolver(new Update());
+        addMapperMethodResolver(new UpdateByColumn());
+        addMapperMethodResolver(new UpdateById());
+        addMapperMethodResolver(new FindAll());
+        addMapperMethodResolver(new FindAllById());
+        addMapperMethodResolver(new FindById());
+        addMapperMethodResolver(new FindOneByColumn());
+        addMapperMethodResolver(new FindAllByColumn());
+        addMapperMethodResolver(new UpdateColumnById());
+    }
+
     public void addMapperMethodResolver(MapperMethodResolver resolver) {
         resolverMap.put(StringUtils.toLowerCamel(resolver.getClass().getSimpleName()), resolver);
     }
@@ -28,27 +59,5 @@ public class MapperMethodResolverRegistry {
     public boolean hasResolver(Method method) {
         return resolverMap.containsKey(method.getName());
     }
-
-//    //
-//
-//    public static MapperMethodResolver getMethodHandler(String methodName) {
-//        return methodHandlers.get(methodName);
-//    }
-//
-//    public static boolean hasMethodHandler(String methodName) {
-//        return methodHandlers.containsKey(methodName);
-//    }
-//
-//    public static Class<? extends Annotation> getSqlAnnotationType(Method method) {
-//        return getSqlAnnotationType(method.getName());
-//    }
-//
-//    public static Class<? extends Annotation> getSqlAnnotationType(String methodName) {
-//        MapperMethodResolver methodHandler = methodHandlers.get(methodName);
-//        if (methodHandler == null) {
-//            return null;
-//        }
-//        return methodHandler.getSqlAnnotationType();
-//    }
 
 }

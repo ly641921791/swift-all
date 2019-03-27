@@ -1,19 +1,5 @@
 package com.github.ly641921791.swift.spring.boot.autoconfigure;
 
-import com.github.ly641921791.swift.core.mapper.method.Count;
-import com.github.ly641921791.swift.core.mapper.method.Delete;
-import com.github.ly641921791.swift.core.mapper.method.DeleteByColumn;
-import com.github.ly641921791.swift.core.mapper.method.DeleteById;
-import com.github.ly641921791.swift.core.mapper.method.FindAll;
-import com.github.ly641921791.swift.core.mapper.method.FindAllByColumn;
-import com.github.ly641921791.swift.core.mapper.method.FindAllById;
-import com.github.ly641921791.swift.core.mapper.method.FindById;
-import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
-import com.github.ly641921791.swift.core.mapper.method.Save;
-import com.github.ly641921791.swift.core.mapper.method.Update;
-import com.github.ly641921791.swift.core.mapper.method.UpdateByColumn;
-import com.github.ly641921791.swift.core.mapper.method.UpdateById;
-import com.github.ly641921791.swift.core.mapper.method.UpdateColumnById;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
@@ -129,23 +115,6 @@ public class SwiftAutoConfiguration implements InitializingBean {
                 customizer.customize(configuration);
             }
         }
-
-        // TODO 日后删除，改为可配置实
-        configuration.addMapperMethodResolver(new Count());
-        configuration.addMapperMethodResolver(new Save());
-        configuration.addMapperMethodResolver(new Delete());
-        configuration.addMapperMethodResolver(new DeleteById());
-        configuration.addMapperMethodResolver(new DeleteByColumn());
-        configuration.addMapperMethodResolver(new Update());
-        configuration.addMapperMethodResolver(new UpdateByColumn());
-        configuration.addMapperMethodResolver(new UpdateById());
-        configuration.addMapperMethodResolver(new FindAll());
-        configuration.addMapperMethodResolver(new FindAllById());
-        configuration.addMapperMethodResolver(new FindById());
-        configuration.addMapperMethodResolver(new FindOneByColumn());
-        configuration.addMapperMethodResolver(new FindAllByColumn());
-        configuration.addMapperMethodResolver(new UpdateColumnById());
-
         factory.setConfiguration(configuration);
     }
 
