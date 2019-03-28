@@ -177,10 +177,8 @@ public class BaseServiceTest {
             fooList.add(foo);
         });
 
-        fooService.saveAll(fooList);
-
+        Assert.assertEquals(fooService.saveAll(fooList), idList.size());
         List<Foo> fooNewList = fooService.findAllById(idList);
-
         Assert.assertEquals(fooNewList.size(), fooList.size());
     }
 

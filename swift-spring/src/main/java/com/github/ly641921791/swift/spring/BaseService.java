@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Base Service Implement
@@ -71,10 +72,8 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
                 paramMap.put("ignore", false);
                 sqlSession.insert(sqlStatement, paramMap);
             });
-            sqlSession.flushStatements();
+            return IntStream.of(sqlSession.flushStatements().get(0).getUpdateCounts()).sum();
         }
-        // TODO 处理结果，不一定插入数量等于参数数量
-        return entities.size();
     }
 
     @Override
