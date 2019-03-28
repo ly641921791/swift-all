@@ -83,11 +83,8 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
-    public int deleteById(ID id) {
-        if (id == null) {
-            return 0;
-        }
-        return mapper.deleteById(id);
+    public int deleteAllById(Collection<ID> ids) {
+        return mapper.deleteAllById(ids);
     }
 
     @Override

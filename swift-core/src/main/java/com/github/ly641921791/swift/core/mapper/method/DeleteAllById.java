@@ -6,17 +6,17 @@ import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 
 /**
- * Target sql script ： <script>DELETE FROM table WHERE id = #{id}</script>
- * Target sql script ： <script>UPDATE table SET column = 1 WHERE id = #{id}</script>
+ * Target sql script ： <script>DELETE FROM table WHERE id IN (#{id})</script>
+ * Target sql script ： <script>UPDATE table SET column = 1 WHERE id IN (#{id})</script>
  *
  * @author ly
  * @since 1.0.0
  **/
-public class DeleteById extends AbstractDeleteMethodResolver {
+public class DeleteAllById extends AbstractDeleteMethodResolver {
 
     @Override
     protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        sqlScript.WHERE(String.format("`%s` = #{%s}", table.getKeyColumn(), P_A_ID));
+        sqlScript.WHERE("id IN <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach>");
     }
 
 }

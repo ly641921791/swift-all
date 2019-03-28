@@ -61,6 +61,15 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void deleteAllByIdTestSuccess() {
+        fooService.deleteAllById(Collections.singleton(14L));
+        Assert.assertNull(fooService.findById(14L));
+
+        fooWithAnnotationService.deleteAllById(Collections.singleton(14L));
+        Assert.assertNull(fooWithAnnotationService.findById(14L));
+    }
+
+    @Test
     public void deleteByColumnTestSuccess() {
         Assert.assertEquals(fooService.deleteByColumn(Foo.ID, 11L), 1);
         Assert.assertEquals(fooService.deleteByColumn(Foo.ID, 11L), 0);

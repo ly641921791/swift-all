@@ -8,7 +8,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.*;
+import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.P_A_COLUMN;
+import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.P_A_CONDITION;
+import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.P_A_ID;
+import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.P_A_VALUE;
+import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.P_A_VALUES;
 
 /**
  * IService通过继承BaseMapper得到BaseMethod，会导致BaseService不能注入Mapper，
@@ -47,10 +51,20 @@ public interface BaseMethod<T, ID> {
     /**
      * 根据id删除记录
      *
+     * @param ids ids
+     * @return 删除记录数
+     */
+    int deleteAllById(@Param("ids") Collection<ID> ids);
+
+    /**
+     * 根据id删除记录
+     *
      * @param id id
      * @return 删除记录数
      */
-    int deleteById(ID id);
+    default int deleteById(ID id) {
+        return deleteAllById(Collections.singleton(id));
+    }
 
     /**
      * 根据指定列删除记录
