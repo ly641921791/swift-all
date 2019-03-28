@@ -9,6 +9,7 @@ import com.github.ly641921791.swift.core.mapper.method.FindAll;
 import com.github.ly641921791.swift.core.mapper.method.FindAllByColumn;
 import com.github.ly641921791.swift.core.mapper.method.FindAllById;
 import com.github.ly641921791.swift.core.mapper.method.FindById;
+import com.github.ly641921791.swift.core.mapper.method.FindAllId;
 import com.github.ly641921791.swift.core.mapper.method.FindOneByColumn;
 import com.github.ly641921791.swift.core.mapper.method.Save;
 import com.github.ly641921791.swift.core.mapper.method.Update;
@@ -41,6 +42,7 @@ public class MapperMethodResolverRegistry {
         addMapperMethodResolver(new UpdateByColumn());
         addMapperMethodResolver(new UpdateById());
         addMapperMethodResolver(new FindAll());
+        addMapperMethodResolver(new FindAllId());
         addMapperMethodResolver(new FindAllById());
         addMapperMethodResolver(new FindById());
         addMapperMethodResolver(new FindOneByColumn());

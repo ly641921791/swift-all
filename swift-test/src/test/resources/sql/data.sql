@@ -11,6 +11,7 @@ INSERT INTO foo (id,string_value,del) VALUES (9,'findAllById',0);
 INSERT INTO foo (id,string_value,del) VALUES (10,'updateByColumn',0);
 INSERT INTO foo (id,string_value,del) VALUES (11,'deleteByColumn',0);
 INSERT INTO foo (id,string_value,del) VALUES (12,'findOneByColumn',0);
+INSERT INTO foo (id,string_value,del) VALUES (13,'findAllId',0);
 
 
 
@@ -30,3 +31,4 @@ INSERT INTO foo2 (id,string_value2,del) VALUES (9,'findAllById',0);
 INSERT INTO foo2 (id,string_value2,del) VALUES (10,'updateByColumn',0);
 INSERT INTO foo2 (id,string_value2,del) VALUES (11,'deleteByColumn',0);
 INSERT INTO foo2 (id,string_value2,del) VALUES (12,'findOneByColumn',0);
+INSERT INTO foo2 (id,string_value2,del) VALUES (13,'findAllId',0);

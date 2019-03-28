@@ -98,6 +98,19 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void findAllIdTestSuccess() {
+        Condition condition = new Condition();
+        condition.eq(Foo.STRING_VALUE, "findAllId");
+        Assert.assertTrue(fooService.findAllId().size() > 0);
+        Assert.assertTrue(fooService.findAllId(condition).size() > 0);
+
+        condition = new Condition();
+        condition.eq(FooWithAnnotation.STRING_VALUE, "findAllId");
+        Assert.assertTrue(fooWithAnnotationService.findAllId().size() > 0);
+        Assert.assertTrue(fooWithAnnotationService.findAllId(condition).size() > 0);
+    }
+
+    @Test
     public void findAllByColumnTestSuccess() {
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, "findAllByColumn").size(), 2);
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, Collections.singleton("findAllByColumn")).size(), 2);

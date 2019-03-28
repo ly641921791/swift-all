@@ -119,6 +119,23 @@ public interface BaseMethod<T, ID> {
     List<T> findAll(@Param("c") Condition c);
 
     /**
+     * 查询符合条件记录的id
+     *
+     * @return id list
+     */
+    default List<ID> findAllId() {
+        return findAllId(null);
+    }
+
+    /**
+     * 查询符合条件记录的id
+     *
+     * @param condition condition
+     * @return id list
+     */
+    List<ID> findAllId(@Param("c") Condition condition);
+
+    /**
      * 根据指定列查询记录
      *
      * @param column 列名

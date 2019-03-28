@@ -124,6 +124,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
+    public List<ID> findAllId(Condition condition) {
+        return mapper.findAllId(condition);
+    }
+
+    @Override
     public <C extends Collection> List<T> findAllByColumn(String column, C values) {
         if (CollectionUtils.isEmpty(values)) {
             return Collections.emptyList();
