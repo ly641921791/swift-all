@@ -24,7 +24,7 @@ public class Save implements MapperMethodResolver {
     // TODO IGNORE 仅支持mysql数据库
     public static final String INSERT_MYSQL = "<script>INSERT <if test='ignore'>IGNORE</if> INTO %s (%s) VALUES (%s)</script>";
 
-    public static final String COLUMNS = "<if test=\"entity.%s!=null\">,%s</if>";
+    public static final String COLUMNS = "<if test=\"entity.%s!=null\">,`%s`</if>";
 
     public static final String VALUES = "<if test=\"entity.%s!=null\">,#{entity.%s}</if>";
 
