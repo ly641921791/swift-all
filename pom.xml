@@ -11,7 +11,7 @@
 
     <groupId>com.github.ly641921791</groupId>
     <artifactId>swift</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>swift</name>
@@ -35,22 +35,22 @@
             <dependency>
                 <groupId>com.github.ly641921791</groupId>
                 <artifactId>swift-core</artifactId>
-                <version>1.0.0</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ly641921791</groupId>
                 <artifactId>swift-spring</artifactId>
-                <version>1.0.0</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ly641921791</groupId>
                 <artifactId>swift-spring-boot-autoconfigure</artifactId>
-                <version>1.0.0</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ly641921791</groupId>
                 <artifactId>swift-spring-boot-starter</artifactId>
-                <version>1.0.0</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
