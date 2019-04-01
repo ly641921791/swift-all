@@ -23,17 +23,20 @@ public class StringArrayTypeHandler extends BaseTypeHandler<StringArray> {
 
     @Override
     public StringArray getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return JSON.parseObject(rs.getString(columnName), StringArray.class);
+        String string = rs.getString(columnName);
+        return string == null ? new StringArray() : JSON.parseObject(string, StringArray.class);
     }
 
     @Override
     public StringArray getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return JSON.parseObject(rs.getString(columnIndex), StringArray.class);
+        String string = rs.getString(columnIndex);
+        return string == null ? new StringArray() : JSON.parseObject(string, StringArray.class);
     }
 
     @Override
     public StringArray getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return JSON.parseObject(cs.getString(columnIndex), StringArray.class);
+        String string = cs.getString(columnIndex);
+        return string == null ? new StringArray() : JSON.parseObject(string, StringArray.class);
     }
 
 }
