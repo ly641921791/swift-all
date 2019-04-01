@@ -28,6 +28,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.56</version>
+            </dependency>
+            <dependency>
                 <groupId>com.github.ly641921791</groupId>
                 <artifactId>swift-core</artifactId>
                 <version>1.0.0</version>

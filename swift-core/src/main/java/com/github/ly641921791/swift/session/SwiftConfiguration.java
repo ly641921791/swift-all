@@ -1,13 +1,16 @@
 package com.github.ly641921791.swift.session;
 
 import com.github.ly641921791.swift.binding.SwiftMapperRegistry;
+import com.github.ly641921791.swift.core.lang.StringArray;
 import com.github.ly641921791.swift.core.mapper.MapperMethodResolver;
 import com.github.ly641921791.swift.core.support.MapperMethodResolverRegistry;
+import com.github.ly641921791.swift.type.StringArrayTypeHandler;
 import lombok.Getter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.type.JdbcType;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -30,6 +33,12 @@ public class SwiftConfiguration extends Configuration {
 
     @Getter
     private final MapperMethodResolverRegistry mapperMethodResolverRegistry = new MapperMethodResolverRegistry();
+
+    public SwiftConfiguration() {
+        super();
+        typeHandlerRegistry.register(StringArray.class, new StringArrayTypeHandler());
+        typeHandlerRegistry.register(JdbcType.VARCHAR, new StringArrayTypeHandler());
+    }
 
     // methods
 
