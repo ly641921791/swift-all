@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
@@ -146,6 +147,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
             return null;
         }
         return mapper.findById(id);
+    }
+
+    @Override
+    public List<Map> findMapList(Condition condition) {
+        return mapper.findMapList(condition);
     }
 
     @Override

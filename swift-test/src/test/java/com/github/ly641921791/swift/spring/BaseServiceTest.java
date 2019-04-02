@@ -142,6 +142,17 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void findMapListTestSuccess() {
+        Condition condition = new Condition();
+        condition.select("f1.id", "f1");
+        condition.select("f2.id", "f2");
+        condition.from("foo AS f1");
+        condition.innerJoin("foo AS f2", "f1.id = f2.id");
+        Assert.assertNotNull(fooService.findMapList(condition));
+        Assert.assertNotNull(fooWithAnnotationService.findMapList(condition));
+    }
+
+    @Test
     public void findOneByColumnTestSuccess() {
         fooService.findOneByColumn(Foo.STRING_VALUE, "findOneByColumn");
         fooWithAnnotationService.findOneByColumn(FooWithAnnotation.STRING_VALUE, "findOneByColumn");
@@ -202,7 +213,6 @@ public class BaseServiceTest {
         fooTargetProperty.setStringValue("updateSuccess");
         FooWithAnnotation foo2targetProperty = new FooWithAnnotation();
         foo2targetProperty.setStringValue("updateSuccess");
-
 
         fooService.updateById(fooTargetProperty, 3L);
         Assert.assertEquals(fooService.findById(3L).getStringValue(), fooTargetProperty.getStringValue());

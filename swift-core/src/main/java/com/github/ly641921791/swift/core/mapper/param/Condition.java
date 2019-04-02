@@ -13,6 +13,12 @@ public class Condition {
 
     private boolean or = false;
 
+    private StringBuilder column = new StringBuilder();
+
+    private String from;
+
+    private StringBuilder join = new StringBuilder();
+
     /**
      * where条件
      */
@@ -26,6 +32,42 @@ public class Condition {
      * 参数映射
      */
     private Map<String, Object> params = new HashMap<>();
+
+    public void select(String column) {
+        this.column.append(column).append(",");
+    }
+
+    public void select(String column, String as) {
+        this.column.append(column).append(" AS ").append(as).append(",");
+    }
+
+    public void from(String from) {
+        this.from = from;
+    }
+
+    public void innerJoin(String table, String on) {
+        join.append("INNER JOIN ").append(table).append(" ON ").append(on).append(" ");
+    }
+
+    public void innerJoin(String table, String as, String on) {
+        join.append("INNER JOIN ").append(table).append(" AS ").append(as).append(" ON ").append(on).append(" ");
+    }
+
+    public void leftJoin(String table, String on) {
+        join.append("LEFT JOIN ").append(table).append(" ON ").append(on).append(" ");
+    }
+
+    public void leftJoin(String table, String as, String on) {
+        join.append("LEFT JOIN ").append(table).append(" AS ").append(as).append(" ON ").append(on).append(" ");
+    }
+
+    public void rightJoin(String table, String on) {
+        join.append("RIGHT JOIN ").append(table).append(" ON ").append(on).append(" ");
+    }
+
+    public void rightJoin(String table, String as, String on) {
+        join.append("RIGHT JOIN ").append(table).append(" AS ").append(as).append(" ON ").append(on).append(" ");
+    }
 
     /**
      * 等于

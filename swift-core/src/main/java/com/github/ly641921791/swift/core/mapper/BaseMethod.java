@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.P_A_COLUMN;
 import static com.github.ly641921791.swift.core.mapper.MapperMethodResolver.P_A_CONDITION;
@@ -186,6 +187,14 @@ public interface BaseMethod<T, ID> {
      * @return 符合条件记录
      */
     T findById(@Param(P_A_ID) ID id);
+
+    /**
+     * 根据条件查询，查询结果包装为map
+     *
+     * @param condition 条件
+     * @return 查询结果
+     */
+    List<Map> findMapList(@Param(P_A_CONDITION) Condition condition);
 
     /**
      * 根据指定列查询记录
