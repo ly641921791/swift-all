@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>com.github.ly641921791</groupId>
-    <artifactId>swift</artifactId>
+    <artifactId>swift-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
