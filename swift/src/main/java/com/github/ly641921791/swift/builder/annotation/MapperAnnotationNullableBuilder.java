@@ -317,7 +317,7 @@ public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
             methodHandler = configuration.getMapperMethodResolver(method);
             if (methodHandler != null) {
                 methodHandler.init(configuration, table);
-                sqlSource = languageDriver.createSqlSource(this.configuration, methodHandler.getStatement(table, this.configuration), parameterTypeClass);
+                sqlSource = languageDriver.createSqlSource(this.configuration, methodHandler.getStatement(), parameterTypeClass);
                 replaceable = true;
             }
         }

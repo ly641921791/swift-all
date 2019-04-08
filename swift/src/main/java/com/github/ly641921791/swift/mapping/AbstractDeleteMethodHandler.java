@@ -1,6 +1,5 @@
 package com.github.ly641921791.swift.mapping;
 
-import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.metadata.Table;
 import com.github.ly641921791.swift.session.SwiftConfiguration;
 import com.github.ly641921791.swift.util.StringUtils;
@@ -10,72 +9,40 @@ import org.apache.ibatis.mapping.SqlCommandType;
  * @author ly
  * @since 1.0.0
  **/
-public abstract class AbstractDeleteMethodHandler implements MapperMethodHandler {
+public abstract class AbstractDeleteMethodHandler extends AbstractMapperMethodHandler {
 
-    private ThreadLocal<SqlCommandType> currentSqlCommandType = new ThreadLocal<>();
+    protected SqlCommandType sqlCommandType = SqlCommandType.DELETE;
+
+    @Override
+    public void init(SwiftConfiguration configuration, Table table) {
+        super.init(configuration, table);
+        if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {
+            sqlCommandType = SqlCommandType.UPDATE;
+        }
+    }
 
     @Override
     public SqlCommandType getSqlCommandType() {
-        return currentSqlCommandType.get() == null ? SqlCommandType.DELETE : currentSqlCommandType.get();
+        return sqlCommandType;
     }
 
     @Override
-    public String getStatement(Table table, SwiftConfiguration configuration) {
-        SqlScript sqlScript = new SqlScript();
-
+    public String getStatement() {
+        StringBuilder statement = new StringBuilder();
+        statement.append(TAG_SCRIPT_OPEN);
         if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {
-
             // UPDATE table SET WHERE
-
-
-            currentSqlCommandType.set(SqlCommandType.UPDATE);
-
-            sqlScript.UPDATE(table.getName());
-            sqlScript.SET(String.format("`%s` = %s", table.getDeleteColumn(), table.getDeleteValue()));
-            handlerWhere(sqlScript, table, configuration);
-
+            statement.append("UPDATE ").append(table.getName()).append(' ');
+            statement.append(TAG_SET_OPEN);
+            statement.append(String.format("`%s` = %s", table.getDeleteColumn(), table.getDeleteValue()));
+            statement.append(TAG_SET_CLOSE);
         } else {
-
             // DELETE FROM table WHERE
-
-
-            currentSqlCommandType.set(SqlCommandType.DELETE);
-
-
-            sqlScript.DELETE_FROM(table.getName());
-
-            handlerWhere(sqlScript, table, configuration);
+            statement.append("DELETE FROM ").append(table.getName()).append(' ');
         }
-
-
-        return sqlScript.toString();
-    }
-
-    /**
-     * handler where condition
-     *
-     * @param sqlScript     sqlScript
-     * @param table         table
-     * @param configuration configuration
-     */
-    protected abstract void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration);
-
-    /**
-     * handler delete column
-     *
-     * @param sqlScript     sqlScript
-     * @param table         table
-     * @param configuration configuration
-     */
-    protected void handlerDeleteColumn(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {
-            sqlScript.WHERE_EQ(table.getDeleteColumn(), table.getExistsValue());
-        }
-    }
-
-    @Override
-    public void close() {
-        currentSqlCommandType.remove();
+        whereClause(statement);
+        statement.append(TAG_SCRIPT_CLOSE);
+        return statement.toString();
     }
 
 }

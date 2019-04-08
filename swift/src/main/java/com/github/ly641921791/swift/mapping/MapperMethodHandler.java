@@ -32,6 +32,14 @@ public interface MapperMethodHandler {
 
     String TAG_SCRIPT_CLOSE = "</script>";
 
+    String TAG_WHERE_OPEN = "<where>";
+
+    String TAG_WHERE_CLOSE = "</where>";
+
+    String TAG_SET_OPEN = "<set>";
+
+    String TAG_SET_CLOSE = "</set>";
+
     /**
      * Initial mapper method handler
      *
@@ -50,11 +58,9 @@ public interface MapperMethodHandler {
     /**
      * 生成Sql Script
      *
-     * @param table         table
-     * @param configuration 配置文件
      * @return Sql Script
      */
-    String getStatement(Table table, SwiftConfiguration configuration);
+    String getStatement();
 
     default KeyGenerator getKeyGenerator(Table table) {
         return NoKeyGenerator.INSTANCE;

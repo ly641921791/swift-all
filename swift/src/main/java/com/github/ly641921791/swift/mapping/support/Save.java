@@ -1,9 +1,8 @@
 package com.github.ly641921791.swift.mapping.support;
 
-import com.github.ly641921791.swift.mapping.MapperMethodHandler;
+import com.github.ly641921791.swift.mapping.AbstractMapperMethodHandler;
 import com.github.ly641921791.swift.metadata.Column;
 import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -17,7 +16,7 @@ import java.util.List;
  * @author ly
  * @since 1.0.0
  **/
-public class Save implements MapperMethodHandler {
+public class Save extends AbstractMapperMethodHandler {
 
     public static final String INSERT = "<script>INSERT INTO %s (%s) VALUES (%s)</script>";
 
@@ -34,7 +33,7 @@ public class Save implements MapperMethodHandler {
     }
 
     @Override
-    public String getStatement(Table table, SwiftConfiguration configuration) {
+    public String getStatement() {
         List<Column> columnList = table.getColumns();
 
         StringBuilder cols = new StringBuilder("<trim prefix=\"\" prefixOverrides=\",\">");

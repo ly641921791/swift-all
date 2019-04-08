@@ -1,9 +1,5 @@
 package com.github.ly641921791.swift.mapping;
 
-import com.github.ly641921791.swift.jdbc.SqlScript;
-import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
-import com.github.ly641921791.swift.util.StringUtils;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 /**
@@ -20,7 +16,7 @@ public abstract class AbstractSelectMethodHandler extends AbstractMapperMethodHa
     }
 
     @Override
-    public String getStatement(Table table, SwiftConfiguration configuration) {
+    public String getStatement() {
         StringBuilder statement = new StringBuilder();
         statement.append(TAG_SCRIPT_OPEN);
         selectClause(statement);
@@ -32,28 +28,17 @@ public abstract class AbstractSelectMethodHandler extends AbstractMapperMethodHa
 
     @Override
     protected void selectClause(StringBuilder statement) {
+        statement.append("<trim prefix='SELECT' suffixOverrides=','>");
         table.getColumns().forEach(column -> {
             if (column.getSelectValue().isEmpty()) {
                 if (column.isExists()) {
-                    statement.append(column.getName()).append(" AS ").append(column.getJavaField().getName()).append(",");
+                    statement.append('`').append(column.getName()).append("` AS `").append(column.getJavaField().getName()).append("`,");
                 }
             } else {
-                statement.append(column.getSelectValue()).append(" AS ").append(column.getName()).append(",");
+                statement.append('(').append(column.getSelectValue()).append(") AS `").append(column.getName()).append("`,");
             }
         });
-    }
-
-    /**
-     * handler delete column
-     *
-     * @param sqlScript     sqlScript
-     * @param table         table
-     * @param configuration configuration
-     */
-    protected void handlerDeleteColumn(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {
-            sqlScript.WHERE_EQ(table.getDeleteColumn(), table.getExistsValue());
-        }
+        statement.append("</trim>");
     }
 
 }

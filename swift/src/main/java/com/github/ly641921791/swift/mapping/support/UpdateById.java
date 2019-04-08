@@ -1,9 +1,6 @@
 package com.github.ly641921791.swift.mapping.support;
 
-import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.mapping.AbstractUpdateMethodHandler;
-import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
 
 /**
  * <script>UPDATE table <set>%s</set> WHERE id = id</script>
@@ -16,7 +13,7 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
 public class UpdateById extends AbstractUpdateMethodHandler {
 
     @Override
-    public String getStatement(Table table, SwiftConfiguration configuration) {
+    public String getStatement() {
 
         StringBuilder set = new StringBuilder();
         table.getColumns().forEach(column -> {
@@ -26,10 +23,6 @@ public class UpdateById extends AbstractUpdateMethodHandler {
         });
 
         return String.format("<script>UPDATE `%s` <set>%s</set> WHERE id = #{id}</script>", table.getName(), set.toString());
-    }
-
-    @Override
-    protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
     }
 
 }

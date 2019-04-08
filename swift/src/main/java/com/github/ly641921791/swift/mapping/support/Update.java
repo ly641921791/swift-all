@@ -1,9 +1,8 @@
 package com.github.ly641921791.swift.mapping.support;
 
-import com.github.ly641921791.swift.mapping.MapperMethodHandler;
+import com.github.ly641921791.swift.mapping.AbstractUpdateMethodHandler;
 import com.github.ly641921791.swift.metadata.Column;
 import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  * @author ly
  * @since 1.0.0
  */
-public class Update implements MapperMethodHandler {
+public class Update extends AbstractUpdateMethodHandler {
 
     public static final String UPDATE = "<script>UPDATE %s <set>%s</set><where>${c.where}</where></script>";
 
@@ -24,7 +23,7 @@ public class Update implements MapperMethodHandler {
     }
 
     @Override
-    public String getStatement(Table table, SwiftConfiguration configuration) {
+    public String getStatement() {
         return String.format(UPDATE, table.getName(), getSetSql(table));
     }
 

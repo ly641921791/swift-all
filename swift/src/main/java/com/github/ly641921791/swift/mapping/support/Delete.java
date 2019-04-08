@@ -1,9 +1,6 @@
 package com.github.ly641921791.swift.mapping.support;
 
-import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.mapping.AbstractDeleteMethodHandler;
-import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 /**
@@ -16,19 +13,16 @@ import org.apache.ibatis.mapping.SqlCommandType;
 public class Delete extends AbstractDeleteMethodHandler {
 
     @Override
-    public String getStatement(Table table, SwiftConfiguration configuration) {
+    public String getStatement() {
         if (SqlCommandType.UPDATE.equals(getSqlCommandType())) {
-            return super.getStatement(table, configuration);
+            return super.getStatement();
         }
-        return super.getStatement(table, configuration).replace("</script>", " <where>${c.where}</where></script>");
+        return super.getStatement().replace("</script>", " <where>${c.where}</where></script>");
     }
 
     @Override
-    protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        if (SqlCommandType.UPDATE.equals(getSqlCommandType())) {
-            return;
-        }
-        handlerDeleteColumn(sqlScript, table, configuration);
+    protected void whereClause(StringBuilder statement) {
+        deleteClause(statement);
     }
 
 }

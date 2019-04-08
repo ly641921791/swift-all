@@ -1,9 +1,6 @@
 package com.github.ly641921791.swift.mapping.support;
 
-import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.mapping.AbstractDeleteMethodHandler;
-import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
 
 /**
  * <pre>
@@ -24,9 +21,11 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
 public class DeleteByColumn extends AbstractDeleteMethodHandler {
 
     @Override
-    protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        sqlScript.WHERE("`${c}` = #{v}");
-        handlerDeleteColumn(sqlScript, table, configuration);
+    protected void whereClause(StringBuilder statement) {
+        statement.append(TAG_WHERE_OPEN);
+        statement.append("`${c}` = #{v}");
+        deleteClause(statement);
+        statement.append(TAG_WHERE_CLOSE);
     }
 
 }
