@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>swift</artifactId>
         <groupId>com.github.ly641921791</groupId>
+        <artifactId>swift-all</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 

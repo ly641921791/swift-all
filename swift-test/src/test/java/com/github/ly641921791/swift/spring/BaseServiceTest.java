@@ -1,7 +1,7 @@
 package com.github.ly641921791.swift.spring;
 
 import com.github.ly641921791.swift.ExceptionAssert;
-import com.github.ly641921791.swift.core.mapper.param.Condition;
+import com.github.ly641921791.swift.mapping.Condition;
 import com.github.ly641921791.swift.test.FooApplication;
 import com.github.ly641921791.swift.test.service.FooService;
 import com.github.ly641921791.swift.test.service.FooWithAnnotationService;

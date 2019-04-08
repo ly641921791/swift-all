@@ -1,10 +1,10 @@
 package com.github.ly641921791.swift.spring;
 
-import com.github.ly641921791.swift.core.mapper.BaseMapper;
-import com.github.ly641921791.swift.core.mapper.method.Save;
-import com.github.ly641921791.swift.core.mapper.param.Condition;
-import com.github.ly641921791.swift.core.util.ClassUtils;
-import com.github.ly641921791.swift.core.util.StringUtils;
+import com.github.ly641921791.swift.mapping.BaseMapper;
+import com.github.ly641921791.swift.mapping.Condition;
+import com.github.ly641921791.swift.mapping.support.Save;
+import com.github.ly641921791.swift.util.ClassUtils;
+import com.github.ly641921791.swift.util.StringUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;

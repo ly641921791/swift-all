@@ -1,7 +1,7 @@
 package com.github.ly641921791.swift.test.table;
 
-import com.github.ly641921791.swift.core.annotation.ColumnField;
-import com.github.ly641921791.swift.core.annotation.TableClass;
+import com.github.ly641921791.swift.annotations.ColumnField;
+import com.github.ly641921791.swift.annotations.TableClass;
 import lombok.Data;
 
 /**

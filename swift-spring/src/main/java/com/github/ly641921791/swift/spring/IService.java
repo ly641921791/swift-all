@@ -1,6 +1,6 @@
 package com.github.ly641921791.swift.spring;
 
-import com.github.ly641921791.swift.core.mapper.BaseMethod;
+import com.github.ly641921791.swift.mapping.BaseMethod;
 
 /**
  * Base Service Interface

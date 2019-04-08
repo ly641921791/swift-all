@@ -2,29 +2,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.github.ly641921791</groupId>
         <artifactId>swift-all</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>swift-spring</artifactId>
+    <artifactId>swift</artifactId>
     <packaging>jar</packaging>
-
+    
     <dependencies>
         <dependency>
-            <groupId>com.github.ly641921791</groupId>
-            <artifactId>swift</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
+            <artifactId>mybatis</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,5 +1,6 @@
 package com.github.ly641921791.swift.core.util;
 
+import com.github.ly641921791.swift.util.StringUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
