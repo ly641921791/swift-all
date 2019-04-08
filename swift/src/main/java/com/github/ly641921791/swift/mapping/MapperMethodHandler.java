@@ -6,8 +6,6 @@ import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.SqlCommandType;
 
-import java.io.Closeable;
-
 /**
  * Mapper方法解析器
  * <p>
@@ -16,7 +14,7 @@ import java.io.Closeable;
  *
  * @author ly
  */
-public interface MapperMethodHandler extends Closeable, Cloneable {
+public interface MapperMethodHandler {
 
     String P_A_VALUE = "v";
 
@@ -35,6 +33,14 @@ public interface MapperMethodHandler extends Closeable, Cloneable {
     String TAG_SCRIPT_CLOSE = "</script>";
 
     /**
+     * Initial mapper method handler
+     *
+     * @param configuration configuration
+     * @param table         table
+     */
+    void init(SwiftConfiguration configuration, Table table);
+
+    /**
      * 获得SqlCommandType
      *
      * @return SqlCommandType
@@ -48,7 +54,7 @@ public interface MapperMethodHandler extends Closeable, Cloneable {
      * @param configuration 配置文件
      * @return Sql Script
      */
-    String buildSqlScript(Table table, SwiftConfiguration configuration);
+    String getStatement(Table table, SwiftConfiguration configuration);
 
     default KeyGenerator getKeyGenerator(Table table) {
         return NoKeyGenerator.INSTANCE;
@@ -60,10 +66,6 @@ public interface MapperMethodHandler extends Closeable, Cloneable {
 
     default String getKeyColumn(Table table) {
         return null;
-    }
-
-    @Override
-    default void close() {
     }
 
 }

@@ -16,7 +16,7 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
 public class UpdateById extends AbstractUpdateMethodHandler {
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
 
         StringBuilder set = new StringBuilder();
         table.getColumns().forEach(column -> {

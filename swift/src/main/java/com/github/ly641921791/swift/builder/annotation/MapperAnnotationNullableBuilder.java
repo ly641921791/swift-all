@@ -84,7 +84,7 @@ import java.util.Set;
 
 /**
  * @author ly
- * @since  1.0.0
+ * @since 1.0.0
  */
 public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
 
@@ -311,118 +311,116 @@ public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
         SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
 
         boolean replaceable = false;
-        MapperMethodHandler resolver = null;
-        try {
-            if (sqlSource == null) {
-                resolver = configuration.getMapperMethodResolver(method);
-                sqlSource = getSqlSourceFromTable(method, parameterTypeClass, languageDriver, resolver);
+        MapperMethodHandler methodHandler = null;
+
+        if (sqlSource == null) {
+            methodHandler = configuration.getMapperMethodResolver(method);
+            if (methodHandler != null) {
+                methodHandler.init(configuration, table);
+                sqlSource = languageDriver.createSqlSource(this.configuration, methodHandler.getStatement(table, this.configuration), parameterTypeClass);
                 replaceable = true;
             }
+        }
 
-            if (sqlSource != null) {
-                Options options = method.getAnnotation(Options.class);
-                final String mappedStatementId = type.getName() + "." + method.getName();
-                Integer fetchSize = null;
-                Integer timeout = null;
-                StatementType statementType = StatementType.PREPARED;
-                ResultSetType resultSetType = null;
-                SqlCommandType sqlCommandType = getSqlCommandType(method);
+        if (sqlSource != null) {
+            Options options = method.getAnnotation(Options.class);
+            final String mappedStatementId = type.getName() + "." + method.getName();
+            Integer fetchSize = null;
+            Integer timeout = null;
+            StatementType statementType = StatementType.PREPARED;
+            ResultSetType resultSetType = null;
+            SqlCommandType sqlCommandType = getSqlCommandType(method);
 
-                if (SqlCommandType.UNKNOWN == sqlCommandType && resolver != null) {
-                    sqlCommandType = resolver.getSqlCommandType();
-                }
+            if (SqlCommandType.UNKNOWN == sqlCommandType && methodHandler != null) {
+                sqlCommandType = methodHandler.getSqlCommandType();
+            }
 
-                boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
-                boolean flushCache = !isSelect;
-                boolean useCache = isSelect;
+            boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+            boolean flushCache = !isSelect;
+            boolean useCache = isSelect;
 
-                KeyGenerator keyGenerator;
-                String keyProperty = null;
-                String keyColumn = null;
-                if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                    // first check for SelectKey annotation - that overrides everything else
-                    SelectKey selectKey = method.getAnnotation(SelectKey.class);
-                    if (selectKey != null) {
-                        keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
-                        keyProperty = selectKey.keyProperty();
-                    } else if (options == null) {
+            KeyGenerator keyGenerator;
+            String keyProperty = null;
+            String keyColumn = null;
+            if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
+                // first check for SelectKey annotation - that overrides everything else
+                SelectKey selectKey = method.getAnnotation(SelectKey.class);
+                if (selectKey != null) {
+                    keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
+                    keyProperty = selectKey.keyProperty();
+                } else if (options == null) {
 
-                        if (table != null && table.getTableClassAnnotation() != null && resolver != null) {
-                            keyGenerator = resolver.getKeyGenerator(table);
-                            keyProperty = resolver.getKeyProperty(table);
-                            keyColumn = resolver.getKeyColumn(table);
-                        } else {
-                            keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
-                        }
-
+                    if (table != null && table.getTableClassAnnotation() != null && methodHandler != null) {
+                        keyGenerator = methodHandler.getKeyGenerator(table);
+                        keyProperty = methodHandler.getKeyProperty(table);
+                        keyColumn = methodHandler.getKeyColumn(table);
                     } else {
-                        keyGenerator = options.useGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
-                        keyProperty = options.keyProperty();
-                        keyColumn = options.keyColumn();
+                        keyGenerator = configuration.isUseGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
                     }
+
                 } else {
-                    keyGenerator = NoKeyGenerator.INSTANCE;
+                    keyGenerator = options.useGeneratedKeys() ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
+                    keyProperty = options.keyProperty();
+                    keyColumn = options.keyColumn();
                 }
-
-                if (options != null) {
-                    if (Options.FlushCachePolicy.TRUE.equals(options.flushCache())) {
-                        flushCache = true;
-                    } else if (Options.FlushCachePolicy.FALSE.equals(options.flushCache())) {
-                        flushCache = false;
-                    }
-                    useCache = options.useCache();
-                    fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; //issue #348
-                    timeout = options.timeout() > -1 ? options.timeout() : null;
-                    statementType = options.statementType();
-                    resultSetType = options.resultSetType();
-                }
-
-                String resultMapId = null;
-                ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
-                if (resultMapAnnotation != null) {
-                    String[] resultMaps = resultMapAnnotation.value();
-                    StringBuilder sb = new StringBuilder();
-                    for (String resultMap : resultMaps) {
-                        if (sb.length() > 0) {
-                            sb.append(",");
-                        }
-                        sb.append(resultMap);
-                    }
-                    resultMapId = sb.toString();
-                } else if (isSelect) {
-                    resultMapId = parseResultMap(method);
-                }
-                assistant.addMappedStatement(
-                        mappedStatementId,
-                        sqlSource,
-                        statementType,
-                        sqlCommandType,
-                        fetchSize,
-                        timeout,
-                        // ParameterMapID
-                        null,
-                        parameterTypeClass,
-                        resultMapId,
-                        getReturnType(method),
-                        resultSetType,
-                        flushCache,
-                        useCache,
-                        // TODO gcode issue #577
-                        false,
-                        keyGenerator,
-                        keyProperty,
-                        keyColumn,
-                        // DatabaseID
-                        null,
-                        languageDriver,
-                        // ResultSets
-                        options != null ? nullOrEmpty(options.resultSets()) : null,
-                        replaceable);
+            } else {
+                keyGenerator = NoKeyGenerator.INSTANCE;
             }
-        } finally {
-            if (resolver != null) {
-                resolver.close();
+
+            if (options != null) {
+                if (Options.FlushCachePolicy.TRUE.equals(options.flushCache())) {
+                    flushCache = true;
+                } else if (Options.FlushCachePolicy.FALSE.equals(options.flushCache())) {
+                    flushCache = false;
+                }
+                useCache = options.useCache();
+                fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; //issue #348
+                timeout = options.timeout() > -1 ? options.timeout() : null;
+                statementType = options.statementType();
+                resultSetType = options.resultSetType();
             }
+
+            String resultMapId = null;
+            ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
+            if (resultMapAnnotation != null) {
+                String[] resultMaps = resultMapAnnotation.value();
+                StringBuilder sb = new StringBuilder();
+                for (String resultMap : resultMaps) {
+                    if (sb.length() > 0) {
+                        sb.append(",");
+                    }
+                    sb.append(resultMap);
+                }
+                resultMapId = sb.toString();
+            } else if (isSelect) {
+                resultMapId = parseResultMap(method);
+            }
+            assistant.addMappedStatement(
+                    mappedStatementId,
+                    sqlSource,
+                    statementType,
+                    sqlCommandType,
+                    fetchSize,
+                    timeout,
+                    // ParameterMapID
+                    null,
+                    parameterTypeClass,
+                    resultMapId,
+                    getReturnType(method),
+                    resultSetType,
+                    flushCache,
+                    useCache,
+                    // TODO gcode issue #577
+                    false,
+                    keyGenerator,
+                    keyProperty,
+                    keyColumn,
+                    // DatabaseID
+                    null,
+                    languageDriver,
+                    // ResultSets
+                    options != null ? nullOrEmpty(options.resultSets()) : null,
+                    replaceable);
         }
     }
 
@@ -527,13 +525,6 @@ public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
         } catch (Exception e) {
             throw new BuilderException("Could not find value method on SQL annotation.  Cause: " + e, e);
         }
-    }
-
-    private SqlSource getSqlSourceFromTable(Method method, Class<?> parameterType, LanguageDriver languageDriver, MapperMethodHandler resolver) {
-        if (resolver == null) {
-            return null;
-        }
-        return languageDriver.createSqlSource(this.configuration, resolver.buildSqlScript(table, this.configuration), parameterType);
     }
 
     private SqlSource buildSqlSourceFromStrings(String[] strings, Class<?> parameterTypeClass, LanguageDriver languageDriver) {

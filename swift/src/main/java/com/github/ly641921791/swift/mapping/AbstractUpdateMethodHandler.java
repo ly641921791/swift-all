@@ -22,7 +22,7 @@ public abstract class AbstractUpdateMethodHandler implements MapperMethodHandler
     }
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
         SqlScript sqlScript = new SqlScript();
         sqlScript.UPDATE(table.getName());
         handlerColumn(sqlScript, table, configuration);

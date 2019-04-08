@@ -15,11 +15,11 @@ import com.github.ly641921791.swift.util.StringUtils;
 public class FindAllById extends AbstractSelectMethodHandler {
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
         if (StringUtils.isNotEmpty(table.getDeleteColumn())) {
-            return super.buildSqlScript(table, configuration).replace("</script>", "AND " + table.getDeleteColumn() + " = " + table.getExistsValue() + "</script>");
+            return super.getStatement(table, configuration).replace("</script>", "AND " + table.getDeleteColumn() + " = " + table.getExistsValue() + "</script>");
         }
-        return super.buildSqlScript(table, configuration);
+        return super.getStatement(table, configuration);
     }
 
     @Override

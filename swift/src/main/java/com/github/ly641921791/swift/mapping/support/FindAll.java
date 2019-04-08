@@ -1,9 +1,6 @@
 package com.github.ly641921791.swift.mapping.support;
 
-import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.mapping.AbstractSelectMethodHandler;
-import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
 import com.github.ly641921791.swift.util.StringUtils;
 
 /**
@@ -48,22 +45,15 @@ import com.github.ly641921791.swift.util.StringUtils;
 public class FindAll extends AbstractSelectMethodHandler {
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
-        StringBuilder replace = new StringBuilder();
+    protected void whereClause(StringBuilder statement) {
         if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {
-            replace.append(String.format("<if test='c == null'>WHERE %s = %s</if>", table.getDeleteColumn(), table.getExistsValue()));
+            statement.append(String.format("<if test='c == null'>WHERE %s = %s</if>", table.getDeleteColumn(), table.getExistsValue()));
         }
-        replace.append("<if test='c != null'>");
-        replace.append("<where>${c.where}</where>");
-        replace.append("<if test='c.orderBy != null'>ORDER BY ${c.orderBy}</if>");
-        replace.append("<if test='c.limit != null'>LIMIT ${c.limit[0]},${c.limit[1]}</if>");
-        replace.append("</if></script>");
-        return super.buildSqlScript(table, configuration).replace("</script>", replace.toString());
-    }
-
-    @Override
-    protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-
+        statement.append("<if test='c != null'>");
+        statement.append("<where>${c.where}</where>");
+        statement.append("<if test='c.orderBy != null'>ORDER BY ${c.orderBy}</if>");
+        statement.append("<if test='c.limit != null'>LIMIT ${c.limit[0]},${c.limit[1]}</if>");
+        statement.append("</if>");
     }
 
 }

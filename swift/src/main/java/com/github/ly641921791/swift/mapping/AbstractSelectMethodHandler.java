@@ -12,7 +12,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
  * @author ly
  * @since 1.0.0
  **/
-public abstract class AbstractSelectMethodHandler implements MapperMethodHandler {
+public abstract class AbstractSelectMethodHandler extends AbstractMapperMethodHandler {
 
     @Override
     public SqlCommandType getSqlCommandType() {
@@ -20,41 +20,28 @@ public abstract class AbstractSelectMethodHandler implements MapperMethodHandler
     }
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
-        SqlScript sqlScript = new SqlScript();
-        handlerColumn(sqlScript, table, configuration);
-        sqlScript.FROM(table.getName());
-        handlerWhere(sqlScript, table, configuration);
-        return sqlScript.toString();
+    public String getStatement(Table table, SwiftConfiguration configuration) {
+        StringBuilder statement = new StringBuilder();
+        statement.append(TAG_SCRIPT_OPEN);
+        selectClause(statement);
+        statement.append("FROM ").append(table.getName()).append(' ');
+        whereClause(statement);
+        statement.append(TAG_SCRIPT_CLOSE);
+        return statement.toString();
     }
 
-    /**
-     * handler column
-     *
-     * @param sqlScript     sqlScript
-     * @param table         table
-     * @param configuration configuration
-     */
-    protected void handlerColumn(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
+    @Override
+    protected void selectClause(StringBuilder statement) {
         table.getColumns().forEach(column -> {
             if (column.getSelectValue().isEmpty()) {
-                if (column.isExists()){
-                    sqlScript.SELECT_COLUMN_AS(column.getName(),column.getJavaField().getName());
+                if (column.isExists()) {
+                    statement.append(column.getName()).append(" AS ").append(column.getJavaField().getName()).append(",");
                 }
-            }else {
-                sqlScript.SELECT_SCRIPT_AS(column.getSelectValue(), column.getName());
+            } else {
+                statement.append(column.getSelectValue()).append(" AS ").append(column.getName()).append(",");
             }
         });
     }
-
-    /**
-     * handler where condition
-     *
-     * @param sqlScript     sqlScript
-     * @param table         table
-     * @param configuration configuration
-     */
-    protected abstract void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration);
 
     /**
      * handler delete column

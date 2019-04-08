@@ -20,7 +20,7 @@ public abstract class AbstractDeleteMethodHandler implements MapperMethodHandler
     }
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
         SqlScript sqlScript = new SqlScript();
 
         if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {

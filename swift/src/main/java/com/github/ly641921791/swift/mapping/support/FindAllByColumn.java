@@ -1,9 +1,6 @@
 package com.github.ly641921791.swift.mapping.support;
 
-import com.github.ly641921791.swift.jdbc.SqlScript;
 import com.github.ly641921791.swift.mapping.AbstractSelectMethodHandler;
-import com.github.ly641921791.swift.metadata.Table;
-import com.github.ly641921791.swift.session.SwiftConfiguration;
 
 /**
  * <pre>
@@ -23,9 +20,9 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
 public class FindAllByColumn extends AbstractSelectMethodHandler {
 
     @Override
-    protected void handlerWhere(SqlScript sqlScript, Table table, SwiftConfiguration configuration) {
-        sqlScript.WHERE("`${c}` IN <foreach item='item' index='index' collection='vs' open='(' separator=',' close=')'>#{item}</foreach>");
-        handlerDeleteColumn(sqlScript, table, configuration);
+    protected void whereClause(StringBuilder statement) {
+        statement.append("`${c}` IN <foreach item='item' index='index' collection='vs' open='(' separator=',' close=')'>#{item}</foreach>");
+        deleteClause(statement, table, configuration);
     }
 
 }

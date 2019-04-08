@@ -19,7 +19,7 @@ import com.github.ly641921791.swift.session.SwiftConfiguration;
 public class FindMapList extends AbstractSelectMethodHandler {
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
         return TAG_SCRIPT_OPEN +
                 "SELECT <trim suffixOverrides=','>${c.column}</trim> " +
                 "FROM ${c.from} " +

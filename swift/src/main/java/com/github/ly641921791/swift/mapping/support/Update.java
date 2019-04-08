@@ -24,7 +24,7 @@ public class Update implements MapperMethodHandler {
     }
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
         return String.format(UPDATE, table.getName(), getSetSql(table));
     }
 

@@ -34,7 +34,7 @@ public class Save implements MapperMethodHandler {
     }
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
         List<Column> columnList = table.getColumns();
 
         StringBuilder cols = new StringBuilder("<trim prefix=\"\" prefixOverrides=\",\">");

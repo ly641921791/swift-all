@@ -16,11 +16,11 @@ import org.apache.ibatis.mapping.SqlCommandType;
 public class Delete extends AbstractDeleteMethodHandler {
 
     @Override
-    public String buildSqlScript(Table table, SwiftConfiguration configuration) {
+    public String getStatement(Table table, SwiftConfiguration configuration) {
         if (SqlCommandType.UPDATE.equals(getSqlCommandType())) {
-            return super.buildSqlScript(table, configuration);
+            return super.getStatement(table, configuration);
         }
-        return super.buildSqlScript(table, configuration).replace("</script>", " <where>${c.where}</where></script>");
+        return super.getStatement(table, configuration).replace("</script>", " <where>${c.where}</where></script>");
     }
 
     @Override
