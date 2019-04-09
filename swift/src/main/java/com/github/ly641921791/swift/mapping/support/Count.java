@@ -11,7 +11,7 @@ public class Count extends AbstractSelectMethodHandler {
 
     @Override
     protected void selectClause(StringBuilder statement) {
-        statement.append("COUNT(0)");
+        statement.append("SELECT COUNT(0) ");
     }
 
     @Override

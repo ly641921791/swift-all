@@ -12,20 +12,18 @@ import com.github.ly641921791.swift.util.StringUtils;
 public class FindAllId extends AbstractSelectMethodHandler {
 
     @Override
-    protected void whereClause(StringBuilder statement) {
-        super.whereClause(statement);
+    protected void selectClause(StringBuilder statement) {
+        statement.append("SELECT `").append(table.getKeyColumn()).append("` AS `").append(table.getKeyProperty()).append('`');
     }
 
     @Override
-    public String getStatement() {
-        StringBuilder replace = new StringBuilder();
+    protected void whereClause(StringBuilder statement) {
         if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {
-            replace.append(String.format("<if test='c == null'>WHERE %s = %s</if>", table.getDeleteColumn(), table.getExistsValue()));
+            statement.append(String.format("<if test='c == null'>WHERE %s = %s</if>", table.getDeleteColumn(), table.getExistsValue()));
         }
-        replace.append("<if test='c != null'>");
-        replace.append("<where>${c.where}</where>");
-        replace.append("</if></script>");
-        return super.getStatement().replace("</script>", replace.toString());
+        statement.append("<if test='c != null'>");
+        statement.append("<where>${c.where}</where>");
+        statement.append("</if>");
     }
 
 }

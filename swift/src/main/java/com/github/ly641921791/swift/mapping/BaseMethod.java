@@ -76,46 +76,6 @@ public interface BaseMethod<T, ID> {
     int deleteByColumn(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
 
     /**
-     * 更新记录
-     * <p>
-     * 只更新非Null列，如：设置r.id=1，则生成SQL为 UPDATE tbName SET id = #{id} WHERE xxx
-     *
-     * @param p property
-     * @param c condition
-     * @return 更新记录数
-     */
-    int update(@Param("p") T p, @Param("c") Condition c);
-
-    /**
-     * update by column
-     *
-     * @param p      target property
-     * @param column column
-     * @param value  value
-     * @return update count
-     */
-    int updateByColumn(@Param("p") T p, @Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
-
-    /**
-     * 根据id更新记录，注意：这个方法会修改id
-     *
-     * @param p  property
-     * @param id id
-     * @return 更新记录数
-     */
-    int updateById(@Param("p") T p, @Param("id") ID id);
-
-    /**
-     * update column by id
-     *
-     * @param column column
-     * @param value  value
-     * @param id     id
-     * @return update count
-     */
-    int updateColumnById(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value, @Param("id") ID id);
-
-    /**
      * Find all records
      *
      * @return all records
@@ -240,5 +200,45 @@ public interface BaseMethod<T, ID> {
         entities.forEach(this::save);
         return entities.size();
     }
+
+    /**
+     * 更新记录
+     * <p>
+     * 只更新非Null列，如：设置r.id=1，则生成SQL为 UPDATE tbName SET id = #{id} WHERE xxx
+     *
+     * @param p property
+     * @param c condition
+     * @return 更新记录数
+     */
+    int update(@Param("p") T p, @Param("c") Condition c);
+
+    /**
+     * update by column
+     *
+     * @param p      target property
+     * @param column column
+     * @param value  value
+     * @return update count
+     */
+    int updateByColumn(@Param("p") T p, @Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value);
+
+    /**
+     * 根据id更新记录，注意：这个方法会修改id
+     *
+     * @param p  property
+     * @param id id
+     * @return 更新记录数
+     */
+    int updateById(@Param("p") T p, @Param("id") ID id);
+
+    /**
+     * update column by id
+     *
+     * @param column column
+     * @param value  value
+     * @param id     id
+     * @return update count
+     */
+    int updateColumnById(@Param(P_A_COLUMN) String column, @Param(P_A_VALUE) Object value, @Param("id") ID id);
 
 }

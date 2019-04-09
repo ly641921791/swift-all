@@ -1,6 +1,6 @@
 
 INSERT INTO foo (id,string_value,del) VALUES (1,'findById',1);
-INSERT INTO foo (id,string_value,del) VALUES (2,'deleteById',1);
+INSERT INTO foo (id,string_value,del) VALUES (2,'deleteById',0);
 INSERT INTO foo (id,string_value,del) VALUES (3,'updateById',1);
 INSERT INTO foo (id,string_value,del) VALUES (4,'findAll',1);
 INSERT INTO foo (id,string_value,del) VALUES (5,'findAll',0);
@@ -23,7 +23,7 @@ INSERT INTO foo (id,string_value,del) VALUES (14,'deleteAllById',0);
 
 
 INSERT INTO foo2 (id,string_value2,del) VALUES (1,'findById',0);
-INSERT INTO foo2 (id,string_value2,del) VALUES (2,'deleteById',1);
+INSERT INTO foo2 (id,string_value2,del) VALUES (2,'deleteById',0);
 INSERT INTO foo2 (id,string_value2,del) VALUES (3,'updateById',0);
 INSERT INTO foo2 (id,string_value2,del) VALUES (4,'findAll',1);
 INSERT INTO foo2 (id,string_value2,del) VALUES (5,'findAll',0);

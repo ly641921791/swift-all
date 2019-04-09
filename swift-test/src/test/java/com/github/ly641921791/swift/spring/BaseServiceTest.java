@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,9 @@ import java.util.Random;
 @SpringBootTest(classes = FooApplication.class)
 public class BaseServiceTest {
 
+    private int fooCount = 14;
+    private int foo2Count = 11;
+
     @Autowired
     private FooService fooService;
 
@@ -36,113 +40,152 @@ public class BaseServiceTest {
     private FooWithAnnotationService fooWithAnnotationService;
 
     @Test
-    public void countTestSuccess() {
-        Assert.assertTrue(fooService.count() > fooWithAnnotationService.count());
+    public void count() {
+        Assert.assertEquals(fooService.count(), fooCount);
+        Assert.assertEquals(fooWithAnnotationService.count(), foo2Count);
 
         Condition condition = new Condition();
         condition.eq(Foo.ID, 1L);
         condition.orderByDesc(Foo.ID);
         condition.limit(1);
-        fooService.count(condition);
-        fooWithAnnotationService.count(condition);
+        Assert.assertEquals(fooService.count(condition), 1);
+        Assert.assertEquals(fooWithAnnotationService.count(condition), 1);
     }
 
     @Test
-    public void deleteTestSuccess() {
+    @Transactional
+    public void delete() {
+        Foo foo = fooService.findById(1L);
         Condition condition = new Condition();
-        condition.eq(Foo.ID, 1L);
-        condition.eq(Foo.STRING_VALUE, "foo");
+        condition.eq(Foo.ID, foo.getId());
+        condition.eq(Foo.STRING_VALUE, foo.getStringValue());
         fooService.delete(condition);
+        Assert.assertNull(fooService.findById(foo.getId()));
 
+        FooWithAnnotation fooWithAnnotation = fooWithAnnotationService.findById(1L);
         condition = new Condition();
-        condition.eq(FooWithAnnotation.ID, 1L);
-        condition.eq(FooWithAnnotation.STRING_VALUE, "foo");
+        condition.eq(FooWithAnnotation.ID, fooWithAnnotation.getId());
+        condition.eq(FooWithAnnotation.STRING_VALUE, fooWithAnnotation.getStringValue());
         fooWithAnnotationService.delete(condition);
+        Assert.assertNull(fooWithAnnotationService.findById(foo.getId()));
     }
 
     @Test
-    public void deleteAllByIdTestSuccess() {
+    @Transactional
+    public void deleteAllById() {
+        Assert.assertNotNull(fooService.findById(14L));
         fooService.deleteAllById(Collections.singleton(14L));
         Assert.assertNull(fooService.findById(14L));
 
+        Assert.assertNotNull(fooWithAnnotationService.findById(14L));
         fooWithAnnotationService.deleteAllById(Collections.singleton(14L));
         Assert.assertNull(fooWithAnnotationService.findById(14L));
     }
 
     @Test
-    public void deleteByColumnTestSuccess() {
+    @Transactional
+    public void deleteByColumn() {
+        Assert.assertNotNull(fooService.findById(11L));
         Assert.assertEquals(fooService.deleteByColumn(Foo.ID, 11L), 1);
         Assert.assertEquals(fooService.deleteByColumn(Foo.ID, 11L), 0);
+        Assert.assertNull(fooService.findById(11L));
 
+        Assert.assertNotNull(fooWithAnnotationService.findById(11L));
         Assert.assertEquals(fooWithAnnotationService.deleteByColumn(Foo.ID, 11L), 1);
         Assert.assertEquals(fooWithAnnotationService.deleteByColumn(Foo.ID, 11L), 0);
+        Assert.assertNull(fooWithAnnotationService.findById(11L));
     }
 
     @Test
-    public void deleteByIdTestSuccess() {
+    @Transactional
+    public void deleteById() {
+        Assert.assertNotNull(fooService.findById(2L));
         fooService.deleteById(2L);
         Assert.assertNull(fooService.findById(2L));
 
+        Assert.assertNotNull(fooWithAnnotationService.findById(2L));
         fooWithAnnotationService.deleteById(2L);
         Assert.assertNull(fooWithAnnotationService.findById(2L));
     }
 
     @Test
-    public void findAllTestSuccess() {
-        Assert.assertTrue(fooService.findAll().size() > fooWithAnnotationService.findAll().size());
+    public void findAll() {
+        Assert.assertEquals(fooService.findAll().size(), fooCount);
+        Assert.assertEquals(fooWithAnnotationService.findAll().size(), foo2Count);
+
+        fooService.findAll().forEach(foo -> foo.setId(foo.equals(new Foo()) ? 0L : 1L));
+        fooWithAnnotationService.findAll().forEach(foo -> foo.setId(foo.equals(new FooWithAnnotation()) ? 0L : 1L));
 
         Condition condition = new Condition();
         condition.eq(Foo.ID, 1L);
-        condition.like(Foo.STRING_VALUE, "like");
+        condition.like(Foo.STRING_VALUE, "find");
         condition.orderByDesc(Foo.ID);
         condition.limit(1);
-        fooService.findAll(condition);
+        Assert.assertEquals(fooService.findAll(condition).size(), 1);
 
         condition = new Condition();
         condition.eq(FooWithAnnotation.ID, 1L);
-        condition.like(FooWithAnnotation.STRING_VALUE, "like");
+        condition.like(FooWithAnnotation.STRING_VALUE, "find");
         condition.orderByDesc(FooWithAnnotation.ID);
         condition.limit(1);
-        fooWithAnnotationService.findAll(condition);
+        Assert.assertEquals(fooWithAnnotationService.findAll(condition).size(), 1);
     }
 
     @Test
-    public void findAllIdTestSuccess() {
+    public void findAllId() {
         Condition condition = new Condition();
         condition.eq(Foo.STRING_VALUE, "findAllId");
-        Assert.assertTrue(fooService.findAllId().size() > 0);
-        Assert.assertTrue(fooService.findAllId(condition).size() > 0);
+        Assert.assertEquals(fooService.findAllId().size(), fooCount);
+        Assert.assertEquals(fooService.findAllId(condition).size(), 1);
+        fooService.findAllId().forEach(id -> id++);
 
         condition = new Condition();
         condition.eq(FooWithAnnotation.STRING_VALUE, "findAllId");
-        Assert.assertTrue(fooWithAnnotationService.findAllId().size() > 0);
-        Assert.assertTrue(fooWithAnnotationService.findAllId(condition).size() > 0);
+        Assert.assertEquals(fooWithAnnotationService.findAllId().size(), foo2Count);
+        Assert.assertEquals(fooWithAnnotationService.findAllId(condition).size(), 1);
+        fooWithAnnotationService.findAllId().forEach(id -> id++);
     }
 
     @Test
-    public void findAllByColumnTestSuccess() {
+    public void findAllByColumn() {
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, "findAllByColumn").size(), 2);
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, Collections.singleton("findAllByColumn")).size(), 2);
         Assert.assertEquals(fooService.findAllByColumn(Foo.STRING_VALUE, Collections.singletonList("findAllByColumn")).size(), 2);
+        fooService.findAllByColumn(Foo.STRING_VALUE, Collections.singletonList("findAllByColumn")).forEach(foo -> foo.setId(foo.equals(new Foo()) ? 0L : 1L));
+
         Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, "findAllByColumn").size(), 1);
         Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, Collections.singleton("findAllByColumn")).size(), 1);
         Assert.assertEquals(fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, Collections.singletonList("findAllByColumn")).size(), 1);
+        fooWithAnnotationService.findAllByColumn(FooWithAnnotation.STRING_VALUE, Collections.singletonList("findAllByColumn")).forEach(foo -> foo.setId(foo.equals(new FooWithAnnotation()) ? 0L : 1L));
     }
 
     @Test
-    public void findAllByIdTestSuccess() {
+    public void findAllById() {
         Assert.assertEquals(fooService.findAllById(Arrays.asList(8L, 9L)).size(), 2);
+        fooService.findAllById(Collections.singletonList(8L)).forEach(foo -> foo.setId(foo.equals(new Foo()) ? 0L : 1L));
+
         Assert.assertEquals(fooWithAnnotationService.findAllById(Arrays.asList(8L, 9L)).size(), 1);
+        fooWithAnnotationService.findAllById(Collections.singletonList(8L)).forEach(foo -> foo.setId(foo.equals(new FooWithAnnotation()) ? 0L : 1L));
     }
 
     @Test
-    public void findByIdTestSuccess() {
-        Assert.assertNotNull(fooService.findById(1L));
-        Assert.assertNotNull(fooWithAnnotationService.findById(1L));
+    public void findById() {
+        Foo foo = new Foo();
+        foo.setId(1L);
+        foo.setStringValue("findById");
+        foo.setDel(1);
+        Assert.assertEquals(fooService.findById(1L), foo);
+
+        FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
+        fooWithAnnotation.setId(1L);
+        fooWithAnnotation.setStringValue("findById");
+        fooWithAnnotation.setDel(0);
+        fooWithAnnotation.setNotExistsColumn("1");
+        Assert.assertEquals(fooWithAnnotationService.findById(1L), fooWithAnnotation);
     }
 
     @Test
-    public void findMapListTestSuccess() {
+    public void findMapList() {
         Condition condition = new Condition();
         condition.select("f1.id", "f1");
         condition.select("f2.id", "f2");
@@ -153,13 +196,14 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void findOneByColumnTestSuccess() {
-        fooService.findOneByColumn(Foo.STRING_VALUE, "findOneByColumn");
-        fooWithAnnotationService.findOneByColumn(FooWithAnnotation.STRING_VALUE, "findOneByColumn");
+    public void findOneByColumn() {
+        fooService.findOneByColumn(Foo.STRING_VALUE, "findOneByColumn").setId(1L);
+        fooWithAnnotationService.findOneByColumn(FooWithAnnotation.STRING_VALUE, "findOneByColumn").setId(1L);
     }
 
     @Test
-    public void saveTestSuccess() {
+    @Transactional
+    public void save() {
         Foo foo = new Foo();
         foo.setId(new Random().nextLong());
         foo.setDel(0);
@@ -167,18 +211,22 @@ public class BaseServiceTest {
         Assert.assertEquals(fooService.save(foo), 1);
         ExceptionAssert.assertException(DuplicateKeyException.class, () -> fooService.save(foo));
         Assert.assertEquals(fooService.save(foo, true), 0);
+        Assert.assertEquals(fooService.findById(foo.getId()), foo);
 
         FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
         fooWithAnnotation.setId(new Random().nextLong());
         fooWithAnnotation.setDel(0);
+        fooWithAnnotation.setNotExistsColumn("1");
 
         Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation), 1);
         ExceptionAssert.assertException(DuplicateKeyException.class, () -> fooWithAnnotationService.save(fooWithAnnotation));
         Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation, true), 0);
+        Assert.assertEquals(fooWithAnnotationService.findById(fooWithAnnotation.getId()), fooWithAnnotation);
     }
 
     @Test
-    public void saveAllTestSuccess() {
+    @Transactional
+    public void saveAll() {
         List<Long> idList = Arrays.asList(1001L, 1002L);
         final List<Foo> fooList = new ArrayList<>();
         idList.forEach(id -> {
@@ -194,7 +242,8 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void updateByColumnTestSuccess() {
+    @Transactional
+    public void updateByColumn() {
         Foo fooTargetProperty = new Foo();
         fooTargetProperty.setStringValue("updateSuccess");
         FooWithAnnotation foo2targetProperty = new FooWithAnnotation();
@@ -208,7 +257,8 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void updateByIdTestSuccess() {
+    @Transactional
+    public void updateById() {
         Foo fooTargetProperty = new Foo();
         fooTargetProperty.setStringValue("updateSuccess");
         FooWithAnnotation foo2targetProperty = new FooWithAnnotation();
@@ -222,9 +272,31 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void updateColumnByIdTestSuccess() {
+    @Transactional
+    public void updateColumnById() {
         fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
+        Assert.assertEquals(fooService.findById(1L).getStringValue(), "111");
+
         fooWithAnnotationService.updateColumnById(FooWithAnnotation.STRING_VALUE, "111", 1L);
+        Assert.assertEquals(fooWithAnnotationService.findById(1L).getStringValue(), "111");
+    }
+
+    @Test
+    @Transactional
+    void update() {
+        Foo foo = new Foo();
+        foo.setStringValue("update");
+        Condition condition = new Condition();
+        condition.eq(Foo.ID, 1L);
+        fooService.update(foo, condition);
+        Assert.assertEquals(fooService.findById(1L).getStringValue(), foo.getStringValue());
+
+        FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
+        fooWithAnnotation.setStringValue("update");
+        condition = new Condition();
+        condition.eq(Foo.ID, 1L);
+        fooWithAnnotationService.update(fooWithAnnotation, condition);
+        Assert.assertEquals(fooWithAnnotationService.findById(1L).getStringValue(), fooWithAnnotation.getStringValue());
     }
 
 }
