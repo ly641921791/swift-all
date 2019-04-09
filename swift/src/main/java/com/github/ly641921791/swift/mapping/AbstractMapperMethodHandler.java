@@ -29,7 +29,7 @@ public abstract class AbstractMapperMethodHandler implements MapperMethodHandler
 
     protected void deleteClause(StringBuilder statement) {
         if (StringUtils.isNotEmpty(table.getDeleteColumn(), table.getExistsValue())) {
-            statement.append("AND ").append(table.getDeleteColumn()).append(" = ").append(table.getExistsValue());
+            statement.append(" AND `").append(table.getDeleteColumn()).append("` = ").append(table.getExistsValue());
         }
     }
 
