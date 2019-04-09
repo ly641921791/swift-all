@@ -68,6 +68,10 @@ public class BaseServiceTest {
         condition.eq(FooWithAnnotation.STRING_VALUE, fooWithAnnotation.getStringValue());
         fooWithAnnotationService.delete(condition);
         Assert.assertNull(fooWithAnnotationService.findById(foo.getId()));
+
+        // 只删除一条记录
+        Assert.assertEquals(fooService.findAll().size(), fooCount - 1);
+        Assert.assertEquals(fooWithAnnotationService.findAll().size(), foo2Count - 1);
     }
 
     @Test
@@ -80,6 +84,10 @@ public class BaseServiceTest {
         Assert.assertNotNull(fooWithAnnotationService.findById(14L));
         fooWithAnnotationService.deleteAllById(Collections.singleton(14L));
         Assert.assertNull(fooWithAnnotationService.findById(14L));
+
+        // 只删除一条记录
+        Assert.assertEquals(fooService.findAll().size(), fooCount - 1);
+        Assert.assertEquals(fooWithAnnotationService.findAll().size(), foo2Count - 1);
     }
 
     @Test
@@ -94,6 +102,10 @@ public class BaseServiceTest {
         Assert.assertEquals(fooWithAnnotationService.deleteByColumn(Foo.ID, 11L), 1);
         Assert.assertEquals(fooWithAnnotationService.deleteByColumn(Foo.ID, 11L), 0);
         Assert.assertNull(fooWithAnnotationService.findById(11L));
+
+        // 只删除一条记录
+        Assert.assertEquals(fooService.findAll().size(), fooCount - 1);
+        Assert.assertEquals(fooWithAnnotationService.findAll().size(), foo2Count - 1);
     }
 
     @Test
@@ -106,6 +118,10 @@ public class BaseServiceTest {
         Assert.assertNotNull(fooWithAnnotationService.findById(2L));
         fooWithAnnotationService.deleteById(2L);
         Assert.assertNull(fooWithAnnotationService.findById(2L));
+
+        // 只删除一条记录
+        Assert.assertEquals(fooService.findAll().size(), fooCount - 1);
+        Assert.assertEquals(fooWithAnnotationService.findAll().size(), foo2Count - 1);
     }
 
     @Test
@@ -254,6 +270,10 @@ public class BaseServiceTest {
 
         fooWithAnnotationService.updateByColumn(foo2targetProperty, Foo.ID, 3L);
         Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), foo2targetProperty.getStringValue());
+
+        // 其他记录不能修改
+        Assert.assertNotEquals(fooService.findById(1L).getStringValue(), fooTargetProperty.getStringValue());
+        Assert.assertNotEquals(fooWithAnnotationService.findById(1L).getStringValue(), foo2targetProperty.getStringValue());
     }
 
     @Test
@@ -269,34 +289,50 @@ public class BaseServiceTest {
 
         fooWithAnnotationService.updateById(foo2targetProperty, 3L);
         Assert.assertEquals(fooWithAnnotationService.findById(3L).getStringValue(), foo2targetProperty.getStringValue());
+
+        // 其他记录不能修改
+        Assert.assertNotEquals(fooService.findById(1L).getStringValue(), fooTargetProperty.getStringValue());
+        Assert.assertNotEquals(fooWithAnnotationService.findById(1L).getStringValue(), foo2targetProperty.getStringValue());
     }
 
     @Test
     @Transactional
     public void updateColumnById() {
-        fooService.updateColumnById(Foo.STRING_VALUE, "111", 1L);
-        Assert.assertEquals(fooService.findById(1L).getStringValue(), "111");
+        String targetProperty = "111";
 
-        fooWithAnnotationService.updateColumnById(FooWithAnnotation.STRING_VALUE, "111", 1L);
-        Assert.assertEquals(fooWithAnnotationService.findById(1L).getStringValue(), "111");
+        fooService.updateColumnById(Foo.STRING_VALUE, targetProperty, 1L);
+        Assert.assertEquals(fooService.findById(1L).getStringValue(), targetProperty);
+
+        fooWithAnnotationService.updateColumnById(FooWithAnnotation.STRING_VALUE, targetProperty, 1L);
+        Assert.assertEquals(fooWithAnnotationService.findById(1L).getStringValue(), targetProperty);
+
+        // 其他记录不能修改
+        Assert.assertNotEquals(fooService.findById(3L).getStringValue(), targetProperty);
+        Assert.assertNotEquals(fooWithAnnotationService.findById(3L).getStringValue(), targetProperty);
     }
 
     @Test
     @Transactional
-    void update() {
+    public void update() {
+        String targetProperty = "111";
+
         Foo foo = new Foo();
-        foo.setStringValue("update");
+        foo.setStringValue(targetProperty);
         Condition condition = new Condition();
         condition.eq(Foo.ID, 1L);
         fooService.update(foo, condition);
         Assert.assertEquals(fooService.findById(1L).getStringValue(), foo.getStringValue());
 
         FooWithAnnotation fooWithAnnotation = new FooWithAnnotation();
-        fooWithAnnotation.setStringValue("update");
+        fooWithAnnotation.setStringValue(targetProperty);
         condition = new Condition();
         condition.eq(Foo.ID, 1L);
         fooWithAnnotationService.update(fooWithAnnotation, condition);
         Assert.assertEquals(fooWithAnnotationService.findById(1L).getStringValue(), fooWithAnnotation.getStringValue());
+
+        // 其他记录不能修改
+        Assert.assertNotEquals(fooService.findById(3L).getStringValue(), targetProperty);
+        Assert.assertNotEquals(fooWithAnnotationService.findById(3L).getStringValue(), targetProperty);
     }
 
 }
