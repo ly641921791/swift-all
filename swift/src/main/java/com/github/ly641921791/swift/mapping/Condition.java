@@ -77,15 +77,7 @@ public class Condition {
      * @return 当前对象
      */
     public Condition eq(String column, Object value) {
-        String paramK = "k" + params.size();
-        params.put(paramK, value);
-        if (or) {
-            where.append("OR ").append(column).append(" = #{c.params.").append(paramK).append("} ");
-            or = false;
-        } else {
-            where.append("AND ").append(column).append(" = #{c.params.").append(paramK).append("} ");
-        }
-        return this;
+        return handleWhereCondition("=", column, value);
     }
 
     /**
@@ -96,14 +88,41 @@ public class Condition {
      * @return 当前对象
      */
     public Condition ne(String column, Object value) {
+        return handleWhereCondition("<>", column, value);
+    }
+
+    /**
+     * 大于（greater than）
+     *
+     * @param column column
+     * @param value  value
+     * @return this
+     */
+    public Condition gt(String column, Object value) {
+        return handleWhereCondition(">", column, value);
+    }
+
+    /**
+     * 小于（less than）
+     *
+     * @param column column
+     * @param value  value
+     * @return this
+     */
+    public Condition lt(String column, Object value) {
+        return handleWhereCondition("<", column, value);
+    }
+
+    private Condition handleWhereCondition(String operational, String column, Object value) {
         String paramK = "k" + params.size();
         params.put(paramK, value);
         if (or) {
-            where.append("OR ").append(column).append(" <> #{c.params.").append(paramK).append("} ");
+            where.append("OR ");
             or = false;
         } else {
-            where.append("AND ").append(column).append(" <> #{c.params.").append(paramK).append("} ");
+            where.append("AND ");
         }
+        where.append(column).append(" ").append(operational).append(" #{c.params.").append(paramK).append("} ");
         return this;
     }
 
