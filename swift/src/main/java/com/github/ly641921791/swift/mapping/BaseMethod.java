@@ -153,6 +153,14 @@ public interface BaseMethod<T, ID> {
      * @param condition 条件
      * @return 查询结果
      */
+    Map findMap(@Param(P_A_CONDITION) Condition condition);
+
+    /**
+     * 根据条件查询，查询结果包装为map
+     *
+     * @param condition 条件
+     * @return 查询结果
+     */
     List<Map> findMapList(@Param(P_A_CONDITION) Condition condition);
 
     /**

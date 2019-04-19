@@ -200,6 +200,15 @@ public class BaseServiceTest {
         Assert.assertEquals(fooWithAnnotationService.findById(1L), fooWithAnnotation);
     }
 
+
+    @Test
+    void findMap() {
+        Condition condition = new Condition();
+        condition.select("COUNT(0)");
+        condition.from("foo");
+        fooService.findMap(condition);
+    }
+
     @Test
     public void findMapList() {
         Condition condition = new Condition();

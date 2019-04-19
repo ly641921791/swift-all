@@ -9,6 +9,7 @@ import com.github.ly641921791.swift.mapping.support.FindAllByColumn;
 import com.github.ly641921791.swift.mapping.support.FindAllById;
 import com.github.ly641921791.swift.mapping.support.FindAllId;
 import com.github.ly641921791.swift.mapping.support.FindById;
+import com.github.ly641921791.swift.mapping.support.FindMap;
 import com.github.ly641921791.swift.mapping.support.FindMapList;
 import com.github.ly641921791.swift.mapping.support.FindOneByColumn;
 import com.github.ly641921791.swift.mapping.support.Save;
@@ -46,6 +47,7 @@ public class MapperMethodHandlerRegistry {
         addMapperMethodHandler(FindAllId.class);
         addMapperMethodHandler(FindAllById.class);
         addMapperMethodHandler(FindById.class);
+        addMapperMethodHandler(FindMap.class);
         addMapperMethodHandler(FindMapList.class);
         addMapperMethodHandler(FindOneByColumn.class);
         addMapperMethodHandler(FindAllByColumn.class);
