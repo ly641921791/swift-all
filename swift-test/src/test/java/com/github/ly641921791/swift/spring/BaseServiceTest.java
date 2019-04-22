@@ -3,9 +3,11 @@ package com.github.ly641921791.swift.spring;
 import com.github.ly641921791.swift.ExceptionAssert;
 import com.github.ly641921791.swift.mapping.Condition;
 import com.github.ly641921791.swift.test.FooApplication;
+import com.github.ly641921791.swift.test.mapper.Foo2Mapper;
 import com.github.ly641921791.swift.test.service.FooService;
 import com.github.ly641921791.swift.test.service.FooWithAnnotationService;
 import com.github.ly641921791.swift.test.table.Foo;
+import com.github.ly641921791.swift.test.table.Foo2;
 import com.github.ly641921791.swift.test.table.FooWithAnnotation;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,9 @@ public class BaseServiceTest {
 
     private int fooCount = 14;
     private int foo2Count = 11;
+
+    @Autowired
+    private Foo2Mapper foo2Mapper;
 
     @Autowired
     private FooService fooService;
@@ -247,6 +252,11 @@ public class BaseServiceTest {
         ExceptionAssert.assertException(DuplicateKeyException.class, () -> fooWithAnnotationService.save(fooWithAnnotation));
         Assert.assertEquals(fooWithAnnotationService.save(fooWithAnnotation, true), 0);
         Assert.assertEquals(fooWithAnnotationService.findById(fooWithAnnotation.getId()), fooWithAnnotation);
+
+        Foo2 foo2 = new Foo2();
+        foo2.setId(new Random().nextLong());
+        foo2.setDel(0);
+        foo2Mapper.save(foo2);
     }
 
     @Test

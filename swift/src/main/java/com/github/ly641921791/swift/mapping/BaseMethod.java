@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.ly641921791.swift.mapping.MapperMethodHandler.ENTITY;
 import static com.github.ly641921791.swift.mapping.MapperMethodHandler.P_A_COLUMN;
 import static com.github.ly641921791.swift.mapping.MapperMethodHandler.P_A_CONDITION;
 import static com.github.ly641921791.swift.mapping.MapperMethodHandler.P_A_ID;
@@ -180,7 +181,7 @@ public interface BaseMethod<T, ID> {
      * @param entity entity
      * @return 插入记录数
      */
-    default int save(T entity) {
+    default int save(@Param(ENTITY) T entity) {
         return save(entity, false);
     }
 
@@ -193,7 +194,7 @@ public interface BaseMethod<T, ID> {
      * @param ignore ignore exception
      * @return 插入记录数
      */
-    int save(@Param("entity") T entity, @Param("ignore") boolean ignore);
+    int save(@Param(ENTITY) T entity, @Param("ignore") boolean ignore);
 
     /**
      * Save all records
