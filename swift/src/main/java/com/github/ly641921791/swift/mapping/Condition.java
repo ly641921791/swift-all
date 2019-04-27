@@ -113,6 +113,28 @@ public class Condition {
         return handleWhereCondition("<", column, value);
     }
 
+    /**
+     * 大于等于
+     *
+     * @param column column
+     * @param value  value
+     * @return this
+     */
+    public Condition ge(String column, Object value) {
+        return handleWhereCondition(">=", column, value);
+    }
+
+    /**
+     * 小于等于
+     *
+     * @param column column
+     * @param value  value
+     * @return this
+     */
+    public Condition le(String column, Object value) {
+        return handleWhereCondition("<=", column, value);
+    }
+
     private Condition handleWhereCondition(String operational, String column, Object value) {
         String paramK = "k" + params.size();
         params.put(paramK, value);

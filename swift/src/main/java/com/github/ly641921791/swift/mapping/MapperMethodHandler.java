@@ -28,6 +28,8 @@ public interface MapperMethodHandler {
 
     String T_WHERE = "<where>${" + P_A_CONDITION + ".where}</where>";
 
+    String ENTITY = "entity";
+
     String TAG_SCRIPT_OPEN = "<script>";
 
     String TAG_SCRIPT_CLOSE = "</script>";

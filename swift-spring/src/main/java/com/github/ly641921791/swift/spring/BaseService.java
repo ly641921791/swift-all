@@ -150,6 +150,11 @@ public class BaseService<T, M extends BaseMapper<T, ID>, ID> implements IService
     }
 
     @Override
+    public Map findMap(Condition condition) {
+        return mapper.findMap(condition);
+    }
+
+    @Override
     public List<Map> findMapList(Condition condition) {
         return mapper.findMapList(condition);
     }

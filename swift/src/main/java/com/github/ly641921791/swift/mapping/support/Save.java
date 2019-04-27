@@ -23,10 +23,6 @@ public class Save extends AbstractMapperMethodHandler {
     // TODO IGNORE 仅支持mysql数据库
     public static final String INSERT_MYSQL = "<script>INSERT <if test='ignore'>IGNORE</if> INTO %s (%s) VALUES (%s)</script>";
 
-    public static final String COLUMNS = "<if test=\"entity.%s!=null\">,`%s`</if>";
-
-    public static final String VALUES = "<if test=\"entity.%s!=null\">,#{entity.%s}</if>";
-
     @Override
     public SqlCommandType getSqlCommandType() {
         return SqlCommandType.INSERT;
@@ -45,8 +41,8 @@ public class Save extends AbstractMapperMethodHandler {
                 return;
             }
             String field = column.getJavaField().getName();
-            cols.append(String.format(COLUMNS, field, column.getName()));
-            fs.append(String.format(VALUES, field, field));
+            cols.append(String.format("<if test='%s.%s!=null'>,`%s`</if>", ENTITY, field, column.getName()));
+            fs.append(String.format("<if test='%s.%s!=null'>,#{entity.%s}</if>", ENTITY, field, field));
         });
 
         cols.append("</trim>");
@@ -67,7 +63,8 @@ public class Save extends AbstractMapperMethodHandler {
 
     @Override
     public String getKeyProperty(Table table) {
-        return table.getKeyProperty();
+        // [Fix] 由于save方法是重载方法，多参数的情况下，keyProperty使用属性名是不够的，需要配合因此需要通过[entity.id]获得值
+        return ENTITY + "." + table.getKeyProperty();
     }
 
 }
