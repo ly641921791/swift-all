@@ -2,13 +2,13 @@ package com.github.ly641921791.swift.metadata;
 
 import com.github.ly641921791.swift.annotations.ColumnField;
 import com.github.ly641921791.swift.annotations.TableClass;
+import com.github.ly641921791.swift.session.SwiftConfiguration;
 import com.github.ly641921791.swift.util.ClassUtils;
 import com.github.ly641921791.swift.util.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -60,12 +60,21 @@ public class Table {
         columns.add(column);
     }
 
-    public static Table resolve(Class<?> tableClass, Configuration configuration) {
+    public static Table resolve(Class<?> tableClass, SwiftConfiguration configuration) {
         Table table = new Table();
+
+        KeywordEscapeStrategy keywordEscapeStrategy = configuration.getKeywordEscapeStrategy();
 
         // 注解解析
         TableClass tableClassAnnotation = tableClass.getAnnotation(TableClass.class);
-        if (tableClassAnnotation != null) {
+        if (tableClassAnnotation == null) {
+            table.setUseGeneratedKeys(false);
+            table.setKeyProperty(DEFAULT_KEY_PROPERTY);
+            table.setKeyColumn(DEFAULT_KEY_COLUMN);
+            table.setDeleteColumn("");
+            table.setDeleteValue("");
+            table.setExistsValue("");
+        } else {
             table.setTableClassAnnotation(tableClassAnnotation);
             table.setName(tableClassAnnotation.tableName());
             table.setUseGeneratedKeys(tableClassAnnotation.useGeneratedKeys());
@@ -74,18 +83,11 @@ public class Table {
             table.setDeleteColumn(tableClassAnnotation.deleteColumn());
             table.setDeleteValue(tableClassAnnotation.deleteValue());
             table.setExistsValue(tableClassAnnotation.existsValue());
-        } else {
-            table.setUseGeneratedKeys(false);
-            table.setKeyProperty(DEFAULT_KEY_PROPERTY);
-            table.setKeyColumn(DEFAULT_KEY_COLUMN);
-            table.setDeleteColumn("");
-            table.setDeleteValue("");
-            table.setExistsValue("");
         }
 
         // Java类名一般是大驼峰，转换下划线格式
         if (StringUtils.isEmpty(table.getName())) {
-            table.setName(StringUtils.toUnderscore(tableClass.getSimpleName()));
+            table.setName(configuration.getTablePrefix() + StringUtils.toUnderscore(tableClass.getSimpleName()));
         }
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
@@ -113,13 +115,28 @@ public class Table {
 
             // 表格列名一般是小驼峰，转下划线格式
             if (StringUtils.isEmpty(column.getName())) {
-                column.setName(StringUtils.toUnderscore(field.getName()));
+                column.setName(configuration.getColumnPrefix() + StringUtils.toUnderscore(field.getName()));
             }
 
             table.addColumn(column);
         }
 
         return table;
+    }
+
+    private String handleKeyword(String keyword, KeywordEscapeStrategy keywordEscapeStrategy) {
+        switch (keywordEscapeStrategy) {
+            case REQUIRED:
+                if ("LIKE".equals(keyword.toUpperCase())) {
+                    return "`" + keyword + "`";
+                } else {
+                    return keyword;
+                }
+            case ALL:
+                return "`" + keyword + "`";
+            default:
+                return keyword;
+        }
     }
 
 }

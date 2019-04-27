@@ -4,8 +4,10 @@ import com.github.ly641921791.swift.binding.SwiftMapperRegistry;
 import com.github.ly641921791.swift.lang.StringArray;
 import com.github.ly641921791.swift.mapping.MapperMethodHandler;
 import com.github.ly641921791.swift.mapping.MapperMethodHandlerRegistry;
+import com.github.ly641921791.swift.metadata.KeywordEscapeStrategy;
 import com.github.ly641921791.swift.type.StringArrayTypeHandler;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
@@ -23,6 +25,42 @@ import java.util.Set;
 public class SwiftConfiguration extends Configuration {
 
     // fields
+
+    /**
+     * Table name prefix
+     * ---
+     * 表格名前缀
+     */
+    @Setter
+    @Getter
+    protected String tablePrefix = "";
+
+    /**
+     * Column name prefix
+     * ---
+     * 字段名前缀
+     */
+    @Setter
+    @Getter
+    protected String columnPrefix = "";
+
+    /**
+     * Keyword escape
+     * ---
+     * 开启关键字策略
+     */
+    @Setter
+    @Getter
+    protected KeywordEscapeStrategy keywordEscapeStrategy = KeywordEscapeStrategy.NEVER;
+
+    /**
+     * Keyword escape character
+     * ---
+     * 关键字转义字符
+     */
+    @Setter
+    @Getter
+    protected String keywordEscapeCharacter = "";
 
     private final MapperRegistry mapperRegistry = new SwiftMapperRegistry(this);
 
