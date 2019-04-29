@@ -1,16 +1,16 @@
 package com.github.ly641921791.swift.metadata;
 
 /**
- * Keyword escape strategy
+ * Keyword escape policy
  * ---
  * 关键字转义策略
  *
  * @author ly
  */
-public enum KeywordEscapeStrategy {
+public enum KeywordEscapePolicy {
 
     /**
-     * Never escape strategy
+     * Never escape
      * ---
      * 从不转义
      */

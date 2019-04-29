@@ -4,7 +4,7 @@ import com.github.ly641921791.swift.binding.SwiftMapperRegistry;
 import com.github.ly641921791.swift.lang.StringArray;
 import com.github.ly641921791.swift.mapping.MapperMethodHandler;
 import com.github.ly641921791.swift.mapping.MapperMethodHandlerRegistry;
-import com.github.ly641921791.swift.metadata.KeywordEscapeStrategy;
+import com.github.ly641921791.swift.metadata.KeywordEscapePolicy;
 import com.github.ly641921791.swift.type.StringArrayTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,7 +51,7 @@ public class SwiftConfiguration extends Configuration {
      */
     @Setter
     @Getter
-    protected KeywordEscapeStrategy keywordEscapeStrategy = KeywordEscapeStrategy.NEVER;
+    protected KeywordEscapePolicy keywordEscapePolicy = KeywordEscapePolicy.NEVER;
 
     /**
      * Keyword escape character

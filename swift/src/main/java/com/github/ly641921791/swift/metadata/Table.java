@@ -13,6 +13,7 @@ import lombok.Setter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -60,10 +61,20 @@ public class Table {
         columns.add(column);
     }
 
+    public void setName(String name, KeywordEscapePolicy keywordEscapePolicy, String escapeCharacter) {
+        if (needEscape(name, keywordEscapePolicy)) {
+            setName(escapeKeyword(name, escapeCharacter));
+        } else {
+            setName(name);
+        }
+    }
+
     public static Table resolve(Class<?> tableClass, SwiftConfiguration configuration) {
         Table table = new Table();
 
-        KeywordEscapeStrategy keywordEscapeStrategy = configuration.getKeywordEscapeStrategy();
+        // 关键字转义相关属性
+        KeywordEscapePolicy keywordEscapePolicy = configuration.getKeywordEscapePolicy();
+        String keywordEscapeCharacter = configuration.getKeywordEscapeCharacter();
 
         // 注解解析
         TableClass tableClassAnnotation = tableClass.getAnnotation(TableClass.class);
@@ -76,7 +87,7 @@ public class Table {
             table.setExistsValue("");
         } else {
             table.setTableClassAnnotation(tableClassAnnotation);
-            table.setName(tableClassAnnotation.tableName());
+            table.setName(tableClassAnnotation.tableName(), keywordEscapePolicy, keywordEscapeCharacter);
             table.setUseGeneratedKeys(tableClassAnnotation.useGeneratedKeys());
             table.setKeyProperty(tableClassAnnotation.keyProperty());
             table.setKeyColumn(tableClassAnnotation.keyColumn());
@@ -87,7 +98,7 @@ public class Table {
 
         // Java类名一般是大驼峰，转换下划线格式
         if (StringUtils.isEmpty(table.getName())) {
-            table.setName(configuration.getTablePrefix() + StringUtils.toUnderscore(tableClass.getSimpleName()));
+            table.setName(configuration.getTablePrefix() + StringUtils.toUnderscore(tableClass.getSimpleName()), keywordEscapePolicy, keywordEscapeCharacter);
         }
 
         List<Field> fieldList = ClassUtils.getAllDeclaredFields(tableClass);
@@ -108,14 +119,14 @@ public class Table {
                 column.setExists(Column.DEFAULT_EXISTS);
                 column.setSelectValue(Column.DEFAULT_SELECT_VALUE);
             } else {
-                column.setName(columnField.columnName());
+                column.setName(columnField.columnName(), keywordEscapePolicy, keywordEscapeCharacter);
                 column.setExists(columnField.exists());
                 column.setSelectValue(columnField.selectValue());
             }
 
             // 表格列名一般是小驼峰，转下划线格式
             if (StringUtils.isEmpty(column.getName())) {
-                column.setName(configuration.getColumnPrefix() + StringUtils.toUnderscore(field.getName()));
+                column.setName(configuration.getColumnPrefix() + StringUtils.toUnderscore(field.getName()), keywordEscapePolicy, keywordEscapeCharacter);
             }
 
             table.addColumn(column);
@@ -124,19 +135,40 @@ public class Table {
         return table;
     }
 
-    private String handleKeyword(String keyword, KeywordEscapeStrategy keywordEscapeStrategy) {
-        switch (keywordEscapeStrategy) {
+    /**
+     * 是否需要转义
+     *
+     * @param keyword             关键字
+     * @param keywordEscapePolicy 转义策略
+     * @return 是否转义
+     */
+    static boolean needEscape(String keyword, KeywordEscapePolicy keywordEscapePolicy) {
+        switch (keywordEscapePolicy) {
             case REQUIRED:
-                if ("LIKE".equals(keyword.toUpperCase())) {
-                    return "`" + keyword + "`";
+                if (Arrays.asList("LIKE", "WHERE").contains(keyword.toUpperCase())) {
+                    return true;
                 } else {
-                    return keyword;
+                    return false;
                 }
             case ALL:
-                return "`" + keyword + "`";
+                return true;
             default:
-                return keyword;
+                return false;
         }
+    }
+
+    /**
+     * 字符转义
+     *
+     * @param keyword         关键字
+     * @param escapeCharacter 转义字符
+     * @return 转义后字符
+     */
+    static String escapeKeyword(String keyword, String escapeCharacter) {
+        if (escapeCharacter.isEmpty()) {
+            return keyword;
+        }
+        return escapeCharacter + keyword + escapeCharacter;
     }
 
 }
