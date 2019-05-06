@@ -72,10 +72,6 @@ public class Table {
     public static Table resolve(Class<?> tableClass, SwiftConfiguration configuration) {
         Table table = new Table();
 
-        // 关键字转义相关属性
-        KeywordEscapePolicy keywordEscapePolicy = configuration.getKeywordEscapePolicy();
-        String keywordEscapeCharacter = configuration.getKeywordEscapeCharacter();
-
         // 注解解析
         TableClass tableClassAnnotation = tableClass.getAnnotation(TableClass.class);
         if (tableClassAnnotation == null) {
