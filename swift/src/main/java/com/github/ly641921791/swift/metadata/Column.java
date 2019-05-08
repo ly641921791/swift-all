@@ -26,12 +26,4 @@ public class Column {
 
     private String selectValue;
 
-    public void setName(String name, KeywordEscapePolicy keywordEscapePolicy, String escapeCharacter) {
-        if (Table.needEscape(name, keywordEscapePolicy)) {
-            setName(Table.escapeKeyword(name, escapeCharacter));
-        } else {
-            setName(name);
-        }
-    }
-
 }

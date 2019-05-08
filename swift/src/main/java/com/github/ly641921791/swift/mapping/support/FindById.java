@@ -2,8 +2,8 @@ package com.github.ly641921791.swift.mapping.support;
 
 import com.github.ly641921791.swift.mapping.AbstractSelectMethodHandler;
 
-import static com.github.ly641921791.swift.metadata.Table.DEFAULT_KEY_COLUMN;
-import static com.github.ly641921791.swift.metadata.Table.DEFAULT_KEY_PROPERTY;
+import static com.github.ly641921791.swift.builder.TableBuilder.DEFAULT_KEY_COLUMN;
+import static com.github.ly641921791.swift.builder.TableBuilder.DEFAULT_KEY_PROPERTY;
 
 /**
  * Target sql script : <script>SELECT %s FROM %s WHERE %s = #{%s}</script>

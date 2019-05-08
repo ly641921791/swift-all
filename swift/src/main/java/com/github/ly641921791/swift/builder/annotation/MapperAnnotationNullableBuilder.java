@@ -231,7 +231,7 @@ public class MapperAnnotationNullableBuilder extends MapperAnnotationBuilder {
         Type[] genericTypes = ClassUtils.getInterfacesGenericType(type, BaseMapper.class);
         if (genericTypes.length != 0) {
             tableClass = (Class) genericTypes[0];
-            table = Table.resolve(tableClass, configuration);
+            table = configuration.getTableBuilder().builder(tableClass);
         }
     }
 

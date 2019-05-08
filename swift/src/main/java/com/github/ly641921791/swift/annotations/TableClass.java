@@ -6,9 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static com.github.ly641921791.swift.metadata.Table.DEFAULT_KEY_COLUMN;
-import static com.github.ly641921791.swift.metadata.Table.DEFAULT_KEY_PROPERTY;
-import static com.github.ly641921791.swift.metadata.Table.DEFAULT_USE_GENERATED_KEYS;
+import static com.github.ly641921791.swift.builder.TableBuilder.*;
 
 /**
  * @author ly

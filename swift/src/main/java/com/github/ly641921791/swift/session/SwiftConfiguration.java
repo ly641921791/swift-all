@@ -26,7 +26,7 @@ public class SwiftConfiguration extends Configuration {
 
     @Setter
     @Getter
-    protected TableBuilder tableBuilder;
+    protected TableBuilder tableBuilder = new TableBuilder();
 
     private final MapperRegistry mapperRegistry = new SwiftMapperRegistry(this);
 

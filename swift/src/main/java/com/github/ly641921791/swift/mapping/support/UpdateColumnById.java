@@ -2,8 +2,8 @@ package com.github.ly641921791.swift.mapping.support;
 
 import com.github.ly641921791.swift.mapping.AbstractUpdateMethodHandler;
 
-import static com.github.ly641921791.swift.metadata.Table.DEFAULT_KEY_COLUMN;
-import static com.github.ly641921791.swift.metadata.Table.DEFAULT_KEY_PROPERTY;
+import static com.github.ly641921791.swift.builder.TableBuilder.DEFAULT_KEY_COLUMN;
+import static com.github.ly641921791.swift.builder.TableBuilder.DEFAULT_KEY_PROPERTY;
 
 /**
  * Target sql script <script>UPDATE table SET `${c}` = #{v} WHERE `id` = #{id}</script>
