@@ -1,6 +1,7 @@
 package com.github.ly641921791.swift.spring.boot.autoconfigure;
 
 import com.github.ly641921791.swift.session.SwiftConfiguration;
+import com.github.ly641921791.swift.session.SwiftSqlSessionFactoryBuilder;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -76,6 +77,7 @@ public class SwiftAutoConfiguration implements InitializingBean {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setVfs(SpringBootVFS.class);
+        factory.setSqlSessionFactoryBuilder(new SwiftSqlSessionFactoryBuilder());
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
         }
