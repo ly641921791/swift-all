@@ -13,7 +13,7 @@ public class FindAllId extends AbstractSelectMethodHandler {
 
     @Override
     protected void selectClause(StringBuilder statement) {
-        statement.append("SELECT `").append(table.getKeyColumn()).append("` AS `").append(table.getKeyProperty()).append('`');
+        statement.append("SELECT ").append(table.getKeyColumn()).append(" AS ").append(table.getKeyProperty());
     }
 
     @Override

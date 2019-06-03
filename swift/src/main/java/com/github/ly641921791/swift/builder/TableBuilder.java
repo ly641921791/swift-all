@@ -65,7 +65,7 @@ public class TableBuilder {
      */
     private String columnSuffix = "";
 
-    private KeywordEscapeStrategy keywordEscapeStrategy = KeywordEscapeStrategy.REQUIRED;
+    private KeywordEscapeStrategy keywordEscapeStrategy = KeywordEscapeStrategy.NEVER;
 
     /**
      * SQL keyword escape character

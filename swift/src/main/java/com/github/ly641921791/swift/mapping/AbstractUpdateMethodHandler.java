@@ -33,7 +33,7 @@ public abstract class AbstractUpdateMethodHandler extends AbstractSelectMethodHa
     protected void setClause(StringBuilder statement) {
         table.getColumns().forEach(column -> {
             if (column.isExists()) {
-                statement.append(String.format("<if test=\"p.%s!=null\">,`%s` = #{p.%s}</if>", column.getJavaField().getName(), column.getName(), column.getJavaField().getName()));
+                statement.append(String.format("<if test=\"p.%s!=null\">,%s = #{p.%s}</if>", column.getJavaField().getName(), column.getName(), column.getJavaField().getName()));
             }
         });
     }

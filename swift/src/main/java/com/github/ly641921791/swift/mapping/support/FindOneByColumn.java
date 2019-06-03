@@ -11,7 +11,7 @@ public class FindOneByColumn extends AbstractSelectMethodHandler {
     @Override
     protected void whereClause(StringBuilder statement) {
         statement.append(TAG_WHERE_OPEN);
-        statement.append("`${c}` = #{v}");
+        statement.append("${c} = #{v}");
         deleteClause(statement);
         statement.append(TAG_WHERE_CLOSE);
     }

@@ -34,7 +34,7 @@ public abstract class AbstractDeleteMethodHandler extends AbstractMapperMethodHa
             // UPDATE table SET WHERE
             statement.append("UPDATE ").append(table.getName()).append(' ');
             statement.append(TAG_SET_OPEN);
-            statement.append(String.format("`%s` = %s", table.getDeleteColumn(), table.getDeleteValue()));
+            statement.append(String.format("%s = %s", table.getDeleteColumn(), table.getDeleteValue()));
             statement.append(TAG_SET_CLOSE);
         } else {
             // DELETE FROM table WHERE

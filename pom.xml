@@ -77,4 +77,15 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>local-mvn-repo</id>
+            <url>file:/Users/ly/Documents/GitHub/mvnrepository</url>
+        </repository>
+        <snapshotRepository>
+            <id>local-mvn-repo</id>
+            <url>file:/Users/ly/Documents/GitHub/mvnrepository</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>

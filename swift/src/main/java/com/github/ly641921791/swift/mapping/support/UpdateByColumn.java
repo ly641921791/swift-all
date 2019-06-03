@@ -13,10 +13,10 @@ public class UpdateByColumn extends AbstractUpdateMethodHandler {
         StringBuilder set = new StringBuilder();
         table.getColumns().forEach(column -> {
             if (column.isExists()) {
-                set.append(String.format("<if test=\"p.%s!=null\">,`%s` = #{p.%s}</if>", column.getJavaField().getName(), column.getName(), column.getJavaField().getName()));
+                set.append(String.format("<if test=\"p.%s!=null\">,%s = #{p.%s}</if>", column.getJavaField().getName(), column.getName(), column.getJavaField().getName()));
             }
         });
-        return String.format("<script>UPDATE `%s` <set>%s</set> WHERE `${c}` = #{v}</script>", table.getName(), set.toString());
+        return String.format("<script>UPDATE %s <set>%s</set> WHERE ${c} = #{v}</script>", table.getName(), set.toString());
     }
 
 }

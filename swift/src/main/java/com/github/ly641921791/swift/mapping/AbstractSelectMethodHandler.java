@@ -32,10 +32,10 @@ public abstract class AbstractSelectMethodHandler extends AbstractMapperMethodHa
         table.getColumns().forEach(column -> {
             if (column.getSelectValue().isEmpty()) {
                 if (column.isExists()) {
-                    statement.append('`').append(column.getName()).append("` AS `").append(column.getJavaField().getName()).append("`,");
+                    statement.append(column.getName()).append(" AS ").append(column.getJavaField().getName()).append(",");
                 }
             } else {
-                statement.append('(').append(column.getSelectValue()).append(") AS `").append(column.getName()).append("`,");
+                statement.append('(').append(column.getSelectValue()).append(") AS ").append(column.getName()).append(",");
             }
         });
         statement.append("</trim>");

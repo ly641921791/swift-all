@@ -17,9 +17,9 @@ public class FindById extends AbstractSelectMethodHandler {
     protected void whereClause(StringBuilder statement) {
         statement.append("WHERE ");
         if (table.getTableClassAnnotation() == null) {
-            statement.append(String.format("`%s` = #{%s}", DEFAULT_KEY_COLUMN, DEFAULT_KEY_PROPERTY));
+            statement.append(String.format("%s = #{%s}", DEFAULT_KEY_COLUMN, DEFAULT_KEY_PROPERTY));
         } else {
-            statement.append(String.format("`%s` = #{%s}", table.getTableClassAnnotation().keyColumn(), table.getTableClassAnnotation().keyProperty()));
+            statement.append(String.format("%s = #{%s}", table.getTableClassAnnotation().keyColumn(), table.getTableClassAnnotation().keyProperty()));
         }
         deleteClause(statement);
     }

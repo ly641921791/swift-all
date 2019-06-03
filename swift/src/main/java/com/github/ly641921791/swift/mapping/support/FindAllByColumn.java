@@ -22,7 +22,7 @@ public class FindAllByColumn extends AbstractSelectMethodHandler {
     @Override
     protected void whereClause(StringBuilder statement) {
         statement.append(TAG_WHERE_OPEN);
-        statement.append("`${c}` IN <foreach item='item' index='index' collection='vs' open='(' separator=',' close=')'>#{item}</foreach>");
+        statement.append("${c} IN <foreach item='item' index='index' collection='vs' open='(' separator=',' close=')'>#{item}</foreach>");
         deleteClause(statement);
         statement.append(TAG_WHERE_CLOSE);
     }

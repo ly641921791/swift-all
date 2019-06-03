@@ -13,6 +13,34 @@ import java.util.List;
 /**
  * TODO INSERT INTO foo ( del ) VALUES ( ? )   del加引号
  *
+ *
+ *
+ *     <insert id="save" parameterType="com.zintow.answer.lottery.model.po.UserRankPo">
+ *         INSERT IGNORE INTO t_user_rank
+ *         <trim prefix="(" suffix=")" suffixOverrides=",">
+ *             <if test="activeId != null">active_id,</if>
+ *             <if test="userId != null">user_id,</if>
+ *             <if test="nickname != null">nickname,</if>
+ *             <if test="avatar != null">avatar,</if>
+ *             <if test="totalScore != null">total_score,</if>
+ *             <if test="answerRight != null">answer_right,</if>
+ *             <if test="shareCount != null">share_count,</if>
+ *             <if test="totalTime != null">total_time,</if>
+ *         </trim>
+ *         VALUES
+ *         <trim prefix="(" suffix=")" suffixOverrides=",">
+ *             <if test="activeId != null">#{activeId},</if>
+ *             <if test="userId != null">#{userId},</if>
+ *             <if test="nickname != null">#{nickname},</if>
+ *             <if test="avatar != null">#{avatar},</if>
+ *             <if test="totalScore != null">#{totalScore},</if>
+ *             <if test="answerRight != null">#{answerRight},</if>
+ *             <if test="shareCount != null">#{shareCount},</if>
+ *             <if test="totalTime != null">#{totalTime},</if>
+ *         </trim>
+ *     </insert>
+ *
+ *
  * @author ly
  * @since 1.0.0
  **/
@@ -41,7 +69,7 @@ public class Save extends AbstractMapperMethodHandler {
                 return;
             }
             String field = column.getJavaField().getName();
-            cols.append(String.format("<if test='%s.%s!=null'>,`%s`</if>", ENTITY, field, column.getName()));
+            cols.append(String.format("<if test='%s.%s!=null'>,%s</if>", ENTITY, field, column.getName()));
             fs.append(String.format("<if test='%s.%s!=null'>,#{entity.%s}</if>", ENTITY, field, field));
         });
 

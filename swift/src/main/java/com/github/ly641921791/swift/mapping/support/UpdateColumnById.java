@@ -6,7 +6,7 @@ import static com.github.ly641921791.swift.builder.TableBuilder.DEFAULT_KEY_COLU
 import static com.github.ly641921791.swift.builder.TableBuilder.DEFAULT_KEY_PROPERTY;
 
 /**
- * Target sql script <script>UPDATE table SET `${c}` = #{v} WHERE `id` = #{id}</script>
+ * Target sql script <script>UPDATE table SET ${c} = #{v} WHERE id = #{id}</script>
  *
  * @author ly
  * @since 1.0.0
@@ -22,9 +22,9 @@ public class UpdateColumnById extends AbstractUpdateMethodHandler {
     protected void whereClause(StringBuilder statement) {
         statement.append("WHERE ");
         if (table.getTableClassAnnotation() == null) {
-            statement.append(String.format("`%s` = #{%s}", DEFAULT_KEY_COLUMN, DEFAULT_KEY_PROPERTY));
+            statement.append(String.format("%s = #{%s}", DEFAULT_KEY_COLUMN, DEFAULT_KEY_PROPERTY));
         } else {
-            statement.append(String.format("`%s` = #{%s}", table.getTableClassAnnotation().keyColumn(), table.getTableClassAnnotation().keyProperty()));
+            statement.append(String.format("%s = #{%s}", table.getTableClassAnnotation().keyColumn(), table.getTableClassAnnotation().keyProperty()));
         }
         deleteClause(statement);
     }
