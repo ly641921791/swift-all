@@ -36,7 +36,7 @@
     </developers>
 
     <properties>
-        <fastjson.version>1.2.56</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
     </properties>
 
     <modules>
